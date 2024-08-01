@@ -2,19 +2,15 @@
 
 declare(strict_types=1);
 
-final class NeovimUpdate {
+require 'Messenger.php';
+
+final class NeovimUpdate
+{
     private string $dotfiles_path;
     private string $source_path;
     private string $target_path;
 
-    const string FILE_CREATED_MESSAGE = 'Created target directory';
-    const string FAILED_TO_CREATE_FILE_MESSAGE = 'Failed to create target directory';
-    const string FILE_DELETED_MESSAGE = 'Deleted files';
-    const string FAILED_TO_DELETE_FILE_MESSAGE = 'Failed to delete files';
-    const string COPIED_FILES_MESSAGE = 'Copied files';
-    const string FAILED_TO_COPY_FILES_MESSAGE = 'Failed to copy files';
-
-    public function __construct ()
+    public function __construct()
     {
         $homeDir = getenv('HOME');
         $this->dotfiles_path = $homeDir . '/.config';
@@ -38,10 +34,11 @@ final class NeovimUpdate {
             return;
         }
 
+        $info = ' file => ' . $this->target_path;
         if (mkdir($this->target_path, 0775, false)) {
-            echo self::FILE_CREATED_MESSAGE.PHP_EOL;
+            echo Messenger::FILE_CREATED_MESSAGE . $info . PHP_EOL;
         } else {
-            throw new RuntimeException(self::FAILED_TO_CREATE_FILE_MESSAGE);
+            throw new RuntimeException(Messenger::FAILED_TO_CREATE_FILE_MESSAGE . $info);
         }
     }
 
@@ -52,18 +49,19 @@ final class NeovimUpdate {
             return;
         }
 
-        $command = "rm -rf " . escapeshellarg($this->target_path);
+        $command = "rm -r " . escapeshellarg($this->target_path);
         $output = [];
         $return_var = 0;
 
         // コマンドの実行
         exec($command, $output, $return_var);
 
+        $info = ' file => ' . $this->target_path;
         if ($return_var !== 0) {
-            throw new RuntimeException(self::FAILED_TO_DELETE_FILE_MESSAGE);
+            throw new RuntimeException(Messenger::FAILED_TO_DELETE_FILE_MESSAGE . $info);
         }
 
-        echo self::FILE_DELETED_MESSAGE.PHP_EOL;
+        echo Messenger::FILE_DELETED_MESSAGE . $info . PHP_EOL;
     }
 
     private function copy_files(): void
@@ -75,11 +73,12 @@ final class NeovimUpdate {
         // コマンドの実行
         exec($command, $output, $return_var);
 
+        $info = ' source => ' . $this->source_path . ' target => ' . $this->target_path;
         if ($return_var !== 0) {
-            throw new RuntimeException(self::FAILED_TO_COPY_FILES_MESSAGE);
+            throw new RuntimeException(Messenger::FAILED_TO_COPY_FILES_MESSAGE . $info);
         }
 
-        echo self::COPIED_FILES_MESSAGE.PHP_EOL;
+        echo Messenger::COPIED_FILES_MESSAGE . $info . PHP_EOL;
     }
 
     public function update(): void
@@ -87,6 +86,7 @@ final class NeovimUpdate {
         $this->make_dot_config_dir_if_not_exist();
         $this->delete_target_path_if_target_exist();
         $this->copy_files();
+        echo Messenger::FINISH_SUCCESSFULLY_MESSAGE . PHP_EOL;
     }
 }
 
