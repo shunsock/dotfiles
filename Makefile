@@ -1,5 +1,6 @@
 .PHONY: up nvim_update
 up:
-	echo "Hello"
+	echo "Do not ust this command"
+
 nvim_update:
 	php ./handler/nvim_update.php
