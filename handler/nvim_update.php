@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-require 'Messenger.php';
+require_once 'Messenger.php';
+require_once 'FileCreator.php';
 
 final class NeovimUpdate
 {
@@ -13,14 +14,17 @@ final class NeovimUpdate
     public function __construct()
     {
         $homeDir = getenv('HOME');
+
+        // check $HOME/.config exist
+        if (file_exists($homeDir.'/.config') === false) {
+            throw new InvalidArgumentException(
+                message: '[Error] could not find $HOME/.config dir'
+            );
+        }
+
         $this->dotfiles_path = $homeDir . '/.config';
         $this->target_path = $homeDir . '/.config/nvim';
         $this->source_path = __DIR__ . '/../nvim';
-    }
-
-    private function check_dot_config_dir_exists(): bool
-    {
-        return file_exists($this->dotfiles_path);
     }
 
     private function check_neovim_config_exists(): bool
@@ -30,16 +34,9 @@ final class NeovimUpdate
 
     private function make_dot_config_dir_if_not_exist(): void
     {
-        if ($this->check_dot_config_dir_exists()) {
-            return;
-        }
-
-        $info = ' file => ' . $this->target_path;
-        if (mkdir($this->target_path, 0775, false)) {
-            echo Messenger::FILE_CREATED_MESSAGE . $info . PHP_EOL;
-        } else {
-            throw new RuntimeException(Messenger::FAILED_TO_CREATE_FILE_MESSAGE . $info);
-        }
+        FileCreator::create(
+            file_path: $this->target_path
+        );
     }
 
     private function delete_target_path_if_target_exist(): void
