@@ -1,4 +1,4 @@
-.PHONY: up nvim wezterm
+.PHONY: up nvim wezterm zsh
 
 up:
 	rm -rf tmp/*
@@ -10,3 +10,8 @@ nvim:
 
 wezterm:
 	php ./worker/wezterm_update_worker.php
+
+zsh:
+	cp configs/zsh/.zshrc ~/.zshrc
+	zsh -c 'source ~/.zshrc omz; echo $$?'
+	php ./worker/zsh_update_worker.php
