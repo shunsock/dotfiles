@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-require_once 'Messenger.php';
+namespace Project\Worker;
+
+use RuntimeException;
 
 class FileRemover
 {

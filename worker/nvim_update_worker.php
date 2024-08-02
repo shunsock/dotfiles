@@ -2,10 +2,14 @@
 
 declare(strict_types=1);
 
-require_once 'Messenger.php';
-require_once 'FileCreator.php';
-require_once 'FileRemover.php';
-require_once 'FileCopier.php';
+namespace Project\Worker;
+
+use InvalidArgumentException;
+
+require_once __DIR__ . '/FileCreator.php';
+require_once __DIR__ . '/FileRemover.php';
+require_once __DIR__ . '/FileCopier.php';
+require_once __DIR__ . '/Messenger.php';
 
 final class NeovimUpdateWorker
 {
