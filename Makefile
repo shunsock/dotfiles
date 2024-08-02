@@ -1,7 +1,8 @@
 .PHONY: up nvim_update
 
 up:
-	echo "Do not ust this command"
+	rm -r tmp/*
+	phpunit tests
 
 nvim_update:
 	php ./worker/nvim_update_worker.php

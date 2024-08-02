@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Project\Worker;
+
 readonly class Messenger
 {
     const string COPIED_FILES_MESSAGE = '[Running] Copied files:';
