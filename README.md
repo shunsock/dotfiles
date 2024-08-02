@@ -7,7 +7,7 @@ This is project directory architecture.
 .
 ├── Makefile
 ├── README.md
-├── handler
+├── worker
 │   ├── FileCopier.php
 │   ├── FileCreator.php
 │   ├── FileRemover.php
@@ -27,5 +27,5 @@ This is project directory architecture.
 neovim settings are in `./nvim`.
 
 ```shell
-make nvim_update  # call `php handler/nvim_update_worker.php`
+make nvim_update  # call `php worker/nvim_update_worker.php`
 ```
