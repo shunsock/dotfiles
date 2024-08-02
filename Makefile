@@ -1,9 +1,12 @@
-.PHONY: up nvim_update
+.PHONY: up nvim wezterm
 
 up:
 	rm -rf tmp/*
 	phpunit tests
 	rm -r tmp/*
 
-nvim_update:
+nvim:
 	php ./worker/nvim_update_worker.php
+
+wezterm:
+	php ./worker/wezterm_update_worker.php
