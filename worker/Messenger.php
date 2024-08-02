@@ -13,5 +13,7 @@ readonly class Messenger
     const string FILE_CREATED_MESSAGE = '[Running] Created target directory:';
     const string FILE_DELETED_MESSAGE = '[Running] Deleted files:';
 
+    const string DIRECTORY_NOT_FOUND = '[Error] Could not find target directory:';
+
     const string FINISH_SUCCESSFULLY_MESSAGE = '[Finish] Completed!!';
 }

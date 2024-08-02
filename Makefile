@@ -1,8 +1,9 @@
 .PHONY: up nvim_update
 
 up:
-	rm -r tmp/*
+	rm -rf tmp/*
 	phpunit tests
+	rm -r tmp/*
 
 nvim_update:
 	php ./worker/nvim_update_worker.php
