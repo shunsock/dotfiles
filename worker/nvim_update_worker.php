@@ -13,7 +13,7 @@ require_once __DIR__ . '/ConfigUpdater.php';
 $homeDir = getenv('HOME');
 $dotfiles_dir_path = $homeDir . '/.config';
 $target_dir_path = $homeDir . '/.config/nvim';
-$source_dir_path = __DIR__ . '/../nvim';
+$source_dir_path = __DIR__ . '/../configs/nvim';
 
 $neovimUpdateWorker = new ConfigUpdater(
     dotfiles_dir_path: $dotfiles_dir_path,
