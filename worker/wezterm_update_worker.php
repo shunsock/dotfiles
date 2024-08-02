@@ -12,12 +12,12 @@ require_once __DIR__ . '/ConfigUpdater.php';
 
 $homeDir = getenv('HOME');
 $dotfiles_dir_path = $homeDir . '/.config';
-$target_dir_path = $homeDir . '/.config/nvim';
-$source_dir_path = __DIR__ . '/../nvim';
+$target_dir_path = $homeDir . '/.config/wezterm';
+$source_dir_path = __DIR__ . '/../wezterm';
 
-$neovimUpdateWorker = new ConfigUpdater(
+$weztermUpdateWorker = new ConfigUpdater(
     dotfiles_dir_path: $dotfiles_dir_path,
     source_dir_path: $source_dir_path,
     target_dir_path: $target_dir_path
 );
-$neovimUpdateWorker->update();
+$weztermUpdateWorker->update();
