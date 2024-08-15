@@ -36,6 +36,12 @@ This is project directory architecture.
 ### Neovim
 neovim settings are in `./configs/nvim`.
 
+before using following command, check if you've already install [jetpack](curl -fLo ~/.local/share/nvim/site/pack/jetpack/opt/vim-jetpack/plugin/jetpack.vim --create-dirs https://raw.githubusercontent.com/tani/vim-jetpack/master/plugin/jetpack.vim)
+
+```shell
+curl -fLo ~/.local/share/nvim/site/pack/jetpack/opt/vim-jetpack/plugin/jetpack.vim --create-dirs https://raw.githubusercontent.com/tani/vim-jetpack/master/plugin/jetpack.vim
+```
+
 ```shell
 make nvim  # call `php worker/nvim_update_worker.php`
 ```

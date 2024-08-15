@@ -6,9 +6,11 @@ up:
 	rm -r tmp/*
 
 nvim:
+	mkdir -p ~/.config/nvim
 	php ./worker/nvim_update_worker.php
 
 wezterm:
+	mkdir -p ~/.config/wezterm
 	php ./worker/wezterm_update_worker.php
 
 zsh:
