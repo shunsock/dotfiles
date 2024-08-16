@@ -3,7 +3,7 @@ local wezterm = require 'wezterm'
 local config = {}
 
 config.font = wezterm.font(
-  "DroidSansMNerdFontMono-Regular",
+  "DroidSansM Nerd Font Mono",
   {
     weight="Regular",
     stretch="Normal",
