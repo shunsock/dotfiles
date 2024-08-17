@@ -9,12 +9,14 @@ vim.api.nvim_set_keymap('n', '<Space>j', '<C-w>j', opts)
 vim.api.nvim_set_keymap('n', '<Space>k', '<C-w>k', opts)
 vim.api.nvim_set_keymap('n', '<Space>l', '<C-w>l', opts)
 
+vim.api.nvim_set_keymap('x', '<Space>h', '<C-w>h', opts)
+vim.api.nvim_set_keymap('x', '<Space>j', '<C-w>j', opts)
+vim.api.nvim_set_keymap('x', '<Space>k', '<C-w>k', opts)
+vim.api.nvim_set_keymap('x', '<Space>l', '<C-w>l', opts)
 
 -- set K as <Esc>
 vim.api.nvim_set_keymap('n', 'K', '<Esc>', opts)
 vim.api.nvim_set_keymap('x', 'K', '<Esc>', opts)
-vim.api.nvim_set_keymap('i', 'o', '<Esc>', opts)
-vim.api.nvim_set_keymap('i', 'K', '<Esc>', opts)
 
 -- set ; as leaderkey
 vim.g.mapleader = ";"
