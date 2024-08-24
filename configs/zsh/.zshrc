@@ -24,7 +24,6 @@ zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 plugins=(
     git
     bundler
-    brew
     dotenv
     macos
   )
@@ -46,5 +45,4 @@ MY_CUSTOM_CONFIG="$HOME/.zsh/config"
 source $MY_CUSTOM_CONFIG/basic/*.zsh
 source $MY_CUSTOM_CONFIG/docker/*.zsh
 source $MY_CUSTOM_CONFIG/git/*.zsh
-source $MY_CUSTOM_CONFIG/python/*.zsh
 source $MY_CUSTOM_CONFIG/wezterm/*.zsh
