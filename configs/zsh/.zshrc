@@ -46,3 +46,5 @@ source $MY_CUSTOM_CONFIG/basic/*.zsh
 source $MY_CUSTOM_CONFIG/docker/*.zsh
 source $MY_CUSTOM_CONFIG/git/*.zsh
 source $MY_CUSTOM_CONFIG/wezterm/*.zsh
+source $MY_CUSTOM_CONFIG/terraform/*.zsh
+source $MY_CUSTOM_CONFIG/nodenv/*.zsh
