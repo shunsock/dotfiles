@@ -39,7 +39,7 @@ export PATH=$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:$PATH
 # ------------------------------------------------------------------------------
 # Cargo
 # ------------------------------------------------------------------------------
-export PATH=$PATH:$HOME/.cargo/bin/
+export PATH=$HOME/.cargo/bin:$PATH
 
 # ------------------------------------------------------------------------------
 # Custom Configuration
