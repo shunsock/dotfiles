@@ -36,6 +36,10 @@ source $ZSH/oh-my-zsh.sh
 # Nixのパスを環境変数PATHに追加
 export PATH=$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:$PATH
 
+# ------------------------------------------------------------------------------
+# Cargo
+# ------------------------------------------------------------------------------
+export PATH=$PATH:$HOME/.cargo/bin/
 
 # ------------------------------------------------------------------------------
 # Custom Configuration
