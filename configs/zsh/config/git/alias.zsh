@@ -4,6 +4,9 @@ alias gad='git add .'
 # Amend the most recent commit
 alias gamd='git commit --amend'
 
+# git branch command alias
+alias gb ='git branch -d'
+
 # List all local branches
 alias gbr='git branch | grep .'
 
@@ -22,11 +25,8 @@ alias gpull='git pull origin'
 # Update remote refs along with associated objects (short for 'git push origin')
 alias gpush='git push origin'
 
-# Reset current HEAD to the specified state
-alias greset='git reset'
-
 # Show the working tree status
 alias gst='git status'
 
 # Switch to another branch
-alias gsw='git switch '
+alias gsw='git switch'
