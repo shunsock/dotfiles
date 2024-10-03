@@ -5,10 +5,10 @@ alias gad='git add .'
 alias gamd='git commit --amend'
 
 # List all local branches
-alias gbr='git branch'
+alias gbr='git branch | grep .'
 
 # List all remote branches
-alias gbrr='git branch -r'
+alias gbrr='git branch -r | grep .'
 
 # Create a new branch and switch to it
 alias gcb='git checkout -b '
