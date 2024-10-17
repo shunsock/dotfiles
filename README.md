@@ -6,9 +6,7 @@ This is project directory architecture.
 
 ```shell
 .
-├── Makefile
-├── README.md
-├── configs
+├── Makefile ├── README.md ├── configs
 │   ├── nvim
 │   ├── wezterm
 │   └── zsh
