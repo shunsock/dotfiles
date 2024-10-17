@@ -17,3 +17,6 @@ zsh:
 	cp configs/zsh/.zshrc ~/.zshrc
 	zsh -c 'source ~/.zshrc omz; echo $$?'
 	php ./worker/zsh_update_worker.php
+
+fonts:
+	bash ./worker/fonts_downloader.sh
