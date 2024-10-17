@@ -4,9 +4,6 @@ alias gad='git add .'
 # Amend the most recent commit
 alias gamd='git commit --amend'
 
-# git branch command alias
-alias gb ='git branch -d'
-
 # List all local branches
 alias gbr='git branch | grep .'
 
