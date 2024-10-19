@@ -5,7 +5,7 @@
 export ZSH="$HOME/.oh-my-zsh"
 
 # THEME
-ZSH_THEME="half-life"
+ZSH_THEME="kennethreitz"
 
 # AUTOSUGGESTIONS export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#dc5fc8'
 # source $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
