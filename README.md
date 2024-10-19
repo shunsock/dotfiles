@@ -1,6 +1,10 @@
 # dotfiles
 This Repository is config files updater which I often use with my work.
 
+## Screen Shot
+
+![screen shot](./images/screen_shot.png)
+
 ## Architecture
 This is project directory architecture.
 
@@ -10,8 +14,14 @@ This is project directory architecture.
 ├── README.md
 ├── configs
 │   ├── nvim
+│   │   ├── init.lua
+│   │   └── lua
 │   ├── wezterm
+│   │   └── wezterm.lua
 │   └── zsh
+│       └── config
+├── images
+│   └── screen_shot.png
 ├── tests
 │   └── FileCopierTest.php
 ├── tmp
@@ -21,13 +31,17 @@ This is project directory architecture.
     ├── FileCreator.php
     ├── FileRemover.php
     ├── Messenger.php
+    ├── fonts_downloader.sh
     ├── nvim_update_worker.php
     ├── wezterm_update_worker.php
     └── zsh_update_worker.php
+
+11 directories, 15 files
 ```
 
 - `Makefile`: run command
 - `worker`: PHP files to update setting files
+- `worker/font_downloader.sh`: Font downloader (will be replaced by PHP)
 - `tests`: PHP test file
 - `configs`: config files
 
