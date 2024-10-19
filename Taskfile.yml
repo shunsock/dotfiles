@@ -1,6 +1,10 @@
 version: '3'
 
 tasks:
+  test:
+    dir: worker
+    cmds:
+      - go test -cover ./...
   hello:
     dir: worker
     cmds:
