@@ -1,0 +1,7 @@
+version: '3'
+
+tasks:
+  hello:
+    dir: worker
+    cmds:
+      - go run entry_point/hello/main.go
