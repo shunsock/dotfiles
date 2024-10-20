@@ -68,6 +68,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+  log.Println("File copied: ", configSourcePath, " -> ", configDestinationPath)
   log.Println("🎉 Updeted!!")
 }
 
