@@ -3,6 +3,7 @@ package path
 import (
 	"os"
 	"testing"
+  "path/filepath"
 )
 
 // テスト用の一時ファイルと一時ディレクトリをセットアップする
@@ -106,6 +107,55 @@ func TestNonExistentDirectoryPath_Initialize(t *testing.T) {
 	err = nonExistentDirPath.Initialize(tempDir)
 	if err == nil || err.Error() != "ディレクトリが既に存在しています" {
 		t.Errorf("既存のディレクトリのエラーメッセージが正しくありません: %v", err)
+	}
+}
+
+// TestGetPaths tests the GetPaths function.
+func TestGetPaths(t *testing.T) {
+	// 一時ファイルとディレクトリをセットアップ
+	tempFilePath, tempDirPath := setupTestFixture(t)
+	defer teardownTestFixture(t, tempFilePath, tempDirPath)
+
+	// 一時ファイルのテスト
+	cleanPath, absPath, err := GetPaths(tempFilePath)
+	if err != nil {
+		t.Errorf("一時ファイルでエラーが発生しました: %v", err)
+	}
+
+	// 絶対パスが正しいか確認
+	expectedAbsPath, _ := filepath.Abs(tempFilePath)
+	if absPath != expectedAbsPath {
+		t.Errorf("絶対パスが正しくありません。期待値: %v, 実際: %v", expectedAbsPath, absPath)
+	}
+
+	// クリーンなパスが正しいか確認
+	expectedCleanPath := filepath.Clean(tempFilePath)
+	if cleanPath != expectedCleanPath {
+		t.Errorf("クリーンな相対パスが正しくありません。期待値: %v, 実際: %v", expectedCleanPath, cleanPath)
+	}
+
+	// 存在しないパスのテスト
+	_, _, err = GetPaths("nonexistentfile.txt")
+	if err != nil {
+		t.Errorf("存在しないファイルでエラーが発生することを期待しましたが、エラーがありませんでした: %v", err)
+	}
+
+	// ディレクトリのテスト
+	cleanPath, absPath, err = GetPaths(tempDirPath)
+	if err != nil {
+		t.Errorf("一時ディレクトリでエラーが発生しました: %v", err)
+	}
+
+	// 絶対パスが正しいか確認
+	expectedAbsDirPath, _ := filepath.Abs(tempDirPath)
+	if absPath != expectedAbsDirPath {
+		t.Errorf("ディレクトリの絶対パスが正しくありません。期待値: %v, 実際: %v", expectedAbsDirPath, absPath)
+	}
+
+	// クリーンなパスが正しいか確認
+	expectedCleanDirPath := filepath.Clean(tempDirPath)
+	if cleanPath != expectedCleanDirPath {
+		t.Errorf("クリーンなディレクトリパスが正しくありません。期待値: %v, 実際: %v", expectedCleanDirPath, cleanPath)
 	}
 }
 
