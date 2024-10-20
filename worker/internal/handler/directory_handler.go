@@ -23,3 +23,12 @@ func (dh *DirectoryHandler) RemoveRecursive(dir *path.DirectoryPath) error {
 	return cmd.Run()
 }
 
+// Create: ディレクトリを作成 (NonExistentDirectoryPathを使用)
+// typeでPathが存在しないことを保証しているので-pは不要
+func (dh *DirectoryHandler) Create(
+  dir *path.NonExistentDirectoryPath,
+) error {
+	cmd := exec.Command("mkdir", dir.Path)
+	return cmd.Run()
+}
+
