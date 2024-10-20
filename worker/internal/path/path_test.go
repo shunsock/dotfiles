@@ -1,7 +1,6 @@
 package path
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 )
@@ -9,13 +8,13 @@ import (
 // テスト用の一時ファイルと一時ディレクトリをセットアップする
 func setupTestFixture(t *testing.T) (string, string) {
 	// 一時ファイルを作成
-	tempFile, err := ioutil.TempFile("", "testfile_*.txt")
+	tempFile, err := os.CreateTemp("", "testfile_*.txt")
 	if err != nil {
 		t.Fatalf("一時ファイルを作成できませんでした: %v", err)
 	}
 
 	// 一時ディレクトリを作成
-	tempDir, err := ioutil.TempDir("", "testdir_")
+	tempDir, err := os.MkdirTemp("", "testdir_")
 	if err != nil {
 		t.Fatalf("一時ディレクトリを作成できませんでした: %v", err)
 	}
@@ -25,14 +24,14 @@ func setupTestFixture(t *testing.T) (string, string) {
 
 // テスト終了後にクリーンアップ
 func teardownTestFixture(t *testing.T, tempFilePath string, tempDirPath string) {
-	// 一時ファイルを削除
+	// 一時ファイルとディレクトリを削除
 	err := os.Remove(tempFilePath)
 	if err != nil {
 		t.Errorf("一時ファイルを削除できませんでした: %v", err)
 	}
 
-	// 一時ディレクトリを削除
-	err = os.Remove(tempDirPath)
+	// 一時ディレクトリ内のファイルを含めて削除
+	err = os.RemoveAll(tempDirPath)
 	if err != nil {
 		t.Errorf("一時ディレクトリを削除できませんでした: %v", err)
 	}
@@ -85,6 +84,28 @@ func TestDirectoryPath_Initialize(t *testing.T) {
 	err = dirPath.Initialize(tempFilePath) // 一時ファイル名を指定
 	if err == nil || err.Error() != "指定されたパスはファイルです" {
 		t.Errorf("ファイルをディレクトリとして指定した場合のエラーメッセージが正しくありません: %v", err)
+	}
+}
+
+func TestNonExistentDirectoryPath_Initialize(t *testing.T) {
+	// NonExistentDirectoryPathの初期化テスト（存在しないディレクトリ）
+	nonExistentDirPath := NonExistentDirectoryPath{}
+	err := nonExistentDirPath.Initialize("/non/existing/directory")
+	if err != nil {
+		t.Errorf("存在しないディレクトリの初期化に失敗しました: %v", err)
+	}
+
+  // 一時ディレクトリを作成
+	tempDir, err := os.MkdirTemp("", "testdir_")
+	if err != nil {
+		t.Fatalf("一時ディレクトリを作成できませんでした: %v", err)
+	}
+	defer os.RemoveAll(tempDir) // テスト終了後に一時ディレクトリを削除
+
+	// NonExistentDirectoryPathの初期化テスト（既存のディレクトリを指定）
+	err = nonExistentDirPath.Initialize(tempDir)
+	if err == nil || err.Error() != "ディレクトリが既に存在しています" {
+		t.Errorf("既存のディレクトリのエラーメッセージが正しくありません: %v", err)
 	}
 }
 

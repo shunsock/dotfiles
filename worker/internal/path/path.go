@@ -49,3 +49,24 @@ func (d *DirectoryPath) Initialize(path string) error {
 	return nil
 }
 
+// NonExistDirectory構造体
+type NonExistentDirectoryPath struct {
+	Path string
+}
+
+// Initialize メソッド: 初期化時にディレクトリの存在を確認し、存在しない場合にのみ初期化
+func (d *NonExistentDirectoryPath) Initialize(path string) error {
+	_, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		// ディレクトリが存在しない場合は初期化
+		d.Path = path
+		return nil
+	}
+	if err != nil {
+		// その他のエラーが発生した場合
+		return err
+	}
+	// ディレクトリが存在する場合
+	return errors.New("ディレクトリが既に存在しています")
+}
+
