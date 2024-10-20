@@ -5,6 +5,10 @@ tasks:
     dir: worker
     cmds:
       - go test -cover ./...
+  flake:
+    dir: flake
+    cmds:
+      - nix run
   wezterm:
     dir: worker
     cmds:
@@ -13,6 +17,10 @@ tasks:
     dir: worker
     cmds:
       - go run entry_point/nvim/main.go
+  nix:
+    dir: worker
+    cmds:
+      - go run entry_point/nix/main.go
   zsh:
     dir: worker
     cmds:
