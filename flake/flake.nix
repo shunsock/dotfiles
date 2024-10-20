@@ -7,9 +7,12 @@
 
   outputs = { self, nixpkgs }: {
 
-    packages.x86_64-linux.hello = nixpkgs.legacyPackages.x86_64-linux.hello;
+    # Define package for arm64-darwin (Apple Silicon Mac)
+    packages.arm64-darwin.hello = nixpkgs.legacyPackages.aarch64-darwin.hello;
 
-    packages.x86_64-linux.default = self.packages.x86_64-linux.hello;
+    # Set the default package for arm64-darwin
+    defaultPackage.arm64-darwin = self.packages.arm64-darwin.hello;
 
   };
 }
+
