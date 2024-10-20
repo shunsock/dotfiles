@@ -19,4 +19,7 @@ tasks:
       - go run entry_point/zsh/main.go
   font:
     cmds:
-      - bash font_downloader.sh
+      - bash ./downloader/font_downloader.sh
+  jetpack:
+    cmds:
+      - bash ./downloader/jetpack_downloader.sh
