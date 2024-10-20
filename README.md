@@ -71,3 +71,21 @@ We already addressed the problem, and all you need to do is to run following com
 task zsh
 ```
 
+## Test
+
+Worker Intenal package is tested by following command.
+
+```shell
+task test
+task: [test] go test -cover ./...
+        worker/entry_point/nvim         coverage: 0.0% of statements
+        worker/entry_point/zsh          coverage: 0.0% of statements
+        worker/entry_point/wezterm              coverage: 0.0% of statements
+ok      worker/internal/handler (cached)        coverage: 70.6% of statements
+ok      worker/internal/path    (cached)        coverage: 87.1% of statements
+```
+
+## License
+
+This repository is totally open source, and you can use it for free. But, please note that this repository can be changed by me. There is no guarantee that it will be stable (Breaking changes may occur). Therefore, please use it at your own risk.
+
