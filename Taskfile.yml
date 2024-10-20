@@ -17,7 +17,9 @@ tasks:
     dir: worker
     cmds:
       - go run entry_point/zsh/main.go
-  hello:
-    dir: worker
+  font:
     cmds:
-      - go run entry_point/hello/main.go
+      - bash ./downloader/font_downloader.sh
+  jetpack:
+    cmds:
+      - bash ./downloader/jetpack_downloader.sh
