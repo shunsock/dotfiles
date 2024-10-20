@@ -84,3 +84,4 @@ func GetPaths(relativePath string) (string, string, error) {
 
 	return cleanPath, absPath, nil
 }
+
