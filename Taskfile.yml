@@ -9,6 +9,10 @@ tasks:
     dir: worker
     cmds:
       - go run entry_point/wezterm/main.go
+  nvim:
+    dir: worker
+    cmds:
+      - go run entry_point/nvim/main.go
   hello:
     dir: worker
     cmds:
