@@ -17,7 +17,6 @@ tasks:
     dir: worker
     cmds:
       - go run entry_point/zsh/main.go
-  hello:
-    dir: worker
+  font:
     cmds:
-      - go run entry_point/hello/main.go
+      - bash font_downloader.sh
