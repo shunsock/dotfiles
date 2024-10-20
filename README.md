@@ -14,12 +14,16 @@ This is project directory architecture.
 ├── README.md
 ├── Taskfile.yml
 ├── configs
+│   ├── nix
 │   ├── nvim
 │   ├── wezterm
 │   └── zsh
 ├── downloader
 │   ├── fonts_downloader.sh
 │   └── jetpack_downloader.sh
+├── flake
+│   ├── flake.lock
+│   └── flake.nix
 ├── images
 │   └── screen_shot.png
 └── worker
@@ -29,9 +33,10 @@ This is project directory architecture.
 ```
 
 - `Taskfile.yml`: task runner file
-- `worker`: worker directory (Go project)
-- `downloader`: downloader directory (shell script)
 - `configs`: config files
+- `flake`: flake.nix files (nix package manager, not `nix.conf`)
+- `downloader`: downloader directory (shell script)
+- `worker`: worker directory (Go project)
 
 ## Setting Files
 
@@ -50,8 +55,21 @@ After that, you can run following command to update neovim settings.
 task nvim
 ```
 
+### Nix
+nix settings are in `./configs/nix`.
+
+```shell
+task nix
+```
+
+when you add package to `flake.nix`, you need to run following command.
+
+```shell
+task flake
+```
+
 ### Wezterm
-neovim settings are in `./configs/wezterm`.
+wezterm settings are in `./configs/wezterm`.
 
 ```shell
 task wezterm
