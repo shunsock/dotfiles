@@ -8,7 +8,7 @@ tasks:
   flake:
     dir: flake
     cmds:
-      - nix run
+      - nix flake check --all-systems
   wezterm:
     dir: worker
     cmds:
