@@ -73,11 +73,14 @@ func (d *NonExistentDirectoryPath) Initialize(path string) error {
 
 // GetPaths 関数は、指定された相対パスをクリーンな相対パスと絶対パスに変換して返す
 func GetPaths(relativePath string) (string, string, error) {
+	// 環境変数の展開 (例: $HOME)
+	expandedPath := os.ExpandEnv(relativePath)
+
 	// 相対パスをクリーン化
-	cleanPath := filepath.Clean(relativePath)
+	cleanPath := filepath.Clean(expandedPath)
 
 	// 絶対パスを取得
-	absPath, err := filepath.Abs(relativePath)
+	absPath, err := filepath.Abs(expandedPath)
 	if err != nil {
 		return "", "", err
 	}

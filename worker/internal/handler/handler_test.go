@@ -35,37 +35,6 @@ func teardownFixture(t *testing.T, dirPath string) {
 	}
 }
 
-// TestCopyRecursive: ディレクトリの再帰的コピーのテスト
-func TestCopyRecursive(t *testing.T) {
-	// フィクスチャをセットアップ
-	srcDir, dstDir := setupFixture(t)
-	defer teardownFixture(t, dstDir) // テスト後にコピー先ディレクトリを削除
-
-	// DirectoryPath を初期化
-	srcDirPath := &path.DirectoryPath{}
-	err := srcDirPath.Initialize(srcDir)
-	if err != nil {
-		t.Fatalf("ソースディレクトリの初期化に失敗しました: %v", err)
-	}
-
-	// dstDirPath は存在しないので初期化は不要
-	dstDirPath := &path.DirectoryPath{Path: dstDir}
-
-	// ディレクトリをコピー
-	dh := &handler.DirectoryHandler{}
-	err = dh.CopyRecursive(srcDirPath, dstDirPath)
-	if err != nil {
-		t.Fatalf("ディレクトリのコピーに失敗しました: %v", err)
-	}
-
-	// コピーされたファイルが存在するか確認
-	copiedFile := filepath.Join(dstDir, "testfile.txt")
-	_, err = os.Stat(copiedFile)
-	if os.IsNotExist(err) {
-		t.Fatalf("ファイルがコピーされていません")
-	}
-}
-
 // TestRemoveRecursive: ディレクトリの再帰的削除のテスト
 func TestRemoveRecursive(t *testing.T) {
 	// フィクスチャをセットアップ
@@ -93,6 +62,36 @@ func TestRemoveRecursive(t *testing.T) {
 	}
 }
 
+// TestCopyRecursive: ディレクトリの再帰的コピーのテスト
+func TestCopyRecursive(t *testing.T) {
+       // フィクスチャをセットアップ
+       srcDir, dstDir := setupFixture(t)
+       defer teardownFixture(t, dstDir) // テスト後にコピー先ディレクトリを削除
+
+       // DirectoryPath を初期化
+       srcDirPath := &path.DirectoryPath{}
+       err := srcDirPath.Initialize(srcDir)
+       if err != nil {
+               t.Fatalf("ソースディレクトリの初期化に失敗しました: %v", err)
+       }
+
+       // dstDirPath は存在しないので初期化は不要
+       dstDirPath := &path.DirectoryPath{Path: dstDir}
+
+       // ディレクトリをコピー
+       dh := &handler.DirectoryHandler{}
+       err = dh.CopyRecursive(srcDirPath, dstDirPath)
+       if err != nil {
+               t.Fatalf("ディレクトリのコピーに失敗しました: %v", err)
+       }
+
+       // コピーされたファイルが存在するか確認
+       copiedFile := filepath.Join(dstDir, "testfile.txt")
+       _, err = os.Stat(copiedFile)
+       if os.IsNotExist(err) {
+               t.Fatalf("ファイルがコピーされていません")
+       }
+}
 // TestCreateDirectory tests the Create method
 func TestCreateDirectory(t *testing.T) {
 	dirPath := &path.NonExistentDirectoryPath{}

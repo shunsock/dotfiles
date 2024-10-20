@@ -6,8 +6,10 @@ import (
 
 // pathChecker は、指定されたパスが存在するかを確認し、エラーも返します。
 func PathChecker(path string) (bool, error) {
-	// os.Stat でファイルやディレクトリの情報を取得
-	_, err := os.Stat(path)
+	// 環境変数の展開 (例: $HOME)
+	expandedPath := os.ExpandEnv(path)
+
+	_, err := os.Stat(expandedPath)
 	if os.IsNotExist(err) {
 		// パスが存在しない場合は false と nil（エラーなし）を返す
 		return false, nil
