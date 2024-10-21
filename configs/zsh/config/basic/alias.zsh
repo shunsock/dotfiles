@@ -30,3 +30,6 @@ alias df='df -kh'
 # Alias 'du' to estimate file and directory space usage, showing sizes in kilobytes
 alias du='du -kh'
 
+# Alias ':q' to exit the shell like in vim ❤️
+alias :q='exit'
+
