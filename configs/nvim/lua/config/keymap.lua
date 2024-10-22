@@ -21,3 +21,17 @@ vim.api.nvim_set_keymap('x', 'K', '<Esc>', opts)
 -- set ; as leaderkey
 vim.g.mapleader = ";"
 vim.g.maplocalleader = ";"
+
+-- ----------------------------------------------------
+-- Bufferline
+-- change buffer with gr (left) and gt (right)
+-- close buffer with
+--  <Ctrl-[> (left buffers)
+--  <Ctrl-\> (current buffer)
+--  <Ctrl-]> (right buffers)
+-- ----------------------------------------------------
+vim.api.nvim_set_keymap('n', 'gr', '<Cmd>BufferLineCyclePrev<CR>', {})
+vim.api.nvim_set_keymap('n', 'gt', '<Cmd>BufferLineCycleNext<CR>', {})
+vim.api.nvim_set_keymap('n', '<C-\'>', ':bdelete<CR>', {})
+vim.api.nvim_set_keymap('n', '<C-]>', ':lua CloseRightBuffers()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<C-[>', ':lua CloseLeftBuffers()<CR>', { noremap = true, silent = true })
