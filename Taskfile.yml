@@ -5,6 +5,10 @@ tasks:
     dir: worker
     cmds:
       - go test -cover ./...
+  darwin-build:
+    dir: worker
+    cmds:
+      - go build -o ./bin/darwin ./...
   flake:
     dir: flake
     cmds:
@@ -12,19 +16,19 @@ tasks:
   wezterm:
     dir: worker
     cmds:
-      - go run entry_point/wezterm/main.go
+      - ./bin/darwin/wezterm
   nvim:
     dir: worker
     cmds:
-      - go run entry_point/nvim/main.go
+      - ./bin/darwin/nvim
   nix:
     dir: worker
     cmds:
-      - go run entry_point/nix/main.go
+      - ./bin/darwin/nix
   zsh:
     dir: worker
     cmds:
-      - go run entry_point/zsh/main.go
+      - ./bin/darwin/zsh
   font:
     cmds:
       - bash ./downloader/font_downloader.sh
