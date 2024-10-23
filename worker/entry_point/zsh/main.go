@@ -4,6 +4,7 @@ import (
 	"log"
   "worker/internal/path"
   "worker/internal/handler"
+  "worker/internal/updater"
 )
 
 func removeDir(target_dir_path string) {
@@ -89,52 +90,14 @@ func zsh_config_update() {
 }
 
 func zshrc_update() {
-  log.Println("🚀 Start updating ~/.zshrc ...")
-
-  // 既存の設定ファイルがあれば消す
-  configFileAlreadySet := "$HOME/.zshrc"
-  exist, err := handler.PathChecker(configFileAlreadySet)
-	if err != nil {
-		log.Fatal(err)
-	}
-  if exist {
-    removeFile(configFileAlreadySet)
-  }
-  log.Println("removed: ", configFileAlreadySet)
-
-  // weztermの設定ファイルを呼び出す
-	configFile := "../configs/zsh/.zshrc"
-	_, configFileAbsPath, err := path.GetPaths(configFile)
-	if err != nil {
-		log.Fatal(err)
-	}
-	configSourcePath := &path.FilePath{}
-	err = configSourcePath.Initialize(configFileAbsPath)
-	if err != nil {
-		log.Fatal(err)
-	}
-  log.Println("Source File Path initialized:", configSourcePath)
-
-  // 設定を置く場所
-	configDestinationDir := "$HOME/"
-	_, configDestinationDirAbsPath, err := path.GetPaths(configDestinationDir)
-	if err != nil {
-		log.Fatal(err)
-	}
-	configDestinationPath := &path.DirectoryPath{}
-	err = configDestinationPath.Initialize(configDestinationDirAbsPath)
-	if err != nil {
-		log.Fatal(err)
-	}
-  log.Println("Destination Directory Path initialized:", configDestinationPath)
-
-  // FileHandlerを呼び出す
-  handler := &handler.FileHandler{}
-  err = handler.Copy(
-    configSourcePath,
-    configDestinationPath,
+  file_updater.Update(
+    // 既存の設定ファイル
+    "$HOME/.zshrc",
+    // 更新に使う設定ファイル
+    "../configs/zsh/.zshrc",
+    // 設定を置く場所
+    "$HOME/",
   )
-  log.Println("File copied: ", configSourcePath, " -> ", configDestinationPath)
 }
 
 
