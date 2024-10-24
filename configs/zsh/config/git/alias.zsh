@@ -10,8 +10,12 @@ alias gbr='git branch | grep .'
 # List all remote branches
 alias gbrr='git branch -r | grep .'
 
+# Delete a branch
+alias gbd='git branch -d'
+alias gbD='git branch -D'
+
 # Create a new branch and switch to it
-alias gcb='git checkout -b '
+alias gcb='git checkout -b'
 
 # Remove files from the index (staging area)
 alias gcr='git rm -r --cached'
