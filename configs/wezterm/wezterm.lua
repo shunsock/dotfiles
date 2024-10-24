@@ -2,6 +2,9 @@ local wezterm = require 'wezterm'
 
 local config = {}
 
+-- General settings
+config.use_ime = true -- Enable IME for Japanese input
+
 -- Font settings
 config.font = wezterm.font("HackGen35 Console NF", {
   weight = "Regular",
@@ -14,10 +17,18 @@ config.line_height = 1.4
 
 -- Color scheme and opacity
 config.color_scheme = 'Tokyo Night Storm (Gogh)'
-config.window_background_opacity = 1.0
+config.window_background_opacity = 0.9
+config.macos_window_background_blur = 20
 
 -- Tab bar settings
-config.use_fancy_tab_bar = true
+config.window_decorations = "RESIZE"
+config.show_new_tab_button_in_tab_bar = false
+config.show_close_tab_button_in_tabs = false
+config.colors = {
+   tab_bar = {
+     inactive_tab_edge = "none",
+   },
+}
 
 -- Border settings
 local border_color = '#783aa1'

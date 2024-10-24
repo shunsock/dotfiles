@@ -39,6 +39,7 @@ func main() {
   configDirAlreadySet := "$HOME/.config/wezterm"
   exist, err := handler.PathChecker(configDirAlreadySet)
 	if err != nil {
+    log.Println("hoge")
 		log.Fatal(err)
 	}
   if exist {
@@ -47,7 +48,7 @@ func main() {
   log.Println("removed: ", configDirAlreadySet)
 
   // 設定を置く場所
-	configDestinationDir := "$HOME/.configs/"
+	configDestinationDir := "$HOME/.config/"
 	_, configDestinationDirAbsPath, err := path.GetPaths(configDestinationDir)
 	if err != nil {
 		log.Fatal(err)
