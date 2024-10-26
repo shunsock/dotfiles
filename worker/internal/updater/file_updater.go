@@ -1,4 +1,4 @@
-package file_updater
+package updater
 
 import (
 	"log"
@@ -21,7 +21,7 @@ func removeFile(target_file_path string) {
   handler.Remove(configSourcePath)
 }
 
-func Update(
+func UpdateFile(
   configTargetFile string,
   configSourceFile string,
   configDestinationDir string,
