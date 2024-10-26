@@ -18,7 +18,10 @@ func removeFile(target_file_path string) {
 		log.Fatal(err)
 	}
   handler := &handler.FileHandler{}
-  handler.Remove(configSourcePath)
+  err = handler.Remove(configSourcePath)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func UpdateFile(

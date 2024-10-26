@@ -32,6 +32,8 @@ func UpdateDirectory(
   configDirAlreadySet string,
   configDestinationDir string,
 ) {
+  log.Println("🚀 Start updating ", configDir, " ...")
+
   // これから設定ファイルとするディレクトリ
 	_, configDirAbsPath, err := path.GetPaths(configDir)
 	if err != nil {
