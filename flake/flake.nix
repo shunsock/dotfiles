@@ -11,7 +11,7 @@
       go = go_1_22;                   # go 1.22.7
       task = go-task;                 # go-task 3.38.0
       hyperfine = hyperfine;           # hyperfine 1.18.0
-      neofetch = neofetch;             # neofetch unstable 2021-12-10
+      fastfetch = fastfetch;           # fastfetch 0.19.0
       neovim = neovim;                 # neovim 0.10.1
       nodejs = nodejs-18_x;            # nodejs 18.20.4
       php = php.withExtensions(exts: [ ]); # php-with-extensions 8.3.12 (add specific extensions if needed)
