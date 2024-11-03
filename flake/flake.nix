@@ -19,10 +19,10 @@
       task = go-task;
       tree = tree;
       wget = wget;
+
+      default = neovim;
     };
 
-    # Set the default package (optional)
-    defaultPackage.aarch64-darwin = self.packages.aarch64-darwin.neovim;
 
     # Optionally define apps for nix run
     apps.aarch64-darwin.neovim = {
