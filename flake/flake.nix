@@ -8,17 +8,17 @@
   outputs = { self, nixpkgs }: {
     # Define packages for arm64-darwin (Apple Silicon Mac)
     packages.aarch64-darwin = with nixpkgs.legacyPackages.aarch64-darwin; {
-      go = go_1_22;                   # go 1.22.7
-      task = go-task;                 # go-task 3.38.0
-      hyperfine = hyperfine;           # hyperfine 1.18.0
-      fastfetch = fastfetch;           # fastfetch 0.19.0
-      neovim = neovim;                 # neovim 0.10.1
-      nodejs = nodejs-18_x;            # nodejs 18.20.4
-      php = php.withExtensions(exts: [ ]); # php-with-extensions 8.3.12 (add specific extensions if needed)
-      rustup = rustup;                 # rustup 1.27.1
-      ag = silver-searcher;            # Corrected to silver-searcher
-      tree = tree;                     # tree 2.1.3
-      wget = wget;                     # wget 1.24.5
+      ag = silver-searcher;
+      fastfetch = fastfetch;
+      go = go_1_22;
+      hyperfine = hyperfine;
+      neovim = neovim;
+      nodejs = nodejs-18_x;
+      php = php.withExtensions(exts: [ ]);
+      rustup = rustup;
+      task = go-task;
+      tree = tree;
+      wget = wget;
     };
 
     # Set the default package (optional)
