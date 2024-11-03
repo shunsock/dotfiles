@@ -1,6 +1,7 @@
 version: '3'
 
 tasks:
+  # development
   test:
     dir: worker
     cmds:
@@ -9,10 +10,12 @@ tasks:
     dir: worker
     cmds:
       - go build -o ./bin/darwin ./...
+  # nix flake
   flake:
     dir: flake
     cmds:
       - nix flake check --all-systems
+  # update system setting files
   wezterm:
     dir: worker
     cmds:
@@ -29,6 +32,7 @@ tasks:
     dir: worker
     cmds:
       - ./bin/darwin/zsh
+  # downloader
   font:
     cmds:
       - bash ./downloader/font_downloader.sh
