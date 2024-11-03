@@ -18,6 +18,7 @@
       task = go-task;
       tree = tree;
       wget = wget;
+      mold = mold;
 
       default = neovim;
     };
