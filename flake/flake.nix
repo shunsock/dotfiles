@@ -6,7 +6,6 @@
   };
 
   outputs = { self, nixpkgs }: {
-    # Define packages for arm64-darwin (Apple Silicon Mac)
     packages.aarch64-darwin = with nixpkgs.legacyPackages.aarch64-darwin; {
       ag = silver-searcher;
       fastfetch = fastfetch;
@@ -23,8 +22,6 @@
       default = neovim;
     };
 
-
-    # Optionally define apps for nix run
     apps.aarch64-darwin.neovim = {
       type = "app";
       program = "${self.packages.aarch64-darwin.neovim}/bin/nvim";
