@@ -68,6 +68,13 @@ when you add package to `flake.nix`, you need to run following command.
 task flake
 ```
 
+when you add package to `flake.nix`, you need to run following command.
+
+```shell
+cd flake
+nix profile install .#packages
+```
+
 ### Wezterm
 wezterm settings are in `./configs/wezterm`.
 
