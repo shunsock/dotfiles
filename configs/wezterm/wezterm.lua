@@ -53,6 +53,48 @@ config.window_frame = {
   font_size = 20.0,
 }
 
+-- Key bindings
+config.keys = {
+  {
+    key = 'f',
+    mods = 'CTRL',
+    action = wezterm.action.ToggleFullScreen
+  },
+  {
+    key = 'y',
+    mods = 'CTRL',
+    action = wezterm.action.ActivateCopyMode
+  },
+  {
+    key = 'i',
+    mods = 'CTRL',
+    action = wezterm.action.SplitPane {
+      direction = 'Down',
+      size = { Percent = 20 },
+    },
+  },
+  {
+    key = 'H',
+    mods = 'CTRL',
+    action = wezterm.action.ActivatePaneDirection 'Left',
+  },
+  {
+    key = 'J',
+    mods = 'CTRL',
+    action = wezterm.action.ActivatePaneDirection 'Down',
+  },
+  {
+    key = 'K',
+    mods = 'CTRL',
+    action = wezterm.action.ActivatePaneDirection 'Up',
+  },
+  {
+    key = 'L',
+    mods = 'CTRL',
+    action = wezterm.action.ActivatePaneDirection 'Right',
+  },
+}
+
 -- Return the final configuration
 return config
 

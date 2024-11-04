@@ -9,7 +9,9 @@
     packages.aarch64-darwin = with nixpkgs.legacyPackages.aarch64-darwin; {
       ag = silver-searcher;
       fastfetch = fastfetch;
+      figlet = figlet;
       go = go_1_22;
+      htop = htop;
       hyperfine = hyperfine;
       neovim = neovim;
       nodejs = nodejs-18_x;
