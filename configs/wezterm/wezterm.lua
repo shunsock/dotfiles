@@ -53,6 +53,12 @@ config.window_frame = {
   font_size = 20.0,
 }
 
+-- Key bindings
+config.keys = {
+  { key = 'f', mods = 'CTRL', action = wezterm.action.ToggleFullScreen },
+  { key = 'y', mods = 'CTRL', action = wezterm.action.ActivateCopyMode },
+}
+
 -- Return the final configuration
 return config
 
