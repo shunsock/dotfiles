@@ -10,6 +10,7 @@
       ag = silver-searcher;
       fastfetch = fastfetch;
       go = go_1_22;
+      htop = htop;
       hyperfine = hyperfine;
       neovim = neovim;
       nodejs = nodejs-18_x;
