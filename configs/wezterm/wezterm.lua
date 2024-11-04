@@ -70,8 +70,7 @@ config.keys = {
     mods = 'CTRL',
     action = wezterm.action.SplitPane {
       direction = 'Down',
-      command = { args = { 'htop' } },
-      size = { Percent = 50 },
+      size = { Percent = 25 },
     },
   },
   {
