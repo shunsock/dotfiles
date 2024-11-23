@@ -129,6 +129,12 @@ paq {
     'pechorin/any-jump.vim',
   },
 
+  -- Name: ctrlp-matchfuzzy
+  -- Feature: Fuzzy Search
+  -- GitHub: https://github.com/mattn/ctrlp-matchfuzzy
+  -- {
+  --   'mattn/ctrlp-matchfuzzy',
+  -- },
 
   --
   -- Auto Completion
