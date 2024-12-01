@@ -8,19 +8,23 @@
   outputs = { self, nixpkgs }: {
     packages.aarch64-darwin = with nixpkgs.legacyPackages.aarch64-darwin; {
       ag = silver-searcher;
+      crystal = crystal;
       fastfetch = fastfetch;
       figlet = figlet;
       go = go_1_22;
       htop = htop;
       hyperfine = hyperfine;
+      mold = mold;
       neovim = neovim;
       nodejs = nodejs-18_x;
-      php = php.withExtensions(exts: [ ]);
       rustup = rustup;
       task = go-task;
       tree = tree;
       wget = wget;
-      mold = mold;
+
+      php = (pkgs.php.override {
+        version = "8.4";
+      }).withExtensions (exts: [ ]);
 
       default = neovim;
     };
