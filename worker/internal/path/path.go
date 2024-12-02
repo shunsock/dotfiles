@@ -3,15 +3,15 @@ package path
 import (
 	"errors"
 	"os"
-  "path/filepath"
+	"path/filepath"
 )
 
-// FilePath構造体
+// FilePath FilePath構造体
 type FilePath struct {
 	Path string
 }
 
-// Fileのメソッド: 初期化時にファイルの存在とタイプを保証する
+// Initialize Fileのメソッド: 初期化時にファイルの存在とタイプを保証する
 func (f *FilePath) Initialize(path string) error {
 	info, err := os.Stat(path)
 	if os.IsNotExist(err) {
@@ -28,12 +28,12 @@ func (f *FilePath) Initialize(path string) error {
 	return nil
 }
 
-// Directory構造体
+// DirectoryPath Directory構造体
 type DirectoryPath struct {
 	Path string
 }
 
-// Directoryのメソッド: 初期化時にディレクトリの存在とタイプを保証する
+// Initialize Directoryのメソッド: 初期化時にディレクトリの存在とタイプを保証する
 func (d *DirectoryPath) Initialize(path string) error {
 	info, err := os.Stat(path)
 	if os.IsNotExist(err) {
@@ -50,7 +50,7 @@ func (d *DirectoryPath) Initialize(path string) error {
 	return nil
 }
 
-// NonExistDirectory構造体
+// NonExistentDirectoryPath NonExistDirectory構造体
 type NonExistentDirectoryPath struct {
 	Path string
 }
@@ -87,4 +87,3 @@ func GetPaths(relativePath string) (string, string, error) {
 
 	return cleanPath, absPath, nil
 }
-

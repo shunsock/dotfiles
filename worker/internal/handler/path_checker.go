@@ -4,7 +4,7 @@ import (
 	"os"
 )
 
-// pathChecker は、指定されたパスが存在するかを確認し、エラーも返します。
+// PathChecker pathChecker は、指定されたパスが存在するかを確認し、エラーも返します。
 func PathChecker(path string) (bool, error) {
 	// 環境変数の展開 (例: $HOME)
 	expandedPath := os.ExpandEnv(path)
@@ -21,4 +21,3 @@ func PathChecker(path string) (bool, error) {
 	// パスが存在する場合は true と nil（エラーなし）を返す
 	return true, nil
 }
-

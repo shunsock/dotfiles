@@ -2,8 +2,8 @@ package path
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
-  "path/filepath"
 )
 
 // テスト用の一時ファイルと一時ディレクトリをセットアップする
@@ -96,7 +96,7 @@ func TestNonExistentDirectoryPath_Initialize(t *testing.T) {
 		t.Errorf("存在しないディレクトリの初期化に失敗しました: %v", err)
 	}
 
-  // 一時ディレクトリを作成
+	// 一時ディレクトリを作成
 	tempDir, err := os.MkdirTemp("", "testdir_")
 	if err != nil {
 		t.Fatalf("一時ディレクトリを作成できませんでした: %v", err)
@@ -158,4 +158,3 @@ func TestGetPaths(t *testing.T) {
 		t.Errorf("クリーンなディレクトリパスが正しくありません。期待値: %v, 実際: %v", expectedCleanDirPath, cleanPath)
 	}
 }
-
