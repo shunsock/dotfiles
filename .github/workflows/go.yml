@@ -5,6 +5,8 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  pathes:
+    - 'worker/**'
 
 jobs:
 
@@ -26,3 +28,4 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+
