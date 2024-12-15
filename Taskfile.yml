@@ -6,36 +6,32 @@ tasks:
     dir: worker
     cmds:
       - go test -cover ./...
-  darwin-build:
+  build-darwin:
     dir: worker
     cmds:
       - go build -o ./bin/darwin ./...
-  # nix flake
-  flake:
-    dir: flake
-    cmds:
-      - nix flake check --all-systems
   # update system setting files
-  wezterm:
+  update-wezterm:
     dir: worker
     cmds:
       - ./bin/darwin/wezterm
-  nvim:
+  update-nvim:
     dir: worker
     cmds:
       - ./bin/darwin/nvim
-  nix:
+  update-nix:
     dir: worker
     cmds:
       - ./bin/darwin/nix
-  zsh:
+  update-zsh:
     dir: worker
     cmds:
+      - '[ -f "$ZSH/lib/directories.zsh" ] && rm "$ZSH/lib/directories.zsh" || echo "$ZSH/lib/directories.zsh does not exist"'
       - ./bin/darwin/zsh
   # downloader
-  font:
+  install-font:
     cmds:
       - bash ./downloader/font_downloader.sh
-  jetpack:
+  install-jetpack:
     cmds:
       - bash ./downloader/jetpack_downloader.sh
