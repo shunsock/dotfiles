@@ -2,7 +2,7 @@ version: '3'
 
 tasks:
   # development
-  test-worker:
+  test:
     dir: worker
     cmds:
       - go test -cover ./...
@@ -26,16 +26,12 @@ tasks:
   update-zsh:
     dir: worker
     cmds:
-      - |
-        if [ -f "$ZSH/lib/directories.zsh" ]; then
-          rm "$ZSH/lib/directories.zsh"
-          echo "Removed $ZSH/lib/directories.zsh"
-        fi
+      - '[ -f "$ZSH/lib/directories.zsh" ] && rm "$ZSH/lib/directories.zsh" || echo "$ZSH/lib/directories.zsh does not exist"'
       - ./bin/darwin/zsh
   # downloader
-  font:
+  install-font:
     cmds:
       - bash ./downloader/font_downloader.sh
-  jetpack:
+  install-jetpack:
     cmds:
       - bash ./downloader/jetpack_downloader.sh
