@@ -1,4 +1,5 @@
 # dotfiles
+
 This Repository is My Configuration Files for Development Environment.
 
 ## Screen Shot
@@ -21,29 +22,25 @@ This is project directory architecture.
 ├── downloader
 │   ├── fonts_downloader.sh
 │   └── jetpack_downloader.sh
-├── flake
-│   ├── flake.lock
-│   └── flake.nix
-├── images
-│   └── screen_shot.png
 └── worker
+    ├── bin
     ├── entry_point
     ├── go.mod
     └── internal
 ```
 
-- `Taskfile.yml`: task runner file
-- `configs`: config files
-- `flake`: flake.nix files (nix package manager, not `nix.conf`)
-- `downloader`: downloader directory (shell script)
-- `worker`: worker directory (Go project)
+- `Taskfile.yml`: Launcher for updating settings for each tools
+- `configs`: Config files for each tools
+- `downloader`: Downloader src (Shell Script)
+- `worker`: worker src(Go project)
 
 ## Setting Files
 
 ### Neovim
+
 neovim settings are in `./configs/nvim`.
 
-before using following command, check if you've already install [jetpack](curl -fLo ~/.local/share/nvim/site/pack/jetpack/opt/vim-jetpack/plugin/jetpack.vim --create-dirs https://raw.githubusercontent.com/tani/vim-jetpack/master/plugin/jetpack.vim)
+before using following command, check if you've already install [jetpack](https://github.com/tani/vim-jetpack)
 
 ```shell
 task jetpack
@@ -62,20 +59,8 @@ nix settings are in `./configs/nix`.
 task nix
 ```
 
-when you add package to `flake.nix`, you need to run following command.
-
-```shell
-task flake
-```
-
-when you add package to `flake.nix`, you need to run following command.
-
-```shell
-cd flake
-nix profile install .#packages
-```
-
 ### Wezterm
+
 wezterm settings are in `./configs/wezterm`.
 
 ```shell
@@ -83,6 +68,7 @@ task wezterm
 ```
 
 ### Zsh
+
 zsh settings are in `./configs/zsh`.
 
 we have two sources to update zsh settings.
