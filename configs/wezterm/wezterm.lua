@@ -13,7 +13,7 @@ config.font = wezterm.font("HackGen35 Console NF", {
 })
 
 config.font_size = 24.0
-config.line_height = 1.4
+config.line_height = 1.6
 
 -- Color scheme and opacity
 config.color_scheme = 'Tokyo Night Storm (Gogh)'
