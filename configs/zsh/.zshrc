@@ -41,7 +41,9 @@ export PATH=$HOME/.cargo/bin:$PATH
 # ------------------------------------------------------------------------------
 
 MY_CUSTOM_CONFIG="$HOME/.zsh/config"
-source $MY_CUSTOM_CONFIG/basic/*.zsh
+for file in $MY_CUSTOM_CONFIG/basic/*.zsh; do
+  source $file
+done
 source $MY_CUSTOM_CONFIG/docker/*.zsh
 source $MY_CUSTOM_CONFIG/git/*.zsh
 source $MY_CUSTOM_CONFIG/nodenv/*.zsh
