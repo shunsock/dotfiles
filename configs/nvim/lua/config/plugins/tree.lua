@@ -31,10 +31,15 @@ require('nvim-tree').setup({
     },
   },
   filters = {
+    -- hide dotfiles by default
     dotfiles = true,
   },
+  git = {
+    enable = true,
+    ignore = false,
+    timeout = 500,
+  },
 })
-
 
 -- start neovim with open nvim-tree
 require("nvim-tree.api").tree.toggle(false, true)
