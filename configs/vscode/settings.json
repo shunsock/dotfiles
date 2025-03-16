@@ -1,0 +1,42 @@
+{
+    // ✏️ Editor
+    "editor.fontFamily": "HackGen35 Console NF",
+    "editor.fontSize": 20,
+    "editor.formatOnSave": true,
+    "editor.lineHeight": 32,
+    "editor.minimap.enabled": false,
+    "editor.suggestSelection": "first",
+    // wordWrap: Lines that exceed the screen width will automatically wrap and be displayed
+    "editor.wordWrap": "on",
+    // 📝 Files
+    "files.autoSave": "onFocusChange",
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+    "files.exclude": {
+        "**/.DS_Store": true,
+        "**/.git": true,
+        "**/.idea": true
+    },
+    // 🔨 Git
+    "git.openRepositoryInParentFolders": "never",
+    "github.copilot.editor.enableAutoCompletions": true,
+    // 💬 Language
+    "problems.decorations.enabled": true,
+    // 🌈 rainbow-brackets
+    "rainbowBracket.enableVariableRainbow": true,
+    // 🚉 Terminal
+    "terminal.integrated.fontFamily": "HackGen35 Console NF",
+    "terminal.integrated.fontSize": 20,
+    // 🔨 Vim
+    "vim.useSystemClipboard": true,
+    // 🎨 Vibrancy (透明度)の設定
+    "vscode_vibrancy.type": "editor",
+    "vscode_vibrancy.opacity": 0.3,
+    "vscode_vibrancy.theme": "Catpuccin Mocha",
+    // 🎨 Window
+    "window.zoomLevel": 2,
+    // 🎨 UI, Theme
+    "workbench.colorTheme": "Catppuccin Mocha",
+    "workbench.sideBar.location": "right",
+    "workbench.startupEditor": "none" // Skip the welcome page ⏩
+}

@@ -2,11 +2,15 @@ version: '3'
 
 tasks:
   # development
+  fmt:
+    dir: worker
+    cmds:
+      - go fmt ./...
   test:
     dir: worker
     cmds:
       - go test -cover ./...
-  build-darwin:
+  build:
     dir: worker
     cmds:
       - go build -o ./bin/darwin ./...
@@ -23,6 +27,10 @@ tasks:
     dir: worker
     cmds:
       - ./bin/darwin/nix
+  update-vscode:
+    dir: worker
+    cmds:
+      - ./bin/darwin/vscode
   update-zsh:
     dir: worker
     cmds:

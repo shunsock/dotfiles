@@ -45,4 +45,3 @@ func TestPathChecker_FilePathChecker(t *testing.T) {
 		t.Errorf("存在するファイルを検出できませんでした: %v", tempFile.Name())
 	}
 }
-
