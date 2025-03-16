@@ -13,4 +13,12 @@ func main() {
 		// 設定を置く場所
 		"$HOME/Library/Application Support/Code/User",
 	)
+	updater.UpdateFile(
+		// 既存の設定ファイル
+		"$HOME/Library/Application Support/Code/User/keybindings.json",
+		// 更新に使う設定ファイル
+		"../configs/vscode/keybindings.json",
+		// 設定を置く場所
+		"$HOME/Library/Application Support/Code/User",
+	)
 }

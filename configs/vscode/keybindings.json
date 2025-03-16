@@ -1,0 +1,32 @@
+[
+    // editor to sidebar
+    {
+        "key": "space l",
+        "command": "workbench.action.focusSideBar",
+        "when": "editorTextFocus && vim.mode == 'Normal'"
+    },
+    // sidebar to editor
+    {
+        "key": "space h",
+        "command": "workbench.action.focusActiveEditorGroup",
+        "when": "sideBarFocus && vim.mode == 'Normal'"
+    },
+    // go to next tab
+    {
+        "key": "g t",
+        "command": "workbench.action.nextEditor",
+        "when": "editorTextFocus && vim.mode == 'Normal'"
+    },
+    // go to previous tab
+    {
+        "key": "g r",
+        "command": "workbench.action.previousEditor",
+        "when": "editorTextFocus && vim.mode == 'Normal'"
+    },
+    // toggle sidebar
+    {
+        "key": "ctrl+n",
+        "command": "workbench.action.toggleSidebarVisibility",
+        "when": "vim.mode == 'Normal'"
+    }
+]
