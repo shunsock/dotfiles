@@ -1,0 +1,10 @@
+{
+    "workbench.colorTheme": "Tokyo Hack",
+    "window.zoomLevel": 2,
+    "editor.minimap.enabled": false,
+    "git.openRepositoryInParentFolders": "never",
+    "editor.fontSize": 18,
+    "editor.fontFamily": "HackGen35 Console NF",
+    "security.workspace.trust.untrustedFiles": "open",
+    "github.copilot.editor.enableAutoCompletions": true
+}
