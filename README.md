@@ -15,13 +15,14 @@ This is project directory architecture.
 ├── README.md
 ├── Taskfile.yml
 ├── configs
-│   ├── nix
-│   ├── nvim
-│   ├── wezterm
-│   └── zsh
+│   ├── nix
+│   ├── nvim
+│   ├── vscode
+│   ├── wezterm
+│   └── zsh
 ├── downloader
-│   ├── fonts_downloader.sh
-│   └── jetpack_downloader.sh
+│   ├── fonts_downloader.sh
+│   └── jetpack_downloader.sh
 └── worker
     ├── bin
     ├── entry_point
@@ -43,20 +44,33 @@ neovim settings are in `./configs/nvim`.
 before using following command, check if you've already install [jetpack](https://github.com/tani/vim-jetpack)
 
 ```shell
-task jetpack
+task install-jetpack
 ```
 
 After that, you can run following command to update neovim settings.
 
 ```shell
-task nvim
+task update-nvim
 ```
 
 ### Nix
 nix settings are in `./configs/nix`.
 
 ```shell
-task nix
+task update-nix
+```
+
+### VSCode
+vscode settings are in `./configs/vscode`.
+
+```shell
+task update-vscode
+```
+
+To install recommended extensions:
+
+```shell
+bash ./configs/vscode/extensions.sh
 ```
 
 ### Wezterm
@@ -64,7 +78,7 @@ task nix
 wezterm settings are in `./configs/wezterm`.
 
 ```shell
-task wezterm
+task update-wezterm
 ```
 
 ### Zsh
@@ -79,12 +93,35 @@ we have two sources to update zsh settings.
 We already addressed the problem, and all you need to do is to run following command.
 
 ```shell
-task zsh
+task update-zsh
 ```
 
-## Test
+### Fonts
 
-Worker Intenal package is tested by following command.
+To download and install the recommended fonts:
+
+```shell
+task install-font
+```
+
+## Development
+
+### Build and Test
+
+Worker internal package can be built and tested using the following commands:
+
+```shell
+# Format code
+task fmt
+
+# Run tests
+task test
+
+# Build binaries
+task build
+```
+
+Test coverage:
 
 ```shell
 task test
