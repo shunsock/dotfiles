@@ -22,6 +22,8 @@
     "github.copilot.editor.enableAutoCompletions": true,
     // 💬 Language
     "problems.decorations.enabled": true,
+    // 🌈 rainbow-brackets
+    "rainbowBracket.enableVariableRainbow": true,
     // 🚉 Terminal
     "terminal.integrated.fontFamily": "HackGen35 Console NF",
     "terminal.integrated.fontSize": 20,
