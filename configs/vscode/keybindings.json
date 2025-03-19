@@ -1,4 +1,9 @@
 [
+    {
+      "key": "g g",
+      "command": "cursorTop",
+      "when": "editorTextFocus"
+    },
     // editor to sidebar
     {
         "key": "space l",
