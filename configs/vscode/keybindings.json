@@ -2,7 +2,7 @@
     {
       "key": "g g",
       "command": "cursorTop",
-      "when": "editorTextFocus"
+      "when": "editorTextFocus && vim.mode == 'Normal'"
     },
     // editor to sidebar
     {
