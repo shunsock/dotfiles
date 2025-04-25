@@ -104,24 +104,6 @@ paq {
     },
   },
 
-  -- Name: telescope.lua
-  -- Feature: File Search Engine
-  -- GitHub: https://github.com/nvim-telescope/telescope.nvim
-  -- Dependency: https://github.com/sharkdp/fd
-  'nvim-lua/plenary.nvim',
-  {
-    'nvim-telescope/telescope.nvim',
-    tag = '0.1.2',
-  },
-
-  -- Name: telescope-fzf-native.nvim
-  -- Feature: FZF for Telescope
-  -- GitHub: https://github.com/nvim-telescope/telescope-fzf-native.nvim
-  {
-    'nvim-telescope/telescope-fzf-native.nvim',
-    run = 'make'
-  },
-
   -- Name: any-jump
   -- Feature: Code jump
   -- GitHub: https://github.com/pechorin/any-jump.vim
