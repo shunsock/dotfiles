@@ -1,14 +1,14 @@
 FROM ubuntu:22.04 AS builder
 
+ENV ARCH=arm64
 ENV DEBIAN_FRONTEND=noninteractive
 ENV NVM_DIR=/root/.nvm
-ENV NVM_VERSION=v0.40.3
-ENV NODE_VERSION=24
 ENV NEOVIM_VERSION=v0.11.1
-ENV ARCH=arm64
+ENV NODE_VERSION=24
+ENV NVM_VERSION=v0.40.3
 
 RUN apt-get update && apt-get install -y \
-    curl git ca-certificates xz-utils bash tar \
+    build-essential curl git ca-certificates xz-utils bash tar \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Node.js install via nvm
@@ -36,8 +36,16 @@ RUN apt-get update && apt-get install -y \
     curl git sudo \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 作業ユーザーの作成
+# Create exec user
 RUN useradd -ms /bin/bash devuser && echo 'devuser ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+USER devuser
+
+# Copy config from local
+USER root
+RUN mkdir -p /home/devuser/.config/nvim
+COPY config/ /home/devuser/.config/nvim/
+RUN chown -R devuser:devuser /home/devuser/.config
+
 USER devuser
 WORKDIR /home/devuser
 
@@ -47,5 +55,5 @@ COPY --from=builder /usr/local/share/nvim /usr/local/share/nvim
 COPY --from=builder /usr/local/bin/node /usr/local/bin/
 COPY --from=builder /usr/local/bin/npm /usr/local/bin/
 
-CMD [ "/usr/local/bin/nvim" ]
+ENTRYPOINT ["/usr/local/bin/nvim"]
 
