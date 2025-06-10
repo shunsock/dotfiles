@@ -12,44 +12,6 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- Plugin定義
-require("lazy").setup({
-  {
-    "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate",
-    opts = {
-      ensure_installed = { "vimdoc", "lua", "bash" },
-      highlight = { enable = true },
-    },
-  },
-  {
-    "nvim-tree/nvim-tree.lua",
-    version = "*",
-    dependencies = {
-      "nvim-tree/nvim-web-devicons",
-    },
-    config = function()
-      require("nvim-tree").setup({
-        view = {
-          width = 30,
-        },
-        renderer = {
-          group_empty = true,
-        },
-        filters = {
-          dotfiles = false,
-        },
-      })
-
-      vim.api.nvim_create_autocmd("VimEnter", {
-        callback = function()
-          local ok, api = pcall(require, "nvim-tree.api")
-          if ok then
-            api.tree.open()
-          end
-        end,
-      })
-    end,
-  },
-})
+require("plugins")
+require("keymap")
 

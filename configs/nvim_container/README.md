@@ -16,6 +16,5 @@ docker run -it --rm \
   -v "$HOME/.nvimc/state":/home/devuser/.local/state/nvim \
   -w /workspace \
   nvimc
-
 ```
 
