@@ -1,4 +1,4 @@
-require("lazy_nvim")
+require("lazy-nvim")
 require("keymap")
 require("basic")
 

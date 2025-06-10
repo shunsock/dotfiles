@@ -13,9 +13,10 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
+  require("plugins.catppuccin"),
+  require("plugins.lualine"),
   require("plugins.nvim-cursorline"),
   require("plugins.nvim-tree"),
-  require("plugins.catppuccin"),
   require("plugins.tree-sitter"),
 })
 
