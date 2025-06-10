@@ -14,13 +14,7 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
   require("plugins.nvim-tree"),
-  {
-    "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate",
-    opts = {
-      ensure_installed = { "vimdoc", "lua", "bash" },
-      highlight = { enable = true },
-    },
-  },
+  require("plugins.tree-sitter"),
+  require("plugins.tokyonight"),
 })
 
