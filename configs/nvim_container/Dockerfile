@@ -33,21 +33,12 @@ FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
-    curl git sudo \
+    curl git sudo build-essential \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Create exec user
-RUN useradd -ms /bin/bash devuser && echo 'devuser ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-USER devuser
-
-# Copy config from local
 USER root
-RUN mkdir -p /home/devuser/.config/nvim
-COPY config/ /home/devuser/.config/nvim/
-RUN chown -R devuser:devuser /home/devuser/.config
-
-USER devuser
-WORKDIR /home/devuser
+RUN mkdir -p /root/.config/nvim
+COPY config/ /root/.config/nvim/
 
 # COPY binaries from builder
 COPY --from=builder /usr/local/bin/nvim /usr/local/bin/
