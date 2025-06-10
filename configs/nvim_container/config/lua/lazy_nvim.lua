@@ -15,7 +15,7 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
   require("plugins.nvim-cursorline"),
   require("plugins.nvim-tree"),
-  require("plugins.tokyonight"),
+  require("plugins.catppuccin"),
   require("plugins.tree-sitter"),
 })
 
