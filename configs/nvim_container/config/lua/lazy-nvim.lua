@@ -14,7 +14,7 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
   require("plugins.catppuccin"),
-  require("plugins.indent-rainbowline"),
+  require("plugins.indent-blankline"),
   require("plugins.lualine"),
   require("plugins.nvim-cursorline"),
   require("plugins.nvim-tree"),
