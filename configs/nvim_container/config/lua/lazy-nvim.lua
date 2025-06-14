@@ -19,5 +19,6 @@ require("lazy").setup({
   require("plugins.nvim-cursorline"),
   require("plugins.nvim-tree"),
   require("plugins.tree-sitter"),
+  require("plugins.vim-oscyank"),
 })
 
