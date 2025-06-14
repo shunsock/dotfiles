@@ -5,6 +5,9 @@ local config = {}
 -- General settings
 config.use_ime = true -- Enable IME for Japanese input
 
+-- OSC52を有効化する
+enable_osc52_copy = true
+
 -- Font settings
 config.font = wezterm.font("HackGen35 Console NF", {
   weight = "Regular",
