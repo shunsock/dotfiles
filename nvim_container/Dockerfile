@@ -24,9 +24,15 @@ ENV CARGO_HOME=/root/.cargo
 ENV RUSTUP_HOME=/root/.rustup
 ENV PATH="${CARGO_HOME}/bin:${PATH}"
 
+# Node.js 20.xのインストール
 RUN apt-get update && apt-get install -y \
-    curl git sudo build-essential unzip wget python3 python3-pip nodejs npm \
+    curl git sudo build-essential unzip wget python3 python3-pip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Node.js 20.xのインストール
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get update && apt-get install -y nodejs && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y --default-toolchain=nightly && \
     . "$HOME/.cargo/env" && rustup show
@@ -40,4 +46,3 @@ COPY --from=builder /usr/local/bin/nvim /usr/local/bin/
 COPY --from=builder /usr/local/share/nvim /usr/local/share/nvim
 
 ENTRYPOINT ["/usr/local/bin/nvim"]
-

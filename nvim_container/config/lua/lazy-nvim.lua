@@ -15,6 +15,7 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
   require("plugins.catppuccin"),
   require("plugins.bufferline.setup"),
+  require("plugins.copilot.setup"),
   require("plugins.indent-blankline"),
   require("plugins.lsp.nvim-cmp"),
   require("plugins.lsp.nvim-lspconfig"),

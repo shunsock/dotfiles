@@ -25,3 +25,4 @@ vim.g.maplocalleader = ";"
 require("plugins.bufferline.function")
 require("plugins.bufferline.keymap")
 require("plugins.lsp.keymap")
+require("plugins.copilot.keymap")
