@@ -25,4 +25,3 @@ require("lazy").setup({
   require("plugins.tree-sitter"),
   require("plugins.vim-oscyank"),
 })
-

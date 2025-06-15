@@ -23,5 +23,5 @@ vim.g.maplocalleader = ";"
 
 -- バッファラインの関数を先に読み込む
 require("plugins.bufferline.function")
-require("plugins.bufferline.keymap") 
+require("plugins.bufferline.keymap")
 require("plugins.lsp.keymap")
