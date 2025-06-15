@@ -9,5 +9,5 @@ alias v='docker run -it --rm \
   -v "$HOME/.nvimc/cache":/root/.cache/nvim \
   -v "$HOME/.nvimc/state":/root/.local/state/nvim \
   -w /workspace \
-  tsuchiya55docker/nvimc:v0.0.2'
+  tsuchiya55docker/nvimc:v0.0.3'
 
