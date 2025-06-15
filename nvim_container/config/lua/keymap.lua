@@ -20,3 +20,5 @@ vim.api.nvim_set_keymap('i', 'jj', '<Esc>', opts)
 -- set ; as leaderkey
 vim.g.mapleader = ";"
 vim.g.maplocalleader = ";"
+
+require("plugins.bufferline.keymap") 
