@@ -16,6 +16,8 @@ require("lazy").setup({
   require("plugins.catppuccin"),
   require("plugins.bufferline.setup"),
   require("plugins.indent-blankline"),
+  require("plugins.lsp.nvim-cmp"),
+  require("plugins.lsp.nvim-lspconfig"),
   require("plugins.lualine"),
   require("plugins.nvim-cursorline"),
   require("plugins.nvim-tree"),

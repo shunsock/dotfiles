@@ -22,3 +22,4 @@ vim.g.mapleader = ";"
 vim.g.maplocalleader = ";"
 
 require("plugins.bufferline.keymap") 
+require("plugins.lsp.keymap")
