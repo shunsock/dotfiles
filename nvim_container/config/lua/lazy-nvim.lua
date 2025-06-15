@@ -18,6 +18,7 @@ require("lazy").setup({
   require("plugins.lualine"),
   require("plugins.nvim-cursorline"),
   require("plugins.nvim-tree"),
+  require("plugins.rainbow-delimiters"),
   require("plugins.tree-sitter"),
   require("plugins.vim-oscyank"),
 })
