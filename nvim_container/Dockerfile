@@ -20,6 +20,9 @@ RUN curl -LO https://github.com/neovim/neovim/releases/download/${NEOVIM_VERSION
 FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV CARGO_HOME=/root/.cargo
+ENV RUSTUP_HOME=/root/.rustup
+ENV PATH="${CARGO_HOME}/bin:${PATH}"
 
 RUN apt-get update && apt-get install -y \
     curl git sudo build-essential unzip wget python3 python3-pip nodejs npm \
@@ -35,8 +38,6 @@ COPY config/ /root/.config/nvim/
 # COPY binaries from builder
 COPY --from=builder /usr/local/bin/nvim /usr/local/bin/
 COPY --from=builder /usr/local/share/nvim /usr/local/share/nvim
-COPY --from=builder /usr/local/bin/node /usr/local/bin/
-COPY --from=builder /usr/local/bin/npm /usr/local/bin/
 
 ENTRYPOINT ["/usr/local/bin/nvim"]
 
