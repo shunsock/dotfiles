@@ -21,5 +21,7 @@ vim.api.nvim_set_keymap('i', 'jj', '<Esc>', opts)
 vim.g.mapleader = ";"
 vim.g.maplocalleader = ";"
 
+-- バッファラインの関数を先に読み込む
+require("plugins.bufferline.function")
 require("plugins.bufferline.keymap") 
 require("plugins.lsp.keymap")
