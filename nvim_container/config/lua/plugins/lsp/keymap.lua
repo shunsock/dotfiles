@@ -12,6 +12,6 @@ map('n', 'Fty', vim.lsp.buf.type_definition, opts)
 map('n', 'Fre', vim.lsp.buf.rename, opts)
 map('n', 'Fact', vim.lsp.buf.code_action, opts)
 map('n', 'Fe', vim.diagnostic.open_float, opts)
-map('n', 'Ft', vim.diagnostic.goto_next, opts)
-map('n', 'Fr', vim.diagnostic.goto_prev, opts)
+map('n', 'F[', vim.diagnostic.goto_next, opts)
+map('n', 'F]', vim.diagnostic.goto_prev, opts)
 
