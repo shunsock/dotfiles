@@ -22,7 +22,7 @@ return {
       
       -- mason-lspconfigの設定
       require("mason-lspconfig").setup({
-        ensure_installed = { "lua_ls", "rust_analyzer" }
+        ensure_installed = { "lua_ls", "rust_analyzer", "marksman" }
       })
       
       -- lspconfigの設定
@@ -38,6 +38,16 @@ return {
       -- rust_analyzer (Rust言語サーバー)
       lspconfig.rust_analyzer.setup({
         capabilities = capabilities,
+      })
+      
+      -- marksman (Markdown言語サーバー)
+      lspconfig.marksman.setup({
+        capabilities = capabilities,
+        filetypes = { "markdown", "markdown.mdx" },
+        root_dir = function(fname)
+          return lspconfig.util.find_git_ancestor(fname)
+        end,
+        single_file_support = true,
       })
 
       -- Diagnostic config
