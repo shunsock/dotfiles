@@ -4,17 +4,30 @@ ENV ARCH=arm64
 ENV DEBIAN_FRONTEND=noninteractive
 ENV NVM_DIR=/root/.nvm
 ENV NEOVIM_VERSION=v0.11.1
+ENV CARGO_HOME=/root/.cargo
+ENV RUSTUP_HOME=/root/.rustup
+ENV PATH="${CARGO_HOME}/bin:${PATH}"
 
 RUN apt-get update && apt-get install -y \
     build-essential curl git ca-certificates xz-utils bash tar \
+    sudo unzip wget python3 python3-pip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Neovimのインストール
 RUN curl -LO https://github.com/neovim/neovim/releases/download/${NEOVIM_VERSION}/nvim-linux-${ARCH}.tar.gz && \
     tar xzvf nvim-linux-${ARCH}.tar.gz && \
     cp nvim-linux-${ARCH}/bin/nvim /usr/local/bin/ && \
     cp -r nvim-linux-${ARCH}/share/nvim /usr/local/share/ && \
     rm -rf nvim-linux-${ARCH} nvim-linux-${ARCH}.tar.gz
 
+# Node.js 20.xのインストール
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get update && apt-get install -y nodejs && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Rustのインストール
+RUN curl https://sh.rustup.rs -sSf | bash -s -- -y --default-toolchain=nightly && \
+    . "$HOME/.cargo/env" && rustup show
 
 # -----------------------------------------------
 FROM ubuntu:22.04
@@ -24,25 +37,21 @@ ENV CARGO_HOME=/root/.cargo
 ENV RUSTUP_HOME=/root/.rustup
 ENV PATH="${CARGO_HOME}/bin:${PATH}"
 
-# Node.js 20.xのインストール
+# 最低限必要なパッケージのみインストール
 RUN apt-get update && apt-get install -y \
-    curl git sudo build-essential unzip wget python3 python3-pip \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Node.js 20.xのインストール
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get update && apt-get install -y nodejs && \
+    curl git && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
-
-RUN curl https://sh.rustup.rs -sSf | bash -s -- -y --default-toolchain=nightly && \
-    . "$HOME/.cargo/env" && rustup show
 
 USER root
 RUN mkdir -p /root/.config/nvim
 COPY config/ /root/.config/nvim/
 
-# COPY binaries from builder
+# builderからバイナリと必要なツールをコピー
 COPY --from=builder /usr/local/bin/nvim /usr/local/bin/
 COPY --from=builder /usr/local/share/nvim /usr/local/share/nvim
+COPY --from=builder /usr/bin/node /usr/bin/
+COPY --from=builder /usr/bin/npm /usr/bin/
+COPY --from=builder ${CARGO_HOME} ${CARGO_HOME}
+COPY --from=builder ${RUSTUP_HOME} ${RUSTUP_HOME}
 
 ENTRYPOINT ["/usr/local/bin/nvim"]
