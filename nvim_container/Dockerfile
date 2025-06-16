@@ -37,13 +37,23 @@ ENV CARGO_HOME=/root/.cargo
 ENV RUSTUP_HOME=/root/.rustup
 ENV PATH="${CARGO_HOME}/bin:${PATH}"
 
-# 最低限必要なパッケージのみインストール
+# 必要なパッケージをインストール
 RUN apt-get update && apt-get install -y \
-    curl git && \
+    curl git build-essential gcc python3 python3-pip \
+    ripgrep fd-find unzip wget apt-transport-https && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# .NET SDKのインストール（Marksman用）
+RUN wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
+    dpkg -i packages-microsoft-prod.deb && \
+    rm packages-microsoft-prod.deb && \
+    apt-get update && \
+    apt-get install -y dotnet-runtime-8.0 aspnetcore-runtime-8.0 && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 USER root
 RUN mkdir -p /root/.config/nvim
+RUN mkdir -p /root/.local/share/nvim/mason
 COPY config/ /root/.config/nvim/
 
 # builderからバイナリと必要なツールをコピー

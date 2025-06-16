@@ -17,13 +17,40 @@ return {
             package_pending = "➜",
             package_uninstalled = "✗"
           }
-        }
+        },
+        install_root_dir = vim.fn.stdpath("data") .. "/mason",
+        PATH = "append",
+        pip = {
+          install_args = {},
+        },
+        log_level = vim.log.levels.INFO,
+        max_concurrent_installers = 4,
       })
       
       -- mason-lspconfigの設定
       require("mason-lspconfig").setup({
-        ensure_installed = { "lua_ls", "rust_analyzer", "marksman" }
+        ensure_installed = { "lua_ls", "rust_analyzer", "marksman" },
+        automatic_installation = true,
       })
+      
+      -- インストール後に自動的にLSPサーバーを起動させる (APIに合わせて修正)
+      -- 古いバージョンの場合は on_server_ready を使用する
+      local has_handlers, mlsp = pcall(function()
+        local m = require("mason-lspconfig")
+        if m.setup_handlers then
+          return m
+        else
+          return nil
+        end
+      end)
+      
+      if has_handlers and mlsp then
+        mlsp.setup_handlers({
+          function(server_name)
+            require("lspconfig")[server_name].setup({})
+          end,
+        })
+      end
       
       -- lspconfigの設定
       local lspconfig = require("lspconfig")
@@ -44,8 +71,9 @@ return {
       lspconfig.marksman.setup({
         capabilities = capabilities,
         filetypes = { "markdown", "markdown.mdx" },
+        cmd = { "marksman", "server" },
         root_dir = function(fname)
-          return lspconfig.util.find_git_ancestor(fname)
+          return lspconfig.util.find_git_ancestor(fname) or lspconfig.util.path.dirname(fname)
         end,
         single_file_support = true,
       })
