@@ -32,19 +32,45 @@ return {
     --   cache_enabled = true,
     -- }
     
-    -- 標準のyankとpasteを確実に動作させる
-    vim.opt.clipboard = "unnamedplus"
+    -- クリップボードプロバイダの設定
+    -- 警告メッセージを抑制しつつ、yank/pasteの機能を維持
+    vim.g.clipboard = {
+      name = 'myClipboard',
+      copy = {
+        ['+'] = function(lines)
+          vim.fn.setreg('+', table.concat(lines, '\n'))
+        end,
+        ['*'] = function(lines)
+          vim.fn.setreg('*', table.concat(lines, '\n'))
+        end,
+      },
+      paste = {
+        ['+'] = function()
+          return vim.fn.split(vim.fn.getreg('+'), '\n')
+        end,
+        ['*'] = function()
+          return vim.fn.split(vim.fn.getreg('*'), '\n')
+        end,
+      },
+      cache_enabled = false,
+    }
 
-    -- OSC52経由でクリップボードにコピーする機能
-    local function copy()
+    -- OSC52経由でクリップボードにコピーする機能（システム間コピー用）
+    local function copy_with_osc52()
       if vim.v.event.operator == "y" then
-        local content = vim.fn.getreg(vim.v.event.regname)
-        require("osc52").copy(content)
+        -- 無名レジスタまたは+/*レジスタの場合のみOSC52でコピー
+        local regname = vim.v.event.regname
+        if regname == "" or regname == "+" or regname == "*" then
+          local content = vim.fn.getreg(regname == "" and '"' or regname)
+          if content and content ~= "" then
+            require("osc52").copy(content)
+          end
+        end
       end
     end
 
     -- テキストがyankされた後に実行
-    vim.api.nvim_create_autocmd("TextYankPost", { callback = copy })
+    vim.api.nvim_create_autocmd("TextYankPost", { callback = copy_with_osc52 })
   end,
 }
 
