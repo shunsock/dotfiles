@@ -13,6 +13,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
+  require("plugins.autosave-nvim"),
   require("plugins.catppuccin"),
   require("plugins.bufferline.setup"),
   require("plugins.copilot.setup"),
