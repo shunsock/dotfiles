@@ -4,6 +4,7 @@ return {
     dependencies = {
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/vim-vsnip',
+      'hrsh7th/cmp-path',
     },
     config = function()
       local cmp = require("cmp")
@@ -15,6 +16,7 @@ return {
         },
         sources = {
           { name = "nvim_lsp" },
+          { name = "path" },
         },
         mapping = cmp.mapping.preset.insert({
           ["<C-p>"] = cmp.mapping.select_prev_item(),

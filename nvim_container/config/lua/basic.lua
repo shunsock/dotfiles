@@ -7,9 +7,6 @@ vim.g.nobackground = 1
 -- ファイルが外部で変更された場合に自動で再読み込みします。
 vim.opt.autoread = true
 
--- クリップボードへのヤンクをOSのクリップボードと連携させます。
-vim.opt.clipboard = "unnamedplus"
-
 -- 現在のカーソル位置の列をハイライトします。
 vim.opt.cursorcolumn = true
 

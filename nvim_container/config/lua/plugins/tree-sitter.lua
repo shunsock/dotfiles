@@ -15,9 +15,26 @@ return {
             return true
           end
         end,
-        additional_vim_regex_highlighting = false,
+        additional_vim_regex_highlighting = {
+          "markdown" -- markdownファイルでは追加のVimシンタックスハイライトを有効化
+        },
+      },
+      
+      -- markdownパーサーを確実にインストール
+      ensure_installed = {
+        "markdown",
+        "markdown_inline"
       },
     }
+    
+    -- markdownファイル用の特別な設定
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = {"markdown", "markdown.mdx"},
+      callback = function()
+        -- markdownファイルでTree-sitterが正常に動作していることを確認
+        vim.cmd("TSEnable highlight")
+      end
+    })
   end,
 }
 
