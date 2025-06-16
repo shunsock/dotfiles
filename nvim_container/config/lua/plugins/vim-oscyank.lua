@@ -31,6 +31,9 @@ return {
       },
       cache_enabled = true,
     }
+    
+    -- 標準のyankとpasteを確実に動作させる
+    vim.opt.clipboard = "unnamedplus"
 
     local function copy()
       if vim.v.event.operator == "y" and vim.v.event.regname == "" then
