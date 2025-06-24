@@ -29,7 +29,7 @@ return {
       
       -- mason-lspconfigの設定
       require("mason-lspconfig").setup({
-        ensure_installed = { "lua_ls", "rust_analyzer", "marksman" },
+        ensure_installed = { "lua_ls", "rust_analyzer", "marksman", "fsautocomplete" },
         automatic_installation = true,
       })
       
@@ -76,6 +76,33 @@ return {
           return lspconfig.util.find_git_ancestor(fname) or lspconfig.util.path.dirname(fname)
         end,
         single_file_support = true,
+      })
+      
+      -- fsautocomplete (F#言語サーバー)
+      lspconfig.fsautocomplete.setup({
+        capabilities = capabilities,
+        cmd = { "fsautocomplete", "--adaptive-lsp-server-enabled" },
+        filetypes = { "fsharp" },
+        root_dir = function(fname)
+          return lspconfig.util.root_pattern("*.sln", "*.fsproj", "*.fsx")(fname) or
+                 lspconfig.util.find_git_ancestor(fname) or
+                 lspconfig.util.path.dirname(fname)
+        end,
+        init_options = {
+          AutomaticWorkspaceInit = true,
+        },
+        settings = {
+          FSharp = {
+            keywordsAutocomplete = true,
+            externalAutocomplete = false,
+            linter = true,
+            indentationSize = 2,
+            dotnetRoot = "/usr/local/share/dotnet",
+          },
+        },
+        on_attach = function(client, bufnr)
+          print("F# LSP attached to buffer " .. bufnr)
+        end,
       })
 
       -- Diagnostic config

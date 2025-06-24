@@ -20,18 +20,27 @@ return {
         },
       },
       
-      -- markdownパーサーを確実にインストール
+      -- 必要なパーサーを確実にインストール
       ensure_installed = {
         "markdown",
-        "markdown_inline"
+        "markdown_inline",
+        "fsharp"
       },
     }
     
-    -- markdownファイル用の特別な設定
+    -- ファイルタイプ別の設定
     vim.api.nvim_create_autocmd("FileType", {
       pattern = {"markdown", "markdown.mdx"},
       callback = function()
         -- markdownファイルでTree-sitterが正常に動作していることを確認
+        vim.cmd("TSEnable highlight")
+      end
+    })
+    
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = {"fsharp"},
+      callback = function()
+        -- F#ファイルでTree-sitterが正常に動作していることを確認
         vim.cmd("TSEnable highlight")
       end
     })

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Build/Run Commands
 - Build Docker image: `docker build -t nvimc .`
-- Run container: `docker run -it --rm -v "$PWD":/workspace -v "$HOME/.nvimc/share":/root/.local/share/nvim -v "$HOME/.nvimc/cache":/root/.cache/nvim -v "$HOME/.nvimc/state":/root/.local/state/nvim -w /workspace nvimc`
+- Run container: `docker run -it --rm -v "$PWD":/workspace -v "$HOME/.nvimc/share":/root/.local/share/nvim -v "$HOME/.nvimc/cache":/root/.cache/nvim -v "$HOME/.nvimc/state":/root/.local/state/nvim -v "/usr/local/share/dotnet":/usr/local/share/dotnet -v "/usr/local/bin/dotnet":/usr/local/bin/dotnet -e DOTNET_ROOT=/usr/local/share/dotnet -e PATH="/usr/local/share/dotnet:$PATH" -w /workspace nvimc`
 
 ## Code Style Guidelines
 - Indentation: 2 spaces (no tabs)

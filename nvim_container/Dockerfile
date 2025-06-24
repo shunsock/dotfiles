@@ -61,7 +61,7 @@ ARG DOTNET_VERSION=8.0
 ENV DEBIAN_FRONTEND=noninteractive \
     CARGO_HOME=/root/.cargo \
     RUSTUP_HOME=/root/.rustup \
-    PATH="/root/.cargo/bin:${PATH}"
+    PATH="/root/.cargo/bin:/root/.dotnet/tools:${PATH}"
 
 # 必要なパッケージのインストール
 RUN apt-get update && apt-get install -y \
@@ -79,14 +79,18 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# .NET SDKのインストール（Marksman用）
+# .NET SDKのインストール（F#サポート用）
 RUN wget "https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb" -O packages-microsoft-prod.deb \
     && dpkg -i packages-microsoft-prod.deb \
     && rm packages-microsoft-prod.deb \
     && apt-get update \
-    && apt-get install -y "dotnet-runtime-${DOTNET_VERSION}" "aspnetcore-runtime-${DOTNET_VERSION}" \
+    && apt-get install -y "dotnet-sdk-${DOTNET_VERSION}" "dotnet-runtime-${DOTNET_VERSION}" "aspnetcore-runtime-${DOTNET_VERSION}" \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# F#ツールのグローバルインストール
+RUN dotnet tool install --global fsautocomplete \
+    && dotnet tool install --global fantomas
 
 # 必要なディレクトリの作成とNvim設定のコピー
 RUN mkdir -p /root/.config/nvim /root/.local/share/nvim/mason
