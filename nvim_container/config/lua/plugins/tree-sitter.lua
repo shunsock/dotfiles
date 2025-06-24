@@ -20,10 +20,11 @@ return {
         },
       },
       
-      -- markdownパーサーを確実にインストール
+      -- パーサーを確実にインストール
       ensure_installed = {
         "markdown",
-        "markdown_inline"
+        "markdown_inline",
+        "fsharp"
       },
     }
     
