@@ -84,9 +84,14 @@ RUN wget "https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-
     && dpkg -i packages-microsoft-prod.deb \
     && rm packages-microsoft-prod.deb \
     && apt-get update \
-    && apt-get install -y "dotnet-runtime-${DOTNET_VERSION}" "aspnetcore-runtime-${DOTNET_VERSION}" \
+    && apt-get install -y "dotnet-runtime-${DOTNET_VERSION}" "aspnetcore-runtime-${DOTNET_VERSION}" "dotnet-sdk-${DOTNET_VERSION}" \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# F#ツールのインストール
+RUN dotnet tool install -g fsautocomplete && \
+    dotnet tool install -g fantomas
+ENV PATH="${PATH}:/root/.dotnet/tools"
 
 # 必要なディレクトリの作成とNvim設定のコピー
 RUN mkdir -p /root/.config/nvim /root/.local/share/nvim/mason
