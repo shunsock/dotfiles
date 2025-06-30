@@ -1,5 +1,5 @@
 {
-  description = "Flake for MacOS";
+  description = "Flake for macOS";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -9,33 +9,33 @@
 
   outputs = { nixpkgs, home-manager, ... }: let
     system = "aarch64-darwin";
-    pkgs = import nixpkgs {
-      inherit system;
-    };
+    pkgs   = import nixpkgs { inherit system; };
   in {
     homeConfigurations."shunsock" = home-manager.lib.homeManagerConfiguration {
-      inherit pkgs;
-      extraSpecialArgs = { inherit pkgs; };
+      inherit pkgs;                   # ← 必須
+      # extraSpecialArgs は今回不要なので削除
 
-      configuration = { pkgs, ... }: {
-        home.username = "shunsock";
-        home.homeDirectory = "/Users/shunsock";
-        home.stateVersion = "23.11";
-        programs.home-manager.enable = true;
+      modules = [
+        ({ pkgs, ... }: {
+          home.username      = "shunsock";
+          home.homeDirectory = "/Users/shunsock";
+          home.stateVersion  = "23.11";
 
-        home.packages = with pkgs; [
-          claude-code
-          dotnetCorePackages.dotnet_9.sdk
-          git
-          go-task
-          hyperfine
-          rustup
-          tree
-        ];
+          programs.home-manager.enable = true;
 
-        programs.zsh.enable = false;
-      };
+          home.packages = with pkgs; [
+            claude-code
+            dotnetCorePackages.dotnet_9.sdk
+            git
+            go-task
+            hyperfine
+            rustup
+            tree
+          ];
+
+          programs.zsh.enable = false;
+        })
+      ];
     };
   };
 }
-
