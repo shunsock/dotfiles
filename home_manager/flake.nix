@@ -7,16 +7,19 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { nixpkgs, home-manager, ... }: {
+  outputs = { nixpkgs, home-manager, ... }: let
+    system = "aarch64-darwin";
+    pkgs = import nixpkgs {
+      inherit system;
+    };
+  in {
     homeConfigurations."shunsock" = home-manager.lib.homeManagerConfiguration {
-      pkgs = import nixpkgs {
-        system = "aarch64-darwin";
-      };
+      inherit pkgs;
+      extraSpecialArgs = { inherit pkgs; };
 
-      username = "shunsock";
-      homeDirectory = "/Users/shunsock";
-
-      configuration = {
+      configuration = { pkgs, ... }: {
+        home.username = "shunsock";
+        home.homeDirectory = "/Users/shunsock";
         home.stateVersion = "23.11";
         programs.home-manager.enable = true;
 
