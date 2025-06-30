@@ -1,5 +1,5 @@
 {
-  description = "Home Manager configuration";
+  description = "Flake for MacOS";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -30,7 +30,7 @@
           tree
         ];
 
-        programs.zsh.enable = true;
+        programs.zsh.enable = false;
       };
     };
   };
