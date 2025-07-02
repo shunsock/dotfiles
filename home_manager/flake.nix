@@ -10,7 +10,7 @@
   outputs = { nixpkgs, home-manager, ... }:
     let
       system = "aarch64-darwin";
-      pkgs   = import nixpkgs {
+      pkgs = import nixpkgs {
         inherit system;
         config = { allowUnfree = true; };
       };
@@ -19,15 +19,12 @@
         inherit pkgs;
         modules = [
           ({ config, pkgs, ... }: {
-            # 基本情報
+            # ユーザー情報
             home.username      = "shunsock";
             home.homeDirectory = "/Users/shunsock";
             home.stateVersion  = "23.11";
 
-            # 既存 ~/.zshrc をバックアップして置き換え
-            home-manager.backupFileExtension = "backup";
-
-            # パッケージ管理
+            # インストールするパッケージ
             home.packages = with pkgs; [
               claude-code
               dotnetCorePackages.dotnet_9.sdk
@@ -44,24 +41,25 @@
             home.file.".config/zsh".source    = ./zsh;
             home.file.".config/zsh".recursive = true;
 
-            # Zsh および Oh My Zsh 設定
+            # Zsh と Oh My Zsh の設定
             programs.zsh = {
               enable = true;
 
-              ohMyZsh = {
+              # Oh My Zsh を有効化しテーマを設定
+              "oh-my-zsh" = {
                 enable  = true;
                 theme   = "kennethreitz";
                 plugins = [];
               };
 
+              # ~/.config/zsh 以下を再帰的に source
               initContent = ''
-                # 再帰的に全設定ファイルを読み込む
                 setopt extendedglob
-                for file in $HOME/.config/zsh/**/*.zsh; do
-                  source "$file"
+                for f in $HOME/.config/zsh/**/*.zsh; do
+                  source "$f"
                 done
 
-                # zsh-autosuggestions は最後に読み込む
+                # zsh-autosuggestions を最後に読み込み
                 source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
               '';
             };
