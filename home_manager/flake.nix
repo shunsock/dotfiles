@@ -33,9 +33,30 @@
             hyperfine
             rustup
             tree
+            zsh-autosuggestions
+            zsh-syntax-highlighting
           ];
 
-          programs.zsh.enable = false;
+          home.file.".config/zsh".source = ./zsh;
+          home.file.".config/zsh".recursive = true;
+
+          oh-my-zsh = {
+              enable  = true;
+              theme   = "kennethreitz";
+              plugins = [ ];
+            };
+
+          programs.zsh = {
+            enable = true;
+            initExtra = ''
+              setopt globstar
+              for file in $HOME/.config/zsh/**/*.zsh; do
+                  source "$file"
+              done
+              unsetopt globstar
+              source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+            '';
+          };
         })
       ];
     };
