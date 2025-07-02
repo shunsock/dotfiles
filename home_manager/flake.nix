@@ -16,6 +16,7 @@
   in {
     homeConfigurations."shunsock" = home-manager.lib.homeManagerConfiguration {
       inherit pkgs;
+      home-manager.backupFileExtension = "backup";
 
       modules = [
         ({ pkgs, ... }: {
@@ -37,23 +38,27 @@
             zsh-syntax-highlighting
           ];
 
-          home.file.".config/zsh".source = ./zsh;
+          # zsh 設定ファイルを再帰的にコピー
+          home.file.".config/zsh".source    = ./zsh;
           home.file.".config/zsh".recursive = true;
 
-          oh-my-zsh = {
+          programs.zsh = {
+            enable = true;
+
+            oh-my-zsh = {
               enable  = true;
               theme   = "kennethreitz";
               plugins = [ ];
             };
 
-          programs.zsh = {
-            enable = true;
-            initExtra = ''
+            # initExtra は非推奨なので initContent に変更
+            initContent = ''
               setopt globstar
               for file in $HOME/.config/zsh/**/*.zsh; do
-                  source "$file"
+                source "$file"
               done
               unsetopt globstar
+
               source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
             '';
           };
@@ -62,3 +67,4 @@
     };
   };
 }
+
