@@ -17,18 +17,17 @@
     in {
       homeConfigurations."shunsock" = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
-        # モジュールで設定を一元管理
         modules = [
           ({ config, pkgs, ... }: {
-            # 基本設定
+            # 基本情報
             home.username      = "shunsock";
             home.homeDirectory = "/Users/shunsock";
             home.stateVersion  = "23.11";
 
-            # 既存 .zshrc のバックアップを手動またはフラグで管理
-            programs.home-manager.enable = true;
+            # 既存 ~/.zshrc をバックアップして置き換え
+            home-manager.backupFileExtension = "backup";
 
-            # パッケージ
+            # パッケージ管理
             home.packages = with pkgs; [
               claude-code
               dotnetCorePackages.dotnet_9.sdk
@@ -41,25 +40,28 @@
               zsh-syntax-highlighting
             ];
 
-            # Zsh 設定ファイルを再帰的にコピー
+            # zsh 設定ファイルを再帰的に配置
             home.file.".config/zsh".source    = ./zsh;
             home.file.".config/zsh".recursive = true;
 
             # Zsh および Oh My Zsh 設定
             programs.zsh = {
               enable = true;
-              # Oh My Zsh 有効化とテーマ設定
-              oh-my-zsh.enable  = true;
-              oh-my-zsh.theme   = "kennethreitz";
-              oh-my-zsh.plugins = [];
+
+              ohMyZsh = {
+                enable  = true;
+                theme   = "kennethreitz";
+                plugins = [];
+              };
 
               initContent = ''
-                setopt globstar
+                # 再帰的に全設定ファイルを読み込む
+                setopt extendedglob
                 for file in $HOME/.config/zsh/**/*.zsh; do
                   source "$file"
                 done
-                unsetopt globstar
 
+                # zsh-autosuggestions は最後に読み込む
                 source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
               '';
             };
