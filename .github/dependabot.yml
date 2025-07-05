@@ -5,6 +5,6 @@ updates:
     schedule:
       interval: "monthly"
   - package-ecosystem: "gomod"
-    directory: "worker"
+    directory: "homem/worker"
     schedule:
       interval: "monthly"
