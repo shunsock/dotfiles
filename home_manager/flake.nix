@@ -22,7 +22,7 @@
         modules = [
           # System configuration
           {
-            system.stateVersion = 6;
+            system.stateVersion = "23.05";
             system.primaryUser = "shunsock";
             nixpkgs.config.allowUnfree = true;
           }
