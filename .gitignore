@@ -9,3 +9,6 @@
 # Project
 tmp/
 bin/
+
+# Nix
+result
