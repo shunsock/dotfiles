@@ -7,28 +7,37 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Task Commands
 - **Initialize project**: `task init`
 - **Apply configuration**: `task apply`
-- **Build configuration**: `task test`
+- **Build configuration**: `task build`
 - **Validate flake**: `task check`
 - **Update dependencies**: `task update`
-- **Complete setup**: `task setup`
 - **Comprehensive validation**: `task validate`
 
 ### Direct Commands (if needed)
-- **Install Home Manager**: `nix profile install github:nix-community/home-manager`
-- **Apply configuration**: `home-manager switch --flake .#shunsock -b backup`
-- **Build configuration**: `nix build .#homeConfigurations.shunsock.activationPackage`
+- **Install nix-darwin system-wide**: `nix run nix-darwin -- switch --flake .#shunsock-darwin`
+- **Apply configuration**: `darwin-rebuild switch --flake .#shunsock-darwin`
+- **Build configuration**: `nix build .#darwinConfigurations.shunsock-darwin.system`
 - **Check flake**: `nix flake check`
 - **Update flake inputs**: `nix flake update`
+
+### Installation Notes
+- **First time setup**: Run `task init` to install nix-darwin system-wide
+- **After init**: The `darwin-rebuild` command will be available in your PATH
+- **Subsequent updates**: Use `task apply` or `sudo darwin-rebuild switch --flake .#shunsock-darwin`
+- **Claude Code Limitation**: Commands requiring sudo cannot be executed by Claude Code and must be run manually in terminal
 
 ## Architecture
 
 This is a Nix Home Manager configuration for macOS (aarch64-darwin) that manages dotfiles and system packages.
 
 ### Structure
-- `flake.nix`: Main configuration defining packages, user settings, and zsh configuration
+- `flake.nix`: Main Nix Darwin configuration defining packages, user settings, and zsh configuration
+- `home.nix`: Home Manager configuration
+- `modules/`: Nix configuration modules (wezterm.nix)
 - `zsh/`: Modular zsh configuration files organized by purpose
   - `basic/`: Core shell configurations (aliases, editor settings, options, PATH)
   - `command/`: Command-specific configurations (docker, git aliases)
+- `Taskfile.yml`: Task automation commands
+- `.claude/`: Claude Code configuration and documentation
 
 ### Key Components
 - **Package Management**: Uses nixpkgs unstable channel with unfree packages allowed

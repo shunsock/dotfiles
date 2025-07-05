@@ -1,9 +1,10 @@
-# Home Manager
+# Nix Darwin Configuration
 
-A comprehensive dotfiles configuration using Nix Home Manager for macOS development environment.
+A comprehensive dotfiles configuration using Nix Darwin for macOS development environment.
 
 ## Features
 
+- **System Management**: Declarative system configuration using Nix Darwin
 - **Package Management**: Declarative package installation using Nix
 - **Modular Zsh Configuration**: Organized shell configuration with automatic loading
 - **Development Tools**: Pre-configured development environment with essential tools
@@ -27,26 +28,35 @@ A comprehensive dotfiles configuration using Nix Home Manager for macOS developm
    ```bash
    task apply
    ```
-
-**Or use the complete setup command**:
-```bash
-task setup
-```
+   
+   **Note:** This command requires sudo permissions. When using Claude Code, you may need to run this manually in your terminal.
 
 ## Configuration Structure
 
 ```
-├── flake.nix           # Main configuration file
-├── flake.lock          # Locked dependency versions
-└── zsh/                # Modular zsh configuration
-    ├── basic/          # Core shell settings
-    │   ├── alias.zsh   # System and utility aliases
-    │   ├── editor.zsh  # Editor configuration
-    │   ├── option.zsh  # Shell options
-    │   └── path.zsh    # PATH modifications
-    └── command/        # Command-specific configurations
-        ├── docker/     # Docker-related settings
-        └── git/        # Git aliases and configuration
+├── .claude/                    # Claude Code configuration
+│   ├── how_to_check_font.md    # Font checking documentation
+│   ├── settings.json           # Claude settings
+│   └── settings.local.json     # Local Claude settings
+├── CLAUDE.md                   # Claude Code instructions
+├── flake.nix                   # Main Nix Darwin configuration
+├── flake.lock                  # Locked dependency versions
+├── home.nix                    # Home Manager configuration
+├── modules/                    # Nix configuration modules
+│   └── wezterm.nix            # WezTerm terminal configuration
+├── README.md                   # This file
+├── Taskfile.yml               # Task automation commands
+└── zsh/                       # Modular zsh configuration
+    ├── basic/                 # Core shell settings
+    │   ├── alias.zsh          # System and utility aliases
+    │   ├── editor.zsh         # Editor configuration
+    │   ├── option.zsh         # Shell options
+    │   └── path.zsh           # PATH modifications
+    └── command/               # Command-specific configurations
+        ├── docker/            # Docker-related settings
+        │   └── docker.zsh     # Docker aliases and functions
+        └── git/               # Git configuration
+            └── alias.zsh      # Git aliases
 ```
 
 ## Included Packages
@@ -58,11 +68,11 @@ task setup
 ## Task Commands
 
 ```bash
-# Apply configuration changes
+# Apply configuration changes (requires sudo - run manually if using Claude Code)
 task apply
 
 # Build configuration (test without applying)
-task test
+task build
 
 # Update all flake inputs
 task update
@@ -70,10 +80,7 @@ task update
 # Check flake configuration
 task check
 
-# Complete setup (init + apply)
-task setup
-
-# Comprehensive validation (test + check)
+# Comprehensive validation (build + check)
 task validate
 ```
 
@@ -81,10 +88,10 @@ task validate
 
 ```bash
 # Apply configuration changes
-home-manager switch --flake .#shunsock -b backup
+sudo darwin-rebuild switch --flake .#shunsock-darwin
 
 # Build configuration (test without applying)
-nix build .#homeConfigurations.shunsock.activationPackage
+nix build .#darwinConfigurations.shunsock-darwin.system
 
 # Update all flake inputs
 nix flake update
@@ -97,10 +104,10 @@ nix flake check
 
 ### Adding New Packages
 
-Edit `flake.nix` and add packages to the `home.packages` list:
+Edit `flake.nix` and add packages to the `environment.systemPackages` list:
 
 ```nix
-home.packages = with pkgs; [
+environment.systemPackages = with pkgs; [
   # existing packages...
   your-new-package
 ];
@@ -115,7 +122,9 @@ Create new `.zsh` files in the appropriate directory under `zsh/`. Files are aut
 Update the user configuration in `flake.nix`:
 
 ```nix
-home.username      = "your-username";
-home.homeDirectory = "/Users/your-username";
+users.users.your-username = {
+  name = "your-username";
+  home = "/Users/your-username";
+};
 ```
 
