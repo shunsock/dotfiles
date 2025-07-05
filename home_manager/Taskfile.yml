@@ -4,7 +4,8 @@ tasks:
   init:
     desc: Initialize the project by installing nix-darwin system-wide
     cmds:
-      - nix run nix-darwin -- switch --flake .#shunsock-darwin
+      - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      - sudo nix run --extra-experimental-features nix-command --extra-experimental-features flakes nix-darwin -- switch --flake .#shunsock-darwin
       - echo "nix-darwin has been installed system-wide. darwin-rebuild command is now available."
     status:
       - which darwin-rebuild
