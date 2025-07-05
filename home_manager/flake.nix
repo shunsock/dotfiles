@@ -28,6 +28,7 @@
             home.packages = with pkgs; [
               claude-code
               dotnetCorePackages.dotnet_9.sdk
+              gh
               git
               go-task
               hyperfine
