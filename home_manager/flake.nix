@@ -25,6 +25,7 @@
             system.stateVersion = 4;
             system.primaryUser = "shunsock";
             nixpkgs.config.allowUnfree = true;
+            ids.gids.nixbld = 350;
           }
           
           # Homebrew configuration
