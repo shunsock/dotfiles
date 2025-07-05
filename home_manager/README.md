@@ -34,17 +34,29 @@ A comprehensive dotfiles configuration using Nix Darwin for macOS development en
 ## Configuration Structure
 
 ```
-├── flake.nix           # Main configuration file
-├── flake.lock          # Locked dependency versions
-└── zsh/                # Modular zsh configuration
-    ├── basic/          # Core shell settings
-    │   ├── alias.zsh   # System and utility aliases
-    │   ├── editor.zsh  # Editor configuration
-    │   ├── option.zsh  # Shell options
-    │   └── path.zsh    # PATH modifications
-    └── command/        # Command-specific configurations
-        ├── docker/     # Docker-related settings
-        └── git/        # Git aliases and configuration
+├── .claude/                    # Claude Code configuration
+│   ├── how_to_check_font.md    # Font checking documentation
+│   ├── settings.json           # Claude settings
+│   └── settings.local.json     # Local Claude settings
+├── CLAUDE.md                   # Claude Code instructions
+├── flake.nix                   # Main Nix Darwin configuration
+├── flake.lock                  # Locked dependency versions
+├── home.nix                    # Home Manager configuration
+├── modules/                    # Nix configuration modules
+│   └── wezterm.nix            # WezTerm terminal configuration
+├── README.md                   # This file
+├── Taskfile.yml               # Task automation commands
+└── zsh/                       # Modular zsh configuration
+    ├── basic/                 # Core shell settings
+    │   ├── alias.zsh          # System and utility aliases
+    │   ├── editor.zsh         # Editor configuration
+    │   ├── option.zsh         # Shell options
+    │   └── path.zsh           # PATH modifications
+    └── command/               # Command-specific configurations
+        ├── docker/            # Docker-related settings
+        │   └── docker.zsh     # Docker aliases and functions
+        └── git/               # Git configuration
+            └── alias.zsh      # Git aliases
 ```
 
 ## Included Packages

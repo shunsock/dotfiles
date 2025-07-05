@@ -30,10 +30,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a Nix Home Manager configuration for macOS (aarch64-darwin) that manages dotfiles and system packages.
 
 ### Structure
-- `flake.nix`: Main configuration defining packages, user settings, and zsh configuration
+- `flake.nix`: Main Nix Darwin configuration defining packages, user settings, and zsh configuration
+- `home.nix`: Home Manager configuration
+- `modules/`: Nix configuration modules (wezterm.nix)
 - `zsh/`: Modular zsh configuration files organized by purpose
   - `basic/`: Core shell configurations (aliases, editor settings, options, PATH)
   - `command/`: Command-specific configurations (docker, git aliases)
+- `Taskfile.yml`: Task automation commands
+- `.claude/`: Claude Code configuration and documentation
 
 ### Key Components
 - **Package Management**: Uses nixpkgs unstable channel with unfree packages allowed
