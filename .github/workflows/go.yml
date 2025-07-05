@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [ "main" ]
     paths:
-      - 'worker/**'
+      - 'homem/worker/**'
 
 jobs:
 
@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-24.04
     defaults:
       run:
-        working-directory: ./worker
+        working-directory: ./homem/worker
     steps:
     - uses: actions/checkout@v4
 
