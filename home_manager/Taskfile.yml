@@ -15,7 +15,7 @@ tasks:
     cmds:
       - darwin-rebuild switch --flake .#shunsock-darwin
 
-  test:
+  build:
     desc: Build and validate configuration without applying
     cmds:
       - nix build .#darwinConfigurations.shunsock-darwin.system
@@ -30,14 +30,8 @@ tasks:
     cmds:
       - nix flake update
 
-  setup:
-    desc: Complete initial setup (initialize + apply)
-    deps:
-      - init
-      - apply
-
   validate:
-    desc: Run comprehensive validation (test + check)
+    desc: Run comprehensive validation (build + check)
     deps:
-      - test
+      - build
       - check

@@ -7,10 +7,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Task Commands
 - **Initialize project**: `task init`
 - **Apply configuration**: `task apply`
-- **Build configuration**: `task test`
+- **Build configuration**: `task build`
 - **Validate flake**: `task check`
 - **Update dependencies**: `task update`
-- **Complete setup**: `task setup`
 - **Comprehensive validation**: `task validate`
 
 ### Direct Commands (if needed)
