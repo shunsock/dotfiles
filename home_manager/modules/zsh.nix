@@ -2,7 +2,7 @@
 
 {
   # zsh 設定ファイルを再帰的に配置
-  home.file.".config/zsh".source    = ../zsh;
+  home.file.".config/zsh".source    = ../configs/zsh;
   home.file.".config/zsh".recursive = true;
 
   # Zsh関連パッケージ
