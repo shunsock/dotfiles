@@ -14,11 +14,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Comprehensive validation**: `task validate`
 
 ### Direct Commands (if needed)
-- **Install Home Manager**: `nix profile install github:nix-community/home-manager`
-- **Apply configuration**: `home-manager switch --flake .#shunsock -b backup`
-- **Build configuration**: `nix build .#homeConfigurations.shunsock.activationPackage`
+- **Install nix-darwin system-wide**: `nix run nix-darwin -- switch --flake .#shunsock-darwin`
+- **Apply configuration**: `darwin-rebuild switch --flake .#shunsock-darwin`
+- **Build configuration**: `nix build .#darwinConfigurations.shunsock-darwin.system`
 - **Check flake**: `nix flake check`
 - **Update flake inputs**: `nix flake update`
+
+### Installation Notes
+- **First time setup**: Run `task init` to install nix-darwin system-wide
+- **After init**: The `darwin-rebuild` command will be available in your PATH
+- **Subsequent updates**: Use `task apply` or `darwin-rebuild switch --flake .#shunsock-darwin`
 
 ## Architecture
 

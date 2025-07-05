@@ -2,21 +2,22 @@ version: '3'
 
 tasks:
   init:
-    desc: Initialize the project by installing Home Manager
+    desc: Initialize the project by installing nix-darwin system-wide
     cmds:
-      - nix profile install github:nix-community/home-manager
+      - nix run nix-darwin -- switch --flake .#shunsock-darwin
+      - echo "nix-darwin has been installed system-wide. darwin-rebuild command is now available."
     status:
-      - which home-manager
+      - which darwin-rebuild
 
   apply:
-    desc: Apply the configuration with backup
+    desc: Apply the configuration with darwin-rebuild
     cmds:
-      - home-manager switch --flake .#shunsock -b backup
+      - darwin-rebuild switch --flake .#shunsock-darwin
 
   test:
     desc: Build and validate configuration without applying
     cmds:
-      - nix build .#homeConfigurations.shunsock.activationPackage
+      - nix build .#darwinConfigurations.shunsock-darwin.system
 
   check:
     desc: Validate flake configuration
