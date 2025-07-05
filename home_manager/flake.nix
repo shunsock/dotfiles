@@ -22,9 +22,10 @@
         modules = [
           # System configuration
           {
-            system.stateVersion = "23.05";
+            system.stateVersion = 4;
             system.primaryUser = "shunsock";
             nixpkgs.config.allowUnfree = true;
+            ids.gids.nixbld = 350;
           }
           
           # Homebrew configuration
