@@ -4,6 +4,7 @@
   imports = [
     ./modules/wezterm.nix
     ./modules/zsh.nix
+    ./modules/skk.nix
   ];
 
   # ユーザー情報

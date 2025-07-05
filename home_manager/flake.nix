@@ -34,6 +34,7 @@
               enable = true;
               casks = [
                 "wezterm"
+                "aquaskk"
               ];
             };
           }
