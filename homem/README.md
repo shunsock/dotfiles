@@ -1,6 +1,6 @@
 # dotfiles
 
-This Repository is My Configuration Files for Development Environment.
+OLD SETTING FILES AND MANAGER PROGRAM. I DONT MAINTAIN NOW.
 
 ## Screen Shot
 
