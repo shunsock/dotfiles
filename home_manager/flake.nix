@@ -24,6 +24,9 @@
             home.homeDirectory = "/Users/shunsock";
             home.stateVersion  = "23.11";
 
+            # フォント設定
+            fonts.fontconfig.enable = true;
+
             # インストールするパッケージ
             home.packages = with pkgs; [
               claude-code
@@ -31,6 +34,7 @@
               gh
               git
               go-task
+              hackgen-nf-font
               hyperfine
               rustup
               tree

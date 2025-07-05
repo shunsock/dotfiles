@@ -44,3 +44,7 @@ Core development tools include: claude-code, dotnetCorePackages.dotnet_9.sdk, gi
 2. Zsh files are copied to `~/.config/zsh/` recursively
 3. initContent in programs.zsh sources all `.zsh` files automatically
 4. Oh My Zsh and autosuggestions are configured last
+
+## Reference Documentation
+
+- **Font Management**: See `.claude/how_to_check_font.md` for checking font installations on macOS
