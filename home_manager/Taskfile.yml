@@ -1,0 +1,41 @@
+version: '3'
+
+tasks:
+  init:
+    desc: Initialize the project by installing Home Manager
+    cmds:
+      - nix profile install github:nix-community/home-manager
+    status:
+      - which home-manager
+
+  apply:
+    desc: Apply the configuration with backup
+    cmds:
+      - home-manager switch --flake .#shunsock -b backup
+
+  test:
+    desc: Build and validate configuration without applying
+    cmds:
+      - nix build .#homeConfigurations.shunsock.activationPackage
+
+  check:
+    desc: Validate flake configuration
+    cmds:
+      - nix flake check
+
+  update:
+    desc: Update flake dependencies
+    cmds:
+      - nix flake update
+
+  setup:
+    desc: Complete initial setup (initialize + apply)
+    deps:
+      - init
+      - apply
+
+  validate:
+    desc: Run comprehensive validation (test + check)
+    deps:
+      - test
+      - check

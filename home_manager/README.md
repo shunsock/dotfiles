@@ -18,15 +18,20 @@ A comprehensive dotfiles configuration using Nix Home Manager for macOS developm
 
 ### Installation
 
-1. **Install Home Manager**:
+1. **Initialize Project**:
    ```bash
-   nix profile install github:nix-community/home-manager
+   task init
    ```
 
 2. **Apply Configuration**:
    ```bash
-   home-manager switch --flake .#shunsock -b backup
+   task apply
    ```
+
+**Or use the complete setup command**:
+```bash
+task setup
+```
 
 ## Configuration Structure
 
@@ -50,7 +55,29 @@ A comprehensive dotfiles configuration using Nix Home Manager for macOS developm
 - **System Utilities**: hyperfine, tree
 - **Shell Enhancement**: zsh-autosuggestions, zsh-syntax-highlighting
 
-## Management Commands
+## Task Commands
+
+```bash
+# Apply configuration changes
+task apply
+
+# Build configuration (test without applying)
+task test
+
+# Update all flake inputs
+task update
+
+# Check flake configuration
+task check
+
+# Complete setup (init + apply)
+task setup
+
+# Comprehensive validation (test + check)
+task validate
+```
+
+## Direct Commands (if needed)
 
 ```bash
 # Apply configuration changes
