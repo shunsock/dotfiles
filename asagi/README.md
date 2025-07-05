@@ -1,4 +1,4 @@
-# Nix Darwin Configuration
+# Asagi: Nix Darwin Configuration
 
 A comprehensive dotfiles configuration using Nix Darwin for macOS development environment.
 
