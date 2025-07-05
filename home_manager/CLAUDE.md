@@ -22,7 +22,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Installation Notes
 - **First time setup**: Run `task init` to install nix-darwin system-wide
 - **After init**: The `darwin-rebuild` command will be available in your PATH
-- **Subsequent updates**: Use `task apply` or `darwin-rebuild switch --flake .#shunsock-darwin`
+- **Subsequent updates**: Use `task apply` or `sudo darwin-rebuild switch --flake .#shunsock-darwin`
+- **Claude Code Limitation**: Commands requiring sudo cannot be executed by Claude Code and must be run manually in terminal
 
 ## Architecture
 
