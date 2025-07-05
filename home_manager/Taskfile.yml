@@ -13,7 +13,7 @@ tasks:
   apply:
     desc: Apply the configuration with darwin-rebuild
     cmds:
-      - darwin-rebuild switch --flake .#shunsock-darwin
+      - sudo darwin-rebuild switch --flake .#shunsock-darwin
 
   build:
     desc: Build and validate configuration without applying
