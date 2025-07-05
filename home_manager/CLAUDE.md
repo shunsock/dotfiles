@@ -4,11 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-### Home Manager Configuration
-- **Apply configuration**: `home-manager switch --flake .#shunsock -b backup`
-- **Install Home Manager**: `nix profile install github:nix-community/home-manager`
+### Task Commands
+- **Initialize project**: `task init`
+- **Apply configuration**: `task apply`
+- **Build configuration**: `task test`
+- **Validate flake**: `task check`
+- **Update dependencies**: `task update`
+- **Complete setup**: `task setup`
+- **Comprehensive validation**: `task validate`
 
-### Nix Operations
+### Direct Commands (if needed)
+- **Install Home Manager**: `nix profile install github:nix-community/home-manager`
+- **Apply configuration**: `home-manager switch --flake .#shunsock -b backup`
 - **Build configuration**: `nix build .#homeConfigurations.shunsock.activationPackage`
 - **Check flake**: `nix flake check`
 - **Update flake inputs**: `nix flake update`
