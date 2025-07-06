@@ -1,6 +1,5 @@
 {
-  description = "Flake for macOS";
-  inputs = {
+  description = "Flake for macOS"; inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
@@ -33,6 +32,7 @@
               enable = true;
               casks = [
                 "aquaskk"
+                "arc"
                 "docker"
                 "wezterm"
                 "zoom"

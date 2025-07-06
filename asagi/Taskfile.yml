@@ -13,6 +13,7 @@ tasks:
   apply:
     desc: Apply the configuration with darwin-rebuild
     cmds:
+      - bash script/remove_backup.sh
       - sudo darwin-rebuild switch --flake .#shunsock-darwin
 
   build:
