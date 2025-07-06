@@ -9,6 +9,7 @@
 
   # ユーザー情報
   home.username      = "shunsock";
+  home.homeDirectory = "/Users/shunsock";
   home.stateVersion  = "23.11";
 
   # フォント設定

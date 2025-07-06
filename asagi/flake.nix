@@ -47,6 +47,8 @@
             home-manager.useUserPackages = true;
             home-manager.users.shunsock = import ./home.nix;
             home-manager.backupFileExtension = "hm-backup";
+            # Explicitly set home directory to avoid null value
+            home-manager.users.shunsock.home.homeDirectory = "/Users/shunsock";
           }
         ];
       };
