@@ -12,6 +12,11 @@
   home.homeDirectory = lib.mkForce "/Users/shunsock";
   home.stateVersion  = "23.11";
 
+  home.file."Library/Application Support/AquaSKK/skk-jisyo.utf8" = {
+    source = ../configs/skk/skk-jisyo.utf8;
+    force  = true;
+  };
+
   # フォント設定
   fonts.fontconfig.enable = true;
 
