@@ -32,9 +32,10 @@ inputs = {
             homebrew = {
               enable = true;
               casks = [
-                "wezterm"
                 "aquaskk"
                 "docker"
+                "wezterm"
+                "zoom"
               ];
             };
           }
