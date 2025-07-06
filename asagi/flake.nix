@@ -45,6 +45,7 @@ inputs = {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.users.shunsock = import ./home.nix;
+            home-manager.backupFileExtension = ".hm-backup";
           }
         ];
       };
