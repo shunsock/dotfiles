@@ -48,8 +48,6 @@
             home-manager.useUserPackages = true;
             home-manager.users.shunsock = import ./home.nix;
             home-manager.backupFileExtension = "hm-backup";
-          }
-          home-manager.darwinModules.home-manager = {
             # 既存バックアップを自動削除するアクティベーション
             home.activation.cleanupOldSKKBackup = {
               after = [ "writeBoundary" ];
@@ -57,7 +55,7 @@
                 rm -f "${config.home.homeDirectory}/Library/Application Support/AquaSKK/skk-jisyo.utf8.${config.home-manager.backupFileExtension}"
               '';
             };
-          };
+          }
         ];
       };
     };
