@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports = [
@@ -9,7 +9,7 @@
 
   # ユーザー情報
   home.username      = "shunsock";
-  home.homeDirectory = pkgs.lib.mkForce "/Users/shunsock";
+  home.homeDirectory = lib.mkForce "/Users/shunsock";
   home.stateVersion  = "23.11";
 
   # フォント設定
@@ -27,5 +27,4 @@
     rustup
     tree
   ];
-
 }
