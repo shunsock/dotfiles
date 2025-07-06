@@ -35,6 +35,7 @@
               casks = [
                 "wezterm"
                 "aquaskk"
+                "docker-desktop"
               ];
             };
           }
