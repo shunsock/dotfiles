@@ -1,6 +1,5 @@
 {
-  description = "Flake for macOS";
-  inputs = {
+  description = "Flake for macOS"; inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
@@ -48,13 +47,6 @@
             home-manager.useUserPackages = true;
             home-manager.users.shunsock = import ./home.nix;
             home-manager.backupFileExtension = "hm-backup";
-            # 既存バックアップを自動削除するアクティベーション
-            home.activation.cleanupOldSKKBackup = {
-              after = [ "writeBoundary" ];
-              script = ''
-                rm -f "${config.home.homeDirectory}/Library/Application Support/AquaSKK/skk-jisyo.utf8.${config.home-manager.backupFileExtension}"
-              '';
-            };
           }
         ];
       };
