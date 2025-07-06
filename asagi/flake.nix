@@ -1,7 +1,6 @@
 {
   description = "Flake for macOS";
-
-  inputs = {
+inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
@@ -35,6 +34,7 @@
               casks = [
                 "wezterm"
                 "aquaskk"
+                "docker"
               ];
             };
           }
@@ -45,6 +45,7 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.users.shunsock = import ./home.nix;
+            home-manager.backupFileExtension = ".hm-backup";
           }
         ];
       };
