@@ -33,6 +33,7 @@
               enable = true;
               casks = [
                 "aquaskk"
+                "arc-browser"
                 "docker"
                 "wezterm"
                 "zoom"
