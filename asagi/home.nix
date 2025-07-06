@@ -1,6 +1,12 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
-{
+let
+  homeDir = config.home.homeDirectory;
+in {
+  home.activation.cleanOldAquaSKK = lib.hm.dag.entryBefore ["writeBoundary"] ''
+  rm -f "${config.home.homeDirectory}/Library/Application Support/AquaSKK/"*".hm-backup"
+'';
+
   imports = [
     ./modules/wezterm.nix
     ./modules/zsh.nix
@@ -27,5 +33,4 @@
     rustup
     tree
   ];
-
 }
