@@ -47,7 +47,7 @@ RUN curl -fsSL "https://deb.nodesource.com/setup_${NODE_VERSION}" | bash - \
 # Rustのインストール
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y --default-toolchain=nightly \
     && . "$HOME/.cargo/env" \
-    && rustup show
+    && rustup component add rust-analyzer-preview --toolchain nightly
 
 # ======================================
 # Runtime Stage
