@@ -35,12 +35,20 @@ tasks:
       - bash ./entry_point.sh akatsuki-python {{.CLI_ARGS}}
     silent: true
 
+  push:
+    desc: "build and push all containers"
+    cmds:
+      - task push:default
+      - task push:python
+
+
   push:python:
     desc: "build and push akatsuki-python"
     dir: akatsuki-python
     cmds:
       - docker build -t akatsuki-python .
-      - docker push "tsuchiya55docker/akatsuki-python:{{.VERSION}}"
+      - docker tag akatsuki-python tsuchiya55docker/akatsuki:python-{{.VERSION}}
+      - docker push "tsuchiya55docker/akatsuki:python-{{.VERSION}}"
     silent: true
 
   push:default:
@@ -48,5 +56,7 @@ tasks:
     dir: akatsuki-default
     cmds:
       - docker build -t akatsuki-default .
-      - docker push "tsuchiya55docker/akatsuki-default:{{.VERSION}}"
+      - docker tag akatsuki-default tsuchiya55docker/akatsuki:default-{{.VERSION}}
+      - docker push "tsuchiya55docker/akatsuki:default-{{.VERSION}}"
     silent: true
+
