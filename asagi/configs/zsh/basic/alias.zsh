@@ -54,13 +54,21 @@ alias la='ls -Fha'
 # -------------------------------------------------------------------
 
 alias vi='vim'
+alias nvim='vim'
 alias v='docker run -it --rm \
   -v "$PWD":/workspace \
-  -v "$HOME/.nvimc/share":/root/.local/share/nvim \
-  -v "$HOME/.nvimc/cache":/root/.cache/nvim \
-  -v "$HOME/.nvimc/state":/root/.local/state/nvim \
+  -v "$HOME/.akatsuki-default/share":/root/.local/share/nvim \
+  -v "$HOME/.akatsuki-default/cache":/root/.cache/nvim \
+  -v "$HOME/.akatsuki-default/state":/root/.local/state/nvim \
   -w /workspace \
-  tsuchiya55docker/nvimc:v0.0.6'
+  tsuchiya55docker/akatsuki:default-0.0.1'
+alias vpy='docker run -it --rm \
+  -v "$PWD":/workspace \
+  -v "$HOME/.akatsuki-python/share":/root/.local/share/nvim \
+  -v "$HOME/.akatsuki-python/cache":/root/.cache/nvim \
+  -v "$HOME/.akatsuki-python/state":/root/.local/state/nvim \
+  -w /workspace \
+  tsuchiya55docker/akatsuki:python-0.0.1'
 
 # -------------------------------------------------------------------
 # df Command
