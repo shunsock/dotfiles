@@ -1,0 +1,31 @@
+version: '3'
+
+vars:
+  VERSION: 0.0.1
+
+tasks:
+  default:
+    cmds:
+      - task -l
+    silent: true
+
+  build:default:
+    desc: "build akatsuki-default"
+    dir: akatsuki-default
+    cmds:
+      - docker build -t akatsuki-default .
+    silent: true
+
+  run:default:
+    desc: "run akatsuki-default (need build:default before run this)"
+    cmds:
+      - bash ./entry_point.sh akatsuki-default
+    silent: true
+
+  push:default:
+    desc: "build and push akatsuki-default"
+    dir: akstsuki-default
+    cmds:
+      - docker build -t akatsuki-default .
+      - docker push "tsuchiya55docker/akatsuki-default:{{.VERSION}}"
+    silent: true
