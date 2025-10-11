@@ -18,7 +18,6 @@
   # インストールするパッケージ
   home.packages = with pkgs; [
     claude-code
-    dotnet-sdk_10
     firefox
     gh
     git
