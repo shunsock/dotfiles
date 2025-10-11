@@ -7,12 +7,7 @@
 
     preferences = {
       "intl.accept_languages" = "en-US, en";
-      
-      # 組み込みテーマ（Plum Torte）を ID で設定
-      # このIDはバージョンによって変わる可能性があるため、注意が必要です。
       "browser.theme.selected" = "firefox-compact-dark@mozilla.org-2";
-      
-      # ブラウザがダークテーマを使用するように設定
       "browser.in-content.dark-mode" = true; 
     };
 
