@@ -14,8 +14,7 @@ tasks:
     desc: Apply the configuration with darwin-rebuild
     cmds:
       - bash script/remove_backup.sh
-      # - sudo darwin-rebuild switch --flake .#shunsock-darwin
-      - sudo home-manager switch -b backup
+      - sudo darwin-rebuild switch --flake .#shunsock-darwin
 
   build:
     desc: Build and validate configuration without applying
