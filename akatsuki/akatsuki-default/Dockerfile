@@ -10,6 +10,7 @@ ARG NODE_VERSION=24.x
 
 # 環境変数の設定
 ENV DEBIAN_FRONTEND=noninteractive
+ENV DOTNET_VERSION=8.0
 
 # 基本パッケージのインストール
 RUN apt-get update && apt-get install -y \
@@ -41,6 +42,15 @@ RUN curl -fsSL "https://deb.nodesource.com/setup_${NODE_VERSION}" | bash - \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# .NET SDKのインストール（Marksman用）
+RUN wget "https://packages.microsoft.com/config/ubuntu/24.04/packages-microsoft-prod.deb" -O packages-microsoft-prod.deb \
+    && dpkg -i packages-microsoft-prod.deb \
+    && rm packages-microsoft-prod.deb \
+    && apt-get update \
+    && apt-get install -y "dotnet-runtime-${DOTNET_VERSION}"\
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 # ======================================
 # Runtime Stage
 # ======================================
@@ -65,14 +75,6 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# .NET SDKのインストール（Marksman用）
-RUN wget "https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb" -O packages-microsoft-prod.deb \
-    && dpkg -i packages-microsoft-prod.deb \
-    && rm packages-microsoft-prod.deb \
-    && apt-get update \
-    && apt-get install -y "dotnet-runtime-${DOTNET_VERSION}"\
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
 
 # 必要なディレクトリの作成とNvim設定のコピー
 RUN mkdir -p /root/.config/nvim /root/.local/share/nvim/mason
@@ -83,5 +85,6 @@ COPY --from=builder /usr/local/bin/nvim /usr/local/bin/
 COPY --from=builder /usr/local/share/nvim /usr/local/share/nvim
 COPY --from=builder /usr/bin/node /usr/bin/
 COPY --from=builder /usr/bin/npm /usr/bin/
+COPY --from=builder /usr/bin/dotnet /usr/bin/
 
 ENTRYPOINT ["/usr/local/bin/nvim"]
