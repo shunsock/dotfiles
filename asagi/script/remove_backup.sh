@@ -14,3 +14,12 @@ if [ -e "$JISYOL" ]; then
 else
   echo "ファイルが存在しません: $JISYOL"
 fi
+
+FIREFOX_CONF="/Users/shunsock/Library/Application Support/Firefox/profiles.ini.hm-backup"
+if [ -e "$FIREFOX_CONF" ]; then
+  rm "$FIREFOX_CONF"
+  echo "削除しました: $FIREFOX_CONF"
+else
+  echo "ファイルが存在しません: $FIREFOX_CONF"
+fi
+

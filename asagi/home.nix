@@ -5,6 +5,7 @@
     ./modules/wezterm.nix
     ./modules/zsh.nix
     ./modules/skk.nix
+    ./modules/firefox.nix
   ];
 
   # ユーザー情報
@@ -19,7 +20,6 @@
   home.packages = with pkgs; [
     claude-code
     dotnet-sdk_10
-    firefox
     gh
     git
     go-task
