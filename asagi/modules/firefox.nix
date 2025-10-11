@@ -3,12 +3,18 @@
 {
   programs.firefox = {
     enable = true;
+    package = pkgs.firefox-bin;
     languagePacks = [ "en-US" ];
 
-    preferences = {
-      "intl.accept_languages" = "en-US, en";
-      "browser.theme.selected"     = "firefox-compact-dark@mozilla.org-2";
-      "browser.in-content.dark-mode" = true;
+    profiles.default = {
+      id = 0;
+      name = "default";
+      isDefault = true;
+      settings = {
+        "intl.accept_languages" = "en-US, en";
+        "browser.theme.selected" = "firefox-compact-dark@mozilla.org-2";
+        "browser.in-content.dark-mode" = true;
+      };
     };
 
     policies = {
