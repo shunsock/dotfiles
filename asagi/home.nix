@@ -5,6 +5,7 @@
     ./modules/wezterm.nix
     ./modules/zsh.nix
     ./modules/skk.nix
+    ./modules/firefox.nix
   ];
 
   # ユーザー情報
