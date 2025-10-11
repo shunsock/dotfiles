@@ -1,9 +1,13 @@
 CONTAINER="$1"
+TARGET="$2"
+if [ -z "$TARGET" ]; then
+    TARGET="$PWD"
+fi
 
 docker run -it --rm \
-  -v "$PWD":/workspace \
-  -v "$HOME/.nvimc/share":/root/.local/share/nvim \
-  -v "$HOME/.nvimc/cache":/root/.cache/nvim \
-  -v "$HOME/.nvimc/state":/root/.local/state/nvim \
+  -v "$TARGET":/workspace \
+  -v "$HOME/.akatsuki-$CONTAINER/share":/root/.local/share/nvim \
+  -v "$HOME/.akatsuki-$CONTAINER/cache":/root/.cache/nvim \
+  -v "$HOME/.akatsuki-$CONTAINER/state":/root/.local/state/nvim \
   -w /workspace \
-  ${CONTAINER}
+  "${CONTAINER}" "$TARGET"

@@ -19,7 +19,7 @@ tasks:
   run:default:
     desc: "run akatsuki-default (need build:default before run this)"
     cmds:
-      - bash ./entry_point.sh akatsuki-default
+      - bash ./entry_point.sh akatsuki-default {{.CLI_ARGS}}
     silent: true
 
   push:default:

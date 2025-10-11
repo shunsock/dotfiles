@@ -6,7 +6,7 @@ FROM ubuntu:24.04 AS builder
 # 引数の定義
 ARG ARCH=arm64
 ARG NEOVIM_VERSION=v0.11.1
-ARG NODE_VERSION=20.x
+ARG NODE_VERSION=24.x
 
 # 環境変数の設定
 ENV DEBIAN_FRONTEND=noninteractive
@@ -45,9 +45,6 @@ RUN curl -fsSL "https://deb.nodesource.com/setup_${NODE_VERSION}" | bash - \
 # Runtime Stage
 # ======================================
 FROM ubuntu:24.04
-
-# 引数の定義
-ARG DOTNET_VERSION=8.0
 
 # 環境変数の設定
 ENV DEBIAN_FRONTEND=noninteractive
