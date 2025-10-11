@@ -30,8 +30,11 @@
 
       # 垂直タブの設定 (設定をロック)
       Preferences = {
-        "sidebar.revamp"      = lock-true;
-        "sidebar.verticalTabs" = lock-true;
+        # 'lock-true' を正しい記法に修正
+        "sidebar.revamp"      = { Value = true; Status = "locked"; };
+        "sidebar.verticalTabs" = { Value = true; Status = "locked"; };
+        
+        # サイドバーの位置をロック (false = 右側)
         "sidebar.position_start" = { Value = false; Status = "locked"; };
       };
     };
