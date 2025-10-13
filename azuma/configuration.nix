@@ -1,8 +1,6 @@
 { config, pkgs, ... }:
 
-{ imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix ];
+{ imports = [ ./hardware-configuration.nix ];
 
   nix = {
     settings = {
@@ -101,6 +99,15 @@
   programs = {
     git = { enable = true; };
     zsh = { enable = true; };
+    neovim = {
+      enable = true;
+      defaultEditor = true; # $EDITOR=nvimに設定
+      viAlias = true;
+      vimAlias = true;
+    };
+    starship = {
+      enable = true;
+    };
   };
 
   # Some programs need SUID wrappers, can be configured further or are started in user sessions. programs.mtr.enable = true; 
