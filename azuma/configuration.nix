@@ -100,6 +100,8 @@
   environment.systemPackages = with pkgs; [
     vim
     curl
+    gh
+    fastfetch
     claude-code
   ];
   virtualisation.docker.enable = true;
