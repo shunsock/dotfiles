@@ -39,7 +39,7 @@
       # オプション: fcitx5の設定をNixで流し込む
       settings = {
         # デフォルトの入力メソッドを SKK に
-        "inputmethod" = {
+        inputMethod = {
           "Groups/0" = {
             Name = "Default";
             DefaultIM = "skk";
