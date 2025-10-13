@@ -4,6 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ./modules/wezterm.nix
+    ./modules/zsh.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
@@ -104,7 +105,6 @@
 
   programs = {
     git = { enable = true; };
-    zsh = { enable = true; };
     neovim = {
       enable = true;
       defaultEditor = true;
