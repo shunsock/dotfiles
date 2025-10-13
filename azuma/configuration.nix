@@ -41,7 +41,7 @@
       noto-fonts-cjk-serif
       noto-fonts-cjk-sans
       noto-fonts-emoji
-      nerd-fonts.jetbrains.mono
+      nerd-fonts.jetbrains-mono
     ];
     fontDir.enable = true;
     fontconfig = {
