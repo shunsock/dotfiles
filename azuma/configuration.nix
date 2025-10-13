@@ -32,37 +32,47 @@
     "en_US.UTF-8"; LC_TIME = "en_US.UTF-8";
   };
   i18n.inputMethod = {
-    enabled = "fcitx5";
+    enable = true;
+    type = "fcitx5";
     fcitx5 = {
-      # mozc -> skk に変更
-      addons = with pkgs; [ fcitx5-skk skk-dicts fcitx5-configtool ];
-      # オプション: fcitx5の設定をNixで流し込む
+      addons = with pkgs; [
+        fcitx5-mozc
+        fcitx5-skk
+        fcitx5-gtk
+        fcitx5-configtool
+      ];
+      # ここには addon 固有キーは置かない
       settings = {
-        # デフォルトの入力メソッドを SKK に
+        # ~/.config/fcitx5/profile 相当
         inputMethod = {
           "Groups/0" = {
             Name = "Default";
+            "Default Layout" = "jp";
+            # 既定 IM（好みで mozc / skk のどちらか）
             DefaultIM = "skk";
-            Items = [ "keyboard-us" "skk" ];
           };
-          "GroupOrder" = [ "Default" ];
-        };
-
-        # SKKプラグインの設定
-        "skk" = {
-          # Ctrl+Space でトグル（好みで）
-          "GlobalHotkey/TriggerKey" = "CTRL_SPACE";
-          # 起動時モード（ひらがな）
-          "initialState" = "Hiragana";
-          # 辞書の指定（大辞書: SKK-JISYO.L）
-          "dictionary/type" = "File";
-          "dictionary/file" = "${pkgs.skk-dicts}/share/skk/SKK-JISYO.L";
-          # ユーザー辞書（可変辞書）はホーム下。なければ作られます
-          "dictionary/user" = "~/.local/share/skk/user-jisyo";
+          "Groups/0/Items/0" = { Name = "keyboard-jp"; };
+          "Groups/0/Items/1" = { Name = "mozc"; };
+          "Groups/0/Items/2" = { Name = "skk"; };
+          "GroupOrder" = { "0" = "Default"; };
         };
       };
     };
   };
+
+  # skk アドオンの設定は /etc/xdg に落とす（ユーザ設定より下位なので必要なら ~/.config 側を消す）
+  environment.etc."xdg/fcitx5/conf/skk.conf".text = ''
+    # system-wide fcitx5-skk config
+    # 辞書: 大辞書 + ユーザ辞書（ユーザ辞書は初回に自動生成される）
+    Dictionaries=${skkDictPkg}/share/skk/SKK-JISYO.L,~/.local/share/skk/user.dict
+
+    # 起動モード（好みで）
+    InitialMode=Hiragana
+
+    # 変換候補ウィンドウなど、必要に応じて追加
+    # CandidateWindow=Vertical
+  '';
+  
   fonts = {
     fonts = with pkgs; [
       noto-fonts-cjk-serif
