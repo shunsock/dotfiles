@@ -1,7 +1,10 @@
 { config, pkgs, ... }:
 
 {
-  imports = [ ./hardware-configuration.nix ];
+  imports = [
+    ./hardware-configuration.nix
+    ./modules/wezterm.nix
+  ];
 
   nixpkgs.config.allowUnfree = true;
   
@@ -95,7 +98,6 @@
   environment.systemPackages = with pkgs; [
     vim
     curl
-    wezterm
     claude-code
   ];
   virtualisation.docker.enable = true;
