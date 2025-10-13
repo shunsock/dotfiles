@@ -93,6 +93,7 @@
     vim
     curl
     wezterm
+    claude-code
   ];
   virtualisation.docker.enable = true;
 
