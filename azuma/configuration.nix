@@ -75,7 +75,7 @@
     wezterm
     skk-dicts
   ];
-  virtualization.docker.enable = true;
+  virtualisation.docker.enable = true;
 
   programs = {
     git = { enable = true; };
