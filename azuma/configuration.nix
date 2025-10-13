@@ -1,7 +1,5 @@
 { config, pkgs, ... }:
-let
-    skkDictPkg = (pkgs.skk-dicts);
-in
+
 { imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix ];
@@ -33,48 +31,11 @@ in
     LC_MONETARY = "en_US.UTF-8"; LC_NAME = "en_US.UTF-8"; LC_NUMERIC = "en_US.UTF-8"; LC_PAPER = "en_US.UTF-8"; LC_TELEPHONE = 
     "en_US.UTF-8"; LC_TIME = "en_US.UTF-8";
   };
-  i18n.inputMethod = {
-    enable = true;
-    type = "fcitx5";
-    fcitx5 = {
-      addons = with pkgs; [
-        fcitx5-mozc
-        fcitx5-skk
-        fcitx5-gtk
-        fcitx5-configtool
-      ];
-      # ここには addon 固有キーは置かない
-      settings = {
-        # ~/.config/fcitx5/profile 相当
-        inputMethod = {
-          "Groups/0" = {
-            Name = "Default";
-            "Default Layout" = "jp";
-            # 既定 IM（好みで mozc / skk のどちらか）
-            DefaultIM = "skk";
-          };
-          "Groups/0/Items/0" = { Name = "keyboard-jp"; };
-          "Groups/0/Items/1" = { Name = "mozc"; };
-          "Groups/0/Items/2" = { Name = "skk"; };
-          "GroupOrder" = { "0" = "Default"; };
-        };
-      };
-    };
-  };
-
-  # skk アドオンの設定は /etc/xdg に落とす（ユーザ設定より下位なので必要なら ~/.config 側を消す）
-  environment.etc."xdg/fcitx5/conf/skk.conf".text = ''
-    # system-wide fcitx5-skk config
-    # 辞書: 大辞書 + ユーザ辞書（ユーザ辞書は初回に自動生成される）
-    Dictionaries=${skkDictPkg}/share/skk/SKK-JISYO.L,~/.local/share/skk/user.dict
-
-    # 起動モード（好みで）
-    InitialMode=Hiragana
-
-    # 変換候補ウィンドウなど、必要に応じて追加
-    # CandidateWindow=Vertical
-  '';
   
+  i18n.inputMethod = {
+   enabled = "fcitx5";
+   fcitx5.addons = [pkgs.fcitx5-mozc];
+  };
   fonts = {
     fonts = with pkgs; [
       noto-fonts-cjk-serif
