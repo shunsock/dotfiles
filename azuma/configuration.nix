@@ -111,9 +111,6 @@
       viAlias = true;
       vimAlias = true;
     };
-    starship = {
-      enable = true;
-    };
   };
 
   system.stateVersion = "25.05";
