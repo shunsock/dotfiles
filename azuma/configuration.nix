@@ -1,5 +1,7 @@
 { config, pkgs, ... }:
-
+let
+    skkDictPkg = (pkgs.skk-dicts or pkgs.skk-dicts-extra);
+in
 { imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix ];
