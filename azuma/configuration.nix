@@ -103,6 +103,7 @@
     claude-code
   ];
   virtualisation.docker.enable = true;
+  users.extraGroups.docker.members = [ "shunsock" ];
 
   programs = {
     git = { enable = true; };
