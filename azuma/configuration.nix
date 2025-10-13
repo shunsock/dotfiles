@@ -73,7 +73,6 @@
     vim
     curl
     wezterm
-    skk-dicts
   ];
   virtualisation.docker.enable = true;
 
