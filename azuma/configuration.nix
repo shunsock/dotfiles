@@ -5,6 +5,7 @@
     ./hardware-configuration.nix
     ./modules/wezterm.nix
     ./modules/zsh.nix
+    ./modules/neovim.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
@@ -105,12 +106,6 @@
 
   programs = {
     git = { enable = true; };
-    neovim = {
-      enable = true;
-      defaultEditor = true;
-      viAlias = true;
-      vimAlias = true;
-    };
   };
 
   system.stateVersion = "25.05";

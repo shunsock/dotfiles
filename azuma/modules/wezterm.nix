@@ -67,6 +67,18 @@
 
     -- Key bindings
     config.keys = {
+      -- Clipboard operations (Linux standard)
+      {
+        key = 'c',
+        mods = 'CTRL|SHIFT',
+        action = wezterm.action.CopyTo 'Clipboard',
+      },
+      {
+        key = 'v',
+        mods = 'CTRL|SHIFT',
+        action = wezterm.action.PasteFrom 'Clipboard',
+      },
+      -- Window management
       {
         key = 'f',
         mods = 'CTRL',
@@ -85,6 +97,7 @@
           size = { Percent = 20 },
         },
       },
+      -- Pane navigation
       {
         key = 'H',
         mods = 'CTRL',
