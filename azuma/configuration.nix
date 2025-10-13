@@ -98,14 +98,14 @@
 
   # List packages installed in system profile. To search, run: $ nix search wget
   environment.systemPackages = with pkgs; [
-    vim
-    curl
-    gh
-    fastfetch
     claude-code
+    curl
+    fastfetch
+    gh
+    vim
   ];
   virtualisation.docker.enable = true;
-  users.extraGroups.docker.members = [ "shunsock" ];
+  users.users.shunsock.extraGroups = [ "docker" ];
 
   programs = {
     git = { enable = true; };
