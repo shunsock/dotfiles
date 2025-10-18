@@ -17,17 +17,6 @@ alias su='nocorrect su'
 alias date='date +"%Y-%m-%dT%H:%M:%S%z"'
 
 # -------------------------------------------------------------------
-# cd Command
-# -------------------------------------------------------------------
-
-# Note: alias . is removed as it conflicts with source/path operations
-# Use these instead for quick navigation
-alias .='cd ../'
-alias ..='cd ../../'
-alias ...='cd ../../../'
-alias ....='cd ../../../../'
-
-# -------------------------------------------------------------------
 # ls Command
 # NOTE:
 # -F 
