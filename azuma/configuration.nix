@@ -34,9 +34,22 @@
     "en_US.UTF-8"; LC_TIME = "en_US.UTF-8";
   };
   
+  # i18n.inputMethod = {
+  #  enabled = "fcitx5";
+  #  fcitx5.addons = [pkgs.fcitx5-mozc];
+  # };
   i18n.inputMethod = {
-   enabled = "fcitx5";
-   fcitx5.addons = [pkgs.fcitx5-mozc];
+    type = "fcitx5";
+    enable = true;
+    fcitx5 = {
+      waylandFrontend = true;
+      addons = with pkgs; [
+        fcitx5-skk
+        fcitx5-configtool
+        fcitx5-gtk
+        kdePackages.fcitx5-qt
+      ];
+    };
   };
 
   fonts = {
@@ -91,12 +104,15 @@
     curl
     fastfetch
     gh
+    skk-dicts
     vim
   ];
+
   virtualisation.docker.enable = true;
 
   programs = {
     git = { enable = true; };
+    dconf = { enable = true }
   };
 
   system.stateVersion = "25.05";
