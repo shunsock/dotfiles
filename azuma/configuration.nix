@@ -110,7 +110,7 @@
     curl
     fastfetch
     gh
-    skk-dicts
+    (pkgs."skk-dicts")
     vim
   ];
 
