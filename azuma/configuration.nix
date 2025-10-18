@@ -105,7 +105,6 @@
     vim
   ];
   virtualisation.docker.enable = true;
-  users.shunsock.extraGroups = [ "docker" ];
 
   programs = {
     git = { enable = true; };
