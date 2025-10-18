@@ -89,7 +89,7 @@
   users.users.shunsock = {
     isNormalUser = true;
     description = "Shunsuke Tsuchiya";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "docker"];
     shell = pkgs.zsh;
   };
 
@@ -105,7 +105,6 @@
     vim
   ];
   virtualisation.docker.enable = true;
-  users.shunsock.extraGroups = [ "docker" ];
 
   programs = {
     git = { enable = true; };

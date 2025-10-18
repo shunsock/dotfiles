@@ -17,20 +17,6 @@ alias su='nocorrect su'
 alias date='date +"%Y-%m-%dT%H:%M:%S%z"'
 
 # -------------------------------------------------------------------
-# cd Command
-# -------------------------------------------------------------------
-
-# Note: alias . is removed as it conflicts with source/path operations
-# Use these instead for quick navigation
-alias ..='cd ../'
-alias ...='cd ../../'
-alias ....='cd ../../../'
-
-# Legacy aliases (kept for compatibility)
-alias cd2='cd ../..'
-alias cd3='cd ../../..'
-
-# -------------------------------------------------------------------
 # ls Command
 # NOTE:
 # -F 
@@ -45,7 +31,7 @@ alias cd3='cd ../../..'
 #   When used with the -l option, use unit suffixes: Byte, Kilobyte, Megabyte, Gigabyte, Terabyte and Petabyte in order to reduce the number of digits to four or fewer using base 2 for sizes. This option is not defined in IEEE Std 1003.1-2008 (“POSIX.1”).
 # -------------------------------------------------------------------
 
-alias l='ls -Fh'
+alias l='ls'
 
 # Showing hidden files
 alias la='ls -Fha'
