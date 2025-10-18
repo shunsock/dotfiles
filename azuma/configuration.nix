@@ -118,7 +118,6 @@
     curl
     fastfetch
     gh
-    ddskk
     vim
   ];
 
