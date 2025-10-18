@@ -89,7 +89,7 @@
   users.users.shunsock = {
     isNormalUser = true;
     description = "Shunsuke Tsuchiya";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "docker"];
     shell = pkgs.zsh;
   };
 
