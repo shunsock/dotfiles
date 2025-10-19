@@ -32,7 +32,7 @@ tasks:
   run:default:amd:
     desc: "run akatsuki-default-amd (need build:default:amd before run this)"
     cmds:
-      - bash ./entry_point.sh akatsuki-default-arm {{.CLI_ARGS}}
+      - bash ./entry_point.sh akatsuki-default-amd {{.CLI_ARGS}}
     silent: true
 
   build:python:
