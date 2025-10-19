@@ -19,7 +19,7 @@
 
     # Enable Oh My Zsh
     ohMyZsh = {
-      enable = false;
+      enable = true;
       theme = "kennethreitz";
       plugins = [];
     };
