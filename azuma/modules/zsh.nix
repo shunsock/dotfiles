@@ -32,6 +32,8 @@
         source "$f"
       done
 
+      unalias -m '*'
+
       # Load zsh-autosuggestions (must be loaded after other configs)
       source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
     '';
