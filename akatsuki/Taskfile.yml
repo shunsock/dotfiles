@@ -1,7 +1,7 @@
 version: '3'
 
 vars:
-  VERSION: 0.0.1
+  VERSION: 0.0.2
 
 tasks:
   default:
@@ -9,17 +9,30 @@ tasks:
       - task -l
     silent: true
 
-  build:default:
-    desc: "build akatsuki-default"
-    dir: akatsuki-default
+  build:default:arm:
+    desc: "build akatsuki-default-arm"
+    dir: akatsuki-default-arm
     cmds:
-      - docker build -t akatsuki-default .
+      - docker build -t akatsuki-default-arm .
     silent: true
 
-  run:default:
-    desc: "run akatsuki-default (need build:default before run this)"
+  run:default:arm:
+    desc: "run akatsuki-default-arm (need build:default:arm before run this)"
     cmds:
-      - bash ./entry_point.sh akatsuki-default {{.CLI_ARGS}}
+      - bash ./entry_point.sh akatsuki-default-arm {{.CLI_ARGS}}
+    silent: true
+
+  build:default:amd:
+    desc: "build akatsuki-default-amd"
+    dir: akatsuki-default-amd
+    cmds:
+      - docker build -t akatsuki-default-amd .
+    silent: true
+
+  run:default:amd:
+    desc: "run akatsuki-default-amd (need build:default:amd before run this)"
+    cmds:
+      - bash ./entry_point.sh akatsuki-default-arm {{.CLI_ARGS}}
     silent: true
 
   build:python:
@@ -38,9 +51,8 @@ tasks:
   push:
     desc: "build and push all containers"
     cmds:
-      - task push:default
+      - task push:default:arm
       - task push:python
-
 
   push:python:
     desc: "build and push akatsuki-python"
@@ -51,12 +63,12 @@ tasks:
       - docker push "tsuchiya55docker/akatsuki:python-{{.VERSION}}"
     silent: true
 
-  push:default:
+  push:default:arm:
     desc: "build and push akatsuki-default"
-    dir: akatsuki-default
+    dir: akatsuki-default-arm
     cmds:
-      - docker build -t akatsuki-default .
-      - docker tag akatsuki-default tsuchiya55docker/akatsuki:default-{{.VERSION}}
-      - docker push "tsuchiya55docker/akatsuki:default-{{.VERSION}}"
+      - docker build -t akatsuki-default-arm .
+      - docker tag akatsuki-default tsuchiya55docker/akatsuki:default-arm-{{.VERSION}}
+      - docker push "tsuchiya55docker/akatsuki:default-arm-{{.VERSION}}"
     silent: true
 
