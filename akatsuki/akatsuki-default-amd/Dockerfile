@@ -4,7 +4,7 @@
 FROM ubuntu:24.04 AS builder
 
 # 引数の定義
-ARG ARCH=arm64
+ARG ARCH=x86_64
 ARG NEOVIM_VERSION=v0.11.1
 ARG NODE_VERSION=24.x
 
@@ -74,7 +74,6 @@ RUN apt-get update && apt-get install -y \
     wget \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-
 
 # 必要なディレクトリの作成とNvim設定のコピー
 RUN mkdir -p /root/.config/nvim /root/.local/share/nvim/mason
