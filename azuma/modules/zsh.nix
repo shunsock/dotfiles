@@ -26,13 +26,13 @@
 
     # Source custom configuration files
     interactiveShellInit = ''
+      unalias -m '*'
+
       # Source all custom zsh files from /etc/zsh/custom
       setopt extendedglob
       for f in /etc/zsh/custom/**/*.zsh; do
         source "$f"
       done
-
-      unalias -m '*'
 
       # Load zsh-autosuggestions (must be loaded after other configs)
       source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
