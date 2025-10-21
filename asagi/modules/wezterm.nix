@@ -33,7 +33,6 @@
       -- Tab bar settings
       config.window_decorations = "RESIZE"
       config.show_new_tab_button_in_tab_bar = false
-      config.show_close_tab_button_in_tabs = false
       config.colors = {
          tab_bar = {
            inactive_tab_edge = "none",
