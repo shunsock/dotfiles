@@ -52,6 +52,7 @@ tasks:
     desc: "build and push all containers"
     cmds:
       - task push:default:arm
+      - task push:default:amd
       - task push:python
 
   push:python:
@@ -68,7 +69,15 @@ tasks:
     dir: akatsuki-default-arm
     cmds:
       - docker build -t akatsuki-default-arm .
-      - docker tag akatsuki-default tsuchiya55docker/akatsuki:default-arm-{{.VERSION}}
+      - docker tag akatsuki-default-arm tsuchiya55docker/akatsuki:default-arm-{{.VERSION}}
       - docker push "tsuchiya55docker/akatsuki:default-arm-{{.VERSION}}"
     silent: true
 
+  push:default:amd:
+    desc: "build and push akatsuki-default"
+    dir: akatsuki-default-amd
+    cmds:
+      - docker build -t akatsuki-default-amd .
+      - docker tag akatsuki-default-amd tsuchiya55docker/akatsuki:default-amd-{{.VERSION}}
+      - docker push "tsuchiya55docker/akatsuki:default-amd-{{.VERSION}}"
+    silent: true
