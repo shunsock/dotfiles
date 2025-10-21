@@ -41,10 +41,6 @@
     LC_TIME = "en_US.UTF-8";
   };
   
-  # i18n.inputMethod = {
-  #  enabled = "fcitx5";
-  #  fcitx5.addons = [pkgs.fcitx5-mozc];
-  # };
   i18n.inputMethod = {
     type = "fcitx5";
     enable = true;
@@ -118,6 +114,7 @@
     curl
     fastfetch
     gh
+    go-task
     vim
   ];
 
