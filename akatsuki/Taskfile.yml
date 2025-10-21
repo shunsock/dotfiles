@@ -52,6 +52,7 @@ tasks:
     desc: "build and push all containers"
     cmds:
       - task push:default:arm
+      - task push:default:amd
       - task push:python
 
   push:python:
