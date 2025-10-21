@@ -69,7 +69,7 @@ tasks:
     dir: akatsuki-default-arm
     cmds:
       - docker build -t akatsuki-default-arm .
-      - docker tag akatsuki-default tsuchiya55docker/akatsuki:default-arm-{{.VERSION}}
+      - docker tag akatsuki-default-arm tsuchiya55docker/akatsuki:default-arm-{{.VERSION}}
       - docker push "tsuchiya55docker/akatsuki:default-arm-{{.VERSION}}"
     silent: true
 
