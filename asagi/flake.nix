@@ -37,6 +37,7 @@
                 "aquaskk"
                 "arc"
                 "docker"
+                "steam"
                 "wezterm"
                 "zoom"
               ];
