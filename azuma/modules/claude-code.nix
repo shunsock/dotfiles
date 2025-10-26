@@ -37,5 +37,5 @@
 
     "defaultMode": "askEdits",
   }
-  ''
+  '';
 }
