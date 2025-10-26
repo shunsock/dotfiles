@@ -123,6 +123,7 @@
   programs = {
     git = { enable = true; };
     dconf = { enable = true; };
+    starship = { enable = true; };
   };
 
   system.stateVersion = "25.05";
