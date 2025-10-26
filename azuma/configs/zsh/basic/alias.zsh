@@ -34,6 +34,7 @@ alias date='date +"%Y-%m-%dT%H:%M:%S%z"'
 # Showing hidden files
 alias la='ls -Fha'
 
+unalias l
 alias l='ls'
 
 # -------------------------------------------------------------------
