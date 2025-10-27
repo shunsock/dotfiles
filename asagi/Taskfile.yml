@@ -1,5 +1,8 @@
 version: '3'
 
+env:
+  NIXPKGS_ALLOW_UNFREE: 1
+
 tasks:
   init:
     desc: Initialize the project by installing nix-darwin system-wide
@@ -15,13 +18,11 @@ tasks:
     cmds:
       - bash script/remove_backup.sh
       - sudo darwin-rebuild switch --flake .#shunsock-darwin --impure
-    env:
-      NIXPKGS_ALLOW_UNFREE: 1
 
   build:
     desc: Build and validate configuration without applying
     cmds:
-      - nix build .#darwinConfigurations.shunsock-darwin.system
+      - nix build .#darwinConfigurations.shunsock-darwin.system --impure
 
   check:
     desc: Validate flake configuration
