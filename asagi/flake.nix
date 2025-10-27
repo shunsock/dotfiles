@@ -1,6 +1,7 @@
 {
   description = "Flake for macOS"; inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-25.05";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager/release-25.05";
@@ -9,13 +10,24 @@
     nixpkgs-firefox-darwin.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, nix-darwin, home-manager, nixpkgs-firefox-darwin, ... }:
+  outputs = { 
+    self,
+    nixpkgs,
+    nixpkgs-unstable,
+    nix-darwin,
+    home-manager,
+    nixpkgs-firefox-darwin,
+    ...
+  }:
     let
       system = "aarch64-darwin";
       pkgs = import nixpkgs {
         inherit system;
         config = { allowUnfree = true; };
         overlays = [ nixpkgs-firefox-darwin.overlay ];
+      };
+      pkgsUnstable = import nixpkgs-unstable {
+        inherit system;
       };
     in {
       darwinConfigurations."shunsock-darwin" = nix-darwin.lib.darwinSystem {
@@ -49,6 +61,9 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            extraSpecialArgs = {
+                inherit pkgsUnstable;
+            };
             home-manager.users.shunsock = import ./home.nix;
             home-manager.backupFileExtension = "hm-backup";
           }
