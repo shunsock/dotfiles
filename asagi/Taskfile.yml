@@ -14,7 +14,9 @@ tasks:
     desc: Apply the configuration with darwin-rebuild
     cmds:
       - bash script/remove_backup.sh
-      - sudo darwin-rebuild switch --flake .#shunsock-darwin
+      - sudo darwin-rebuild switch --flake .#shunsock-darwin --impure
+    env:
+      NIXPKGS_ALLOW_UNFREE: 1
 
   build:
     desc: Build and validate configuration without applying
