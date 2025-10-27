@@ -59,13 +59,18 @@
           # Home Manager integration
           home-manager.darwinModules.home-manager
           {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            extraSpecialArgs = {
+            home-manager = {
+              useGlobalPkgs   = true;
+              useUserPackages = true;
+
+              extraSpecialArgs = {
                 inherit pkgsUnstable;
+              };
+
+              users.shunsock = import ./home.nix;
+
+              backupFileExtension = "hm-backup";
             };
-            home-manager.users.shunsock = import ./home.nix;
-            home-manager.backupFileExtension = "hm-backup";
           }
         ];
       };
