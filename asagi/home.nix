@@ -1,11 +1,12 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, pkgsUnstable, lib, ... }:
 
 {
   imports = [
+    ./modules/claude.nix
+    ./modules/firefox.nix
+    ./modules/skk.nix
     ./modules/wezterm.nix
     ./modules/zsh.nix
-    ./modules/skk.nix
-    ./modules/firefox.nix
   ];
 
   # ユーザー情報
@@ -18,7 +19,6 @@
 
   # インストールするパッケージ
   home.packages = with pkgs; [
-    claude-code
     dotnet-sdk_10
     gh
     git
@@ -27,5 +27,7 @@
     hyperfine
     rustup
     tree
+  ] ++ [
+    pkgsUnstable.claude-code
   ];
 }

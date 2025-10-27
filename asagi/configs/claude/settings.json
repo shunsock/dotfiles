@@ -1,0 +1,65 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(gh api:*)",
+      "Bash(git diff:*)",
+      "Bash(man:*)",
+      "Bash(task:*)",
+      "Bash(tree:*)",
+      "Bash(which:*)",
+      "Glob",
+      "Grep",
+      "SlashCommand",
+      "TodoWrite",
+      "WebFetch",
+      "WebSearch"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(**/.env*)",
+      "Read(**/env*)",
+
+      "Read(**/*.cert)",
+      "Read(**/*.crt)",
+      "Read(**/*.key)",
+      "Read(**/*.pem)",
+      "Read(**/secret/**)",
+      "Read(**/secrets/**)",
+      "Read(**/credential/**)",
+      "Read(**/credentials/**)",
+
+      "Bash(rm -rf /)",
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~)",
+      "Bash(rm -rf $HOME)",
+
+      "Bash(sudo:*)",
+      "Bash(diskutil:*)",
+      "Bash(chmod:*)",
+      "Bash(chown:*)",
+      "Bash(dd:*)",
+      "Bash(mkfs:*)",
+      "Bash(mount:*)",
+      "Bash(ln -s:*)",
+
+      "WebFetch(domain:github.com)"
+    ],
+    "ask": [
+      "Bash(gh:*)",
+      "Bash(git:*)",
+      "Edit(*)",
+      "Write(*)"
+    ]
+  },
+
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
+    "ANTHROPIC_MODEL": "claude-sonnet-4-5-20250929",
+    "BASH_DEFAULT_TIMEOUT_MS": "180000"
+  },
+
+  "includeCoAuthoredBy": true,
+  "defaultMode": "interactive"
+}
+
