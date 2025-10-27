@@ -28,6 +28,7 @@
       };
       pkgsUnstable = import nixpkgs-unstable {
         inherit system;
+        config = { allowUnfree = true; };
       };
     in {
       darwinConfigurations."shunsock-darwin" = nix-darwin.lib.darwinSystem {
