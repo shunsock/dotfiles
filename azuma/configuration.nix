@@ -3,9 +3,10 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ./modules/claude-code.nix
+    ./modules/neovim.nix
     ./modules/wezterm.nix
     ./modules/zsh.nix
-    ./modules/neovim.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
@@ -110,7 +111,6 @@
 
   # List packages installed in system profile. To search, run: $ nix search wget
   environment.systemPackages = with pkgs; [
-    claude-code
     curl
     fastfetch
     gh
@@ -123,6 +123,7 @@
   programs = {
     git = { enable = true; };
     dconf = { enable = true; };
+    starship = { enable = true; };
   };
 
   system.stateVersion = "25.05";

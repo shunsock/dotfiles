@@ -19,7 +19,7 @@
 
     # Enable Oh My Zsh
     ohMyZsh = {
-      enable = true;
+      enable = false;
       theme = "kennethreitz";
       plugins = [];
     };
@@ -29,10 +29,10 @@
       unalias -m '*'
 
       # Source all custom zsh files from /etc/zsh/custom
-      setopt extendedglob
-      for f in /etc/zsh/custom/**/*.zsh; do
-        source "$f"
-      done
+      # setopt extendedglob
+      # for f in /etc/zsh/custom/**/*.zsh; do
+      #  source "$f"
+      # done
 
       # Load zsh-autosuggestions (must be loaded after other configs)
       source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
