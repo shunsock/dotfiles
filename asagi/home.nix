@@ -25,6 +25,7 @@
     go-task
     hackgen-nf-font
     hyperfine
+    mise
     rustup
     tree
   ] ++ [
