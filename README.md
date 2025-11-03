@@ -30,17 +30,16 @@ A comprehensive development environment configuration using Nix Darwin, Go-based
 
 ```
 dotfiles/
-├── asagi/          # Primary Nix Darwin configuration
-├── homem/          # Legacy Go-based configuration manager
-├── yamabuki/       # Containerized Neovim environment
-└── Taskfile.yml    # Legacy task automation
+├── asagi/          # Nix Darwin configuration for macOS
+├── azuma/          # NixOS configuration for Linux
+└── akatsuki/       # Docker container environments
 ```
 
 ## Projects
 
-### 🚀 Asagi (Primary System)
+### 🚀 Asagi
 
-**Modern Nix Darwin configuration for macOS**
+**Nix Darwin configuration for macOS**
 
 - **Target**: Apple Silicon Macs (aarch64-darwin)
 - **Features**: Declarative system configuration, package management, modular shell setup
@@ -51,7 +50,7 @@ dotfiles/
 - Home Manager integration
 - Modular Zsh configuration with automatic loading
 - SKK Japanese input support
-- Development tools: Claude Code, .NET 9 SDK, Rust, Go Task
+- Development tools: Claude Code, .NET 10 SDK, Rust, Go Task, mise
 
 **Quick Commands**:
 ```bash
@@ -61,39 +60,47 @@ task build     # Test build without applying
 task validate  # Comprehensive validation
 ```
 
-### 🏗️ Homem (Legacy)
+### 🐧 Azuma
 
-**Go-based dotfiles synchronization system**
+**NixOS configuration for Linux systems**
 
-- **Language**: Go 1.22.7
-- **Features**: Type-safe file operations, multi-tool configuration management
-- **Status**: ⚠️ Deprecated
+- **Target**: x86_64-linux
+- **Features**: Complete Linux desktop environment with GNOME, development tools
+- **Status**: ✅ Active
 
-**Architecture**:
-- 5 executable entry points (nix, nvim, vscode, wezterm, zsh)
-- Type-safe path handling with custom types
-- Comprehensive test coverage (70.6% handlers, 87.1% path utilities)
+**Key Components**:
+- NixOS system configuration with flakes
+- GNOME Desktop Environment
+- Fcitx5 Japanese input (SKK)
+- Docker support
+- Development tools: WezTerm, Neovim, Claude Code, Git
 
-**Development Commands**:
+**Quick Commands**:
 ```bash
-task fmt      # Format Go code
-task test     # Run tests with coverage
-task build    # Build all binaries
+cd azuma/
+sudo nixos-rebuild switch --flake .#myNixOS
+nix flake update
 ```
 
-### 🐳 Yamabuki (Neovim Container)
+### 🐳 Akatsuki
 
-**Containerized Neovim development environment**
+**Docker container environments for development**
 
-- **Base**: Alpine Linux with Neovim
-- **Features**: Lua-based plugin system, portable development environment
-- **Status**: ✅ Active for development
+- **Base**: Ubuntu 24.04
+- **Features**: Pre-configured development containers with Neovim
+- **Status**: ✅ Active
 
-**Usage**:
+**Available Containers**:
+- `akatsuki-default-arm` - ARM architecture
+- `akatsuki-default-amd` - AMD/Intel architecture
+- `akatsuki-python` - Python development environment
+
+**Quick Commands**:
 ```bash
-cd yamabuki/
-docker build -t nvimc .
-docker run -it --rm -v "$PWD":/workspace nvimc
+cd akatsuki/
+task build:default:arm    # Build ARM container
+task run:default:arm      # Run ARM container
+task build:python         # Build Python container
 ```
 
 ## Development Environment
@@ -102,16 +109,21 @@ docker run -it --rm -v "$PWD":/workspace nvimc
 
 **System Packages** (via Asagi):
 - Claude Code - AI-powered development assistant
-- .NET 9 SDK - Cross-platform development
+- .NET 10 SDK - Cross-platform development
 - Git & GitHub CLI - Version control
 - Go Task - Task automation
 - Rust toolchain - Systems programming
 - Hyperfine - Command-line benchmarking
 - Tree - Directory visualization
+- mise - Polyglot runtime manager
 
 **Homebrew Casks**:
 - WezTerm - GPU-accelerated terminal
 - AquaSKK - Japanese input method
+- Arc - Modern web browser
+- Docker - Container platform
+- Steam - Gaming platform
+- Zoom - Video conferencing
 
 ### Shell Configuration
 
@@ -138,22 +150,24 @@ configs/zsh/
 
 ### Daily Development
 
-1. **System Updates**:
+1. **macOS System Updates** (Asagi):
    ```bash
    cd asagi/
    task update    # Update dependencies
    task apply     # Apply changes
    ```
 
-2. **Configuration Changes**:
-   - Edit files in `asagi/configs/`
-   - Test with `task build`
-   - Apply with `task apply`
-
-3. **Container Development**:
+2. **Linux System Updates** (Azuma):
    ```bash
-   cd yamabuki/
-   docker run -it --rm -v "$PWD":/workspace nvimc
+   cd azuma/
+   sudo nixos-rebuild switch --flake .#myNixOS
+   ```
+
+3. **Container Development** (Akatsuki):
+   ```bash
+   cd akatsuki/
+   task build:default:arm
+   task run:default:arm /path/to/workspace
    ```
 
 ### Adding New Packages
@@ -174,36 +188,40 @@ Create new `.zsh` files in `asagi/configs/zsh/`:
 
 ## Architecture Notes
 
+### Configuration Management
+
+**Declarative Systems**:
+- **Asagi** (macOS): Nix Darwin + Home Manager
+- **Azuma** (Linux): NixOS with flakes
+
+Both use modular imports to organize configurations by tool, making them maintainable and reusable.
+
+### Multi-Platform Support
+
+This repository supports multiple platforms:
+- **macOS**: Native system via Nix Darwin (aarch64-darwin)
+- **Linux**: Native system via NixOS (x86_64-linux)
+- **Containers**: Portable environments via Docker (multi-arch)
+
 ### Configuration Flow
 
-1. **Nix Darwin** manages system-level configuration
-2. **Home Manager** handles user-space configuration  
-3. **Modular imports** organize configuration by tool
-4. **Automatic loading** reduces manual configuration management
+1. **Nix-based systems** manage both system and user-space configuration
+2. **Modular imports** organize configuration by tool
+3. **Automatic loading** reduces manual configuration management
+4. **Flakes** ensure reproducible builds
 
-### Type Safety
+## Project Status
 
-The legacy Go system demonstrates type-safe configuration management:
-- `FilePath` - Guarantees file existence
-- `DirectoryPath` - Guarantees directory existence
-- `NonExistentDirectoryPath` - Safe for creation operations
-
-### Environment Variables
-
-All systems support environment variable expansion (e.g., `$HOME`, `$ZSH`) for portability across different user environments.
-
-## Migration Status
-
-- **✅ Current**: Asagi (Nix Darwin) - Primary development system
-- **⚠️ Deprecated**: Homem (Go) - Legacy system, reference only
-- **✅ Specialized**: Yamabuki (Container) - Development environment
+- **✅ Active**: Asagi - macOS system configuration
+- **✅ Active**: Azuma - Linux system configuration
+- **✅ Active**: Akatsuki - Docker container environments
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Sudo permissions**: Some commands require manual execution
-2. **Nix Darwin not found**: Run `task init` first
+1. **Sudo permissions**: Some commands (Nix Darwin/NixOS rebuilds) require manual execution
+2. **Nix not found**: Install Nix package manager first
 3. **Container issues**: Ensure Docker is running
 
 ### Getting Help
