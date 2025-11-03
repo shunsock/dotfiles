@@ -1,5 +1,0 @@
-vim.api.nvim_set_keymap('n', 'gr', '<Cmd>BufferLineCyclePrev<CR>', {})
-vim.api.nvim_set_keymap('n', 'gt', '<Cmd>BufferLineCycleNext<CR>', {})
-vim.api.nvim_set_keymap('n', '<C-\'>', ':bdelete<CR>', {})
-vim.api.nvim_set_keymap('n', '<C-]>', ':lua CloseRightBuffers()<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<C-[>', ':lua CloseLeftBuffers()<CR>', { noremap = true, silent = true })
