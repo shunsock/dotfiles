@@ -31,6 +31,8 @@
         config = { allowUnfree = true; };
       };
     in {
+      formatter.${system} = pkgs.nixfmt-rfc-style;
+
       darwinConfigurations."shunsock-darwin" = nix-darwin.lib.darwinSystem {
         inherit system;
         modules = [
