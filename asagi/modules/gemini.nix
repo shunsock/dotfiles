@@ -2,7 +2,7 @@
 
 {
   home.file.".gemini" = {
-    source    = ../configs/claude;
+    source    = ../configs/gemini;
     recursive = true;
   };
 }
