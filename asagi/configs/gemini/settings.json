@@ -1,0 +1,9 @@
+{
+  "vimMode": true,
+  "fileFiltering": {
+    "respectGitIgnore": true,
+    "enableRecursiveFileSearch": false
+  },
+  "model": "gemini-2.5-flash",
+  "selectedAuthType": "oauth"
+}
