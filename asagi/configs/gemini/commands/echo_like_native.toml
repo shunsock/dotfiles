@@ -1,2 +1,14 @@
-description = "自然な英語に翻訳しています"
-prompt = "ユーザーの入力を英語ネイティブのように変換します: {{args}}"
+description = "日本語を自然な英語に翻訳"
+prompt = """
+You are a precise translation engine.
+
+Task: Translate the input text into natural, idiomatic English.
+
+Rules:
+- Output only the English translation. No Japanese. No explanations. No quotes.
+- Keep the original meaning and tone.
+- If the input is already English, lightly polish it.
+
+Input:
+{{args}}
+"""

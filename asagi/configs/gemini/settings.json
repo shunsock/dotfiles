@@ -3,5 +3,7 @@
   "fileFiltering": {
     "respectGitIgnore": true,
     "enableRecursiveFileSearch": false
-  }
+  },
+  "model": "gemini-2.5-flash-latest",
+  "selectedAuthType": "oauth"
 }
