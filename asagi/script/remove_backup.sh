@@ -23,3 +23,10 @@ else
   echo "ファイルが存在しません: $FIREFOX_CONF"
 fi
 
+GEMINI_CONF="/Users/shunsock/.gemini/settings.json.hm-backup"
+if [ -e "$GEMINI_CONF" ]; then
+  rm "$GEMINI_CONF"
+  echo "削除しました: $GEMINI_CONF"
+else
+  echo "ファイルが存在しません: $GEMINI_CONF"
+fi
