@@ -29,18 +29,22 @@
     with pkgs;
     [
       dotnet-sdk_10
+      fzf
       gh
+      ghq
       git
       go-task
       hackgen-nf-font
       hyperfine
       mise
       nixfmt-rfc-style
+      npins
       rustup
       tree
     ]
     ++ [
       pkgsUnstable.claude-code
+      pkgsUnstable.gcloud-sdk
       pkgsUnstable.gemini-cli
     ];
 }
