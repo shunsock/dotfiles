@@ -14,7 +14,6 @@
   home.username      = "shunsock";
   home.homeDirectory = lib.mkForce "/Users/shunsock";
   home.stateVersion  = "23.11";
-  home.packages = [ nixfmt-rfc-style ];
 
   # フォント設定
   fonts.fontconfig.enable = true;
