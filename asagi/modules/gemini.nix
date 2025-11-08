@@ -2,8 +2,7 @@
 
 {
   home.file.".gemini" = {
-    source    = ../configs/gemini;
+    source = ../configs/gemini;
     recursive = true;
   };
 }
-

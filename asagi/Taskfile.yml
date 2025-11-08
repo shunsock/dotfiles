@@ -36,3 +36,8 @@ tasks:
     deps:
       - build
       - check
+
+  format:
+    desc: Format Nix Settings
+    cmds:
+      - nix fmt

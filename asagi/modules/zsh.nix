@@ -2,7 +2,7 @@
 
 {
   # zsh 設定ファイルを再帰的に配置
-  home.file.".config/zsh".source    = ../configs/zsh;
+  home.file.".config/zsh".source = ../configs/zsh;
   home.file.".config/zsh".recursive = true;
 
   # Zsh関連パッケージ
@@ -17,9 +17,9 @@
 
     # Oh My Zsh を有効化しテーマを設定
     "oh-my-zsh" = {
-      enable  = true;
-      theme   = "kennethreitz";
-      plugins = [];
+      enable = true;
+      theme = "kennethreitz";
+      plugins = [ ];
     };
 
     # ~/.config/zsh 以下を再帰的に source

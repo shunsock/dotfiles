@@ -1,5 +1,6 @@
 {
-  description = "Flake for macOS"; inputs = {
+  description = "Flake for macOS";
+  inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-25.05";
@@ -10,27 +11,35 @@
     nixpkgs-firefox-darwin.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { 
-    self,
-    nixpkgs,
-    nixpkgs-unstable,
-    nix-darwin,
-    home-manager,
-    nixpkgs-firefox-darwin,
-    ...
-  }:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      nixpkgs-unstable,
+      nix-darwin,
+      home-manager,
+      nixpkgs-firefox-darwin,
+      ...
+    }:
     let
       system = "aarch64-darwin";
       pkgs = import nixpkgs {
         inherit system;
-        config = { allowUnfree = true; };
+        config = {
+          allowUnfree = true;
+        };
         overlays = [ nixpkgs-firefox-darwin.overlay ];
       };
       pkgsUnstable = import nixpkgs-unstable {
         inherit system;
-        config = { allowUnfree = true; };
+        config = {
+          allowUnfree = true;
+        };
       };
-    in {
+    in
+    {
+      formatter.${system} = pkgs.nixfmt-rfc-style;
+
       darwinConfigurations."shunsock-darwin" = nix-darwin.lib.darwinSystem {
         inherit system;
         modules = [
@@ -41,7 +50,7 @@
             nixpkgs.config.allowUnfree = true;
             ids.gids.nixbld = 350;
           }
-          
+
           # Homebrew configuration
           {
             homebrew = {
@@ -56,12 +65,12 @@
               ];
             };
           }
-          
+
           # Home Manager integration
           home-manager.darwinModules.home-manager
           {
             home-manager = {
-              useGlobalPkgs   = true;
+              useGlobalPkgs = true;
               useUserPackages = true;
 
               extraSpecialArgs = {
@@ -77,4 +86,3 @@
       };
     };
 }
-

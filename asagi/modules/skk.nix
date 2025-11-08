@@ -2,7 +2,7 @@
 
 {
   home.file."Library/Application Support/AquaSKK" = {
-    source    = ../configs/skk;
+    source = ../configs/skk;
     recursive = true;
   };
 }

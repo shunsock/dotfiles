@@ -24,17 +24,25 @@
 
       ExtensionSettings = {
         "bitwarden@bitwarden.com" = {
-          install_url       = "https://addons.mozilla.org/firefox/downloads/latest/bitwarden-password-manager/latest.xpi";
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/bitwarden-password-manager/latest.xpi";
           installation_mode = "force_installed";
         };
       };
 
       Preferences = {
-        "sidebar.revamp"         = { Value = true; Status = "locked"; };
-        "sidebar.verticalTabs"   = { Value = true; Status = "locked"; };
-        "sidebar.position_start" = { Value = false; Status = "locked"; };
+        "sidebar.revamp" = {
+          Value = true;
+          Status = "locked";
+        };
+        "sidebar.verticalTabs" = {
+          Value = true;
+          Status = "locked";
+        };
+        "sidebar.position_start" = {
+          Value = false;
+          Status = "locked";
+        };
       };
     };
   };
 }
-

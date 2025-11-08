@@ -1,4 +1,10 @@
-{ config, pkgs, pkgsUnstable, lib, ... }:
+{
+  config,
+  pkgs,
+  pkgsUnstable,
+  lib,
+  ...
+}:
 
 {
   imports = [
@@ -11,26 +17,30 @@
   ];
 
   # ユーザー情報
-  home.username      = "shunsock";
+  home.username = "shunsock";
   home.homeDirectory = lib.mkForce "/Users/shunsock";
-  home.stateVersion  = "23.11";
+  home.stateVersion = "23.11";
 
   # フォント設定
   fonts.fontconfig.enable = true;
 
   # インストールするパッケージ
-  home.packages = with pkgs; [
-    dotnet-sdk_10
-    gh
-    git
-    go-task
-    hackgen-nf-font
-    hyperfine
-    mise
-    rustup
-    tree
-  ] ++ [
-    pkgsUnstable.claude-code
-    pkgsUnstable.gemini-cli
-  ];
+  home.packages =
+    with pkgs;
+    [
+      dotnet-sdk_10
+      gh
+      git
+      go-task
+      hackgen-nf-font
+      hyperfine
+      mise
+      nixfmt-rfc-style
+      rustup
+      tree
+    ]
+    ++ [
+      pkgsUnstable.claude-code
+      pkgsUnstable.gemini-cli
+    ];
 }
