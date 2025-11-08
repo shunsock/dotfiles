@@ -30,5 +30,6 @@
     tree
   ] ++ [
     pkgsUnstable.claude-code
+    pkgsUnstable.gemini-cli-bin
   ];
 }
