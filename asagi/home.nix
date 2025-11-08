@@ -44,7 +44,7 @@
     ]
     ++ [
       pkgsUnstable.claude-code
-      pkgsUnstable.gcloud-sdk
+      pkgsUnstable.google-cloud-sdk
       pkgsUnstable.gemini-cli
     ];
 }
