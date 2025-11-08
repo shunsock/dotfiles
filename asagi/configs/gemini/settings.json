@@ -1,1 +1,7 @@
-{}
+{
+  "vimMode": true,
+  "fileFiltering": {
+    "respectGitIgnore": true,
+    "enableRecursiveFileSearch": false
+  }
+}
