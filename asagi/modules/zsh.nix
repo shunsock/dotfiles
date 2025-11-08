@@ -25,8 +25,7 @@
       unalias -m '*' # 🗑️👋 trash auto added aliases
 
       setopt extendedglob
-      setopt null_glob
-      for f in $ZDOTDIR/**/*.zsh(.N); do
+      for f in $HOME/.config/zsh/**/*.zsh; do
         source "$f"
       done
     '';
