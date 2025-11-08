@@ -35,9 +35,9 @@
       hackgen-nf-font
       hyperfine
       mise
+      nixfmt-rfc-style
       rustup
       tree
-      nixfmt-rfc-style
     ]
     ++ [
       pkgsUnstable.claude-code
