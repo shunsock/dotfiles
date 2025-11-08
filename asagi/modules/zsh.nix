@@ -14,6 +14,8 @@
   # Zsh と Oh My Zsh の設定
   programs.zsh = {
     enable = true;
+    syntaxHighlighting.enable = true;
+    autosuggestion.enable = true;
 
     # Oh My Zsh を有効化しテーマを設定
     "oh-my-zsh" = {
@@ -24,13 +26,11 @@
 
     # ~/.config/zsh 以下を再帰的に source
     initContent = ''
+      unalias -m '*'
       setopt extendedglob
       for f in $HOME/.config/zsh/**/*.zsh; do
         source "$f"
       done
-
-      # zsh-autosuggestions を最後に読み込み
-      source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
     '';
   };
 }
