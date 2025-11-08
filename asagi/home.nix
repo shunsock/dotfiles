@@ -30,6 +30,7 @@
     mise
     rustup
     tree
+    nixfmt-rfc-style
   ] ++ [
     pkgsUnstable.claude-code
     pkgsUnstable.gemini-cli
