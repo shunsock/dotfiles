@@ -41,6 +41,7 @@
       npins
       rustup
       tree
+      wthrr
     ]
     ++ [
       pkgsUnstable.claude-code
