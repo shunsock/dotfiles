@@ -43,6 +43,7 @@
       tree
       wthrr
       yazi
+      zoxide
     ]
     ++ [
       pkgsUnstable.claude-code
