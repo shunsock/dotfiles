@@ -42,6 +42,7 @@
       rustup
       tree
       wthrr
+      yazi
     ]
     ++ [
       pkgsUnstable.claude-code
