@@ -46,7 +46,7 @@
           # System configuration
           {
             system.stateVersion = 4;
-            system.primaryUser = "shunsock";
+            system.primaryUser = "shunsuke.tsuchiya";
             nixpkgs.config.allowUnfree = true;
             ids.gids.nixbld = 350;
           }
@@ -77,7 +77,7 @@
                 inherit pkgsUnstable;
               };
 
-              users.shunsock = import ./home.nix;
+              users."shunsuke.tsuchiya" = import ./home.nix;
 
               backupFileExtension = "hm-backup";
             };

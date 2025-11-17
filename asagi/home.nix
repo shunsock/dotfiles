@@ -17,8 +17,8 @@
   ];
 
   # ユーザー情報
-  home.username = "shunsock";
-  home.homeDirectory = lib.mkForce "/Users/shunsock";
+  home.username = "shunsuke.tsuchiya";
+  home.homeDirectory = lib.mkForce "/Users/shunsuke.tsuchiya";
   home.stateVersion = "23.11";
 
   # フォント設定
