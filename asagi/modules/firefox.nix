@@ -14,6 +14,12 @@
         "intl.accept_languages" = "en-US, en";
         "browser.theme.selected" = "firefox-compact-dark@mozilla.org-2";
         "browser.in-content.dark-mode" = true;
+
+        # Enable Firefox's built-in wallpaper feature
+        "browser.newtabpage.activity-stream.newtabWallpapers.enabled" = true;
+        "browser.newtabpage.activity-stream.newtabWallpapers.v2.enabled" = true;
+        "browser.newtabpage.activity-stream.newtabWallpapers.customWallpaper.enabled" = true;
+        "browser.newtabpage.activity-stream.newtabWallpapers.customColor.enabled" = true;
       };
     };
 
