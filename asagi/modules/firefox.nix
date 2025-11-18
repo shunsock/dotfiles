@@ -15,12 +15,18 @@
         "browser.theme.selected" = "firefox-compact-dark@mozilla.org-2";
         "browser.in-content.dark-mode" = true;
         "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+
+        # Disable Firefox's built-in wallpaper feature
+        "browser.newtabpage.activity-stream.newtabWallpapers.enabled" = false;
+        "browser.newtabpage.activity-stream.newtabWallpapers.v2.enabled" = false;
+        "browser.newtabpage.activity-stream.newtabWallpapers.customColor.enabled" = false;
+        "browser.newtabpage.activity-stream.newtabWallpapers.customWallpaper.enabled" = false;
       };
 
       userContent = pkgs.writeText "userContent.css" ''
         @-moz-document url-prefix(about:home), url-prefix(about:newtab) {
           body {
-            background: url("file://${../image/firefox_background.jpg}") !important;
+            background: url("firefox_background.jpg") !important;
             background-size: cover !important;
             background-repeat: no-repeat !important;
             background-position: center center !important;
@@ -56,5 +62,10 @@
         };
       };
     };
+  };
+
+  # Copy background image to Firefox chrome directory (macOS path)
+  home.file."Library/Application Support/Firefox/Profiles/default/chrome/firefox_background.jpg" = {
+    source = ../image/firefox_background.jpg;
   };
 }
