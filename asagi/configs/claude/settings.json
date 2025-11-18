@@ -2,18 +2,20 @@
   "permissions": {
     "allow": [
       "Bash(cat:*)",
-      "Bash(gh api:*)",
-      "Bash(git diff:*)",
+      "Bash(gh:*)",
+      "Bash(git:*)",
       "Bash(man:*)",
       "Bash(task:*)",
       "Bash(tree:*)",
       "Bash(which:*)",
+      "Edit(*)",
       "Glob",
       "Grep",
       "SlashCommand",
       "TodoWrite",
       "WebFetch",
-      "WebSearch"
+      "WebSearch",
+      "Write(*)",
     ],
     "deny": [
       "Read(.env)",
@@ -46,10 +48,10 @@
       "WebFetch(domain:github.com)"
     ],
     "ask": [
-      "Bash(gh:*)",
-      "Bash(git:*)",
-      "Edit(*)",
-      "Write(*)"
+      "Bash(git -rm:*)",
+      "Bash(git merge:*)",
+      "Bash(git push -f:*)",
+      "Bash(git revert:*)",
     ]
   },
 
