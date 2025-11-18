@@ -18,6 +18,8 @@
         # Enable Firefox's built-in wallpaper feature
         "browser.newtabpage.activity-stream.newtabWallpapers.enabled" = true;
         "browser.newtabpage.activity-stream.newtabWallpapers.v2.enabled" = true;
+        "browser.newtabpage.activity-stream.newtabWallpapers.customWallpaper.enabled" = true;
+        "browser.newtabpage.activity-stream.newtabWallpapers.customColor.enabled" = true;
       };
     };
 
