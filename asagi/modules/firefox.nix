@@ -14,7 +14,6 @@
         "intl.accept_languages" = "en-US, en";
         "browser.theme.selected" = "firefox-compact-dark@mozilla.org-2";
         "browser.in-content.dark-mode" = true;
-        "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
       };
     };
 
