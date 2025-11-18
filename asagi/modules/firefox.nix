@@ -14,7 +14,19 @@
         "intl.accept_languages" = "en-US, en";
         "browser.theme.selected" = "firefox-compact-dark@mozilla.org-2";
         "browser.in-content.dark-mode" = true;
+        "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
       };
+
+      userContent = pkgs.writeText "userContent.css" ''
+        @-moz-document url-prefix(about:home), url-prefix(about:newtab) {
+          body {
+            background: url("file://${../image/firefox_background.jpg}") !important;
+            background-size: cover !important;
+            background-repeat: no-repeat !important;
+            background-position: center center !important;
+          }
+        }
+      '';
     };
 
     policies = {
