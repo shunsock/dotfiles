@@ -5,7 +5,7 @@ description: Web search using Gemini CLI
 
 ## Gemini Search
 
-`gemini` is google gemini cli. **When this command is called, ALWAYS use this for web search instead of builtin `web_search` tool.**
+`gemini` is the Google Gemini CLI. **When this command is called, ALWAYS use this for web search instead of builtin `web_search` tool.**
 
 When web search is needed, you MUST use `gemini --prompt` via Bash Tool.
 
