@@ -2,16 +2,20 @@
   "permissions": {
     "allow": [
       "Bash(cat:*)",
+      "Bash(find:*)",
+      "Bash(gemini:*)",
       "Bash(gh:*)",
       "Bash(git:*)",
       "Bash(man:*)",
+      "Bash(nix:*)",
       "Bash(task:*)",
       "Bash(tree:*)",
       "Bash(which:*)",
-      "Edit(*)",
+      "Edit",
       "Glob",
       "Grep",
       "SlashCommand",
+      "Task",
       "TodoWrite",
       "WebFetch",
       "WebSearch",
@@ -44,8 +48,6 @@
       "Bash(mkfs:*)",
       "Bash(mount:*)",
       "Bash(ln -s:*)",
-
-      "WebFetch(domain:github.com)"
     ],
     "ask": [
       "Bash(git -rm:*)",
