@@ -11,7 +11,7 @@
       "Bash(task:*)",
       "Bash(tree:*)",
       "Bash(which:*)",
-      "Edit",
+      "Edit(*)",
       "Glob",
       "Grep",
       "SlashCommand",
