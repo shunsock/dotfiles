@@ -3,7 +3,6 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ./modules/claude-code.nix
     ./modules/neovim.nix
     ./modules/wezterm.nix
     ./modules/zsh.nix
