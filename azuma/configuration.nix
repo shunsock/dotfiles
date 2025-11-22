@@ -3,7 +3,6 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ./modules/claude-code.nix
     ./modules/neovim.nix
     ./modules/wezterm.nix
     ./modules/zsh.nix
@@ -49,7 +48,7 @@
       waylandFrontend = true;
       addons = with pkgs; [
         fcitx5-skk
-        fcitx5-configtool
+        qt6Packages.fcitx5-configtool
         fcitx5-gtk
         kdePackages.fcitx5-qt
       ];
@@ -60,7 +59,7 @@
     packages = with pkgs; [
       noto-fonts-cjk-serif
       noto-fonts-cjk-sans
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       nerd-fonts.jetbrains-mono
     ];
     fontDir.enable = true;
