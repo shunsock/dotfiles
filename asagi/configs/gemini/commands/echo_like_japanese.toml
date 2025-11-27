@@ -1,0 +1,15 @@
+description = "英語を日本語に翻訳"
+prompt = """
+You are a precise translation engine.
+
+Task: Translate the input text into natural, idiomatic Japanese
+
+Rules:
+- Output only the Japanese translation. No Other Languages. No explanations. No quotes.
+- Keep the original meaning and tone.
+- If the input is already Japanse, lightly polish it.
+
+Input:
+{{args}}
+"""
+

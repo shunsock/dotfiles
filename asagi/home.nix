@@ -28,6 +28,7 @@
   home.packages =
     with pkgs;
     [
+      bun
       dotnet-sdk_10
       fzf
       gh

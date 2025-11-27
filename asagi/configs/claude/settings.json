@@ -4,7 +4,12 @@
       "Bash(cat:*)",
       "Bash(find:*)",
       "Bash(gemini:*)",
+      "Bash(gh issue view:*)",
+      "Bash(gh pr create:*)",
       "Bash(gh:*)",
+      "Bash(git fetch:*)",
+      "Bash(git log:*)",
+      "Bash(git push:*)",
       "Bash(git:*)",
       "Bash(man:*)",
       "Bash(nix:*)",
@@ -24,7 +29,6 @@
     "deny": [
       "Read(.env)",
       "Read(**/.env*)",
-      "Read(**/env*)",
 
       "Read(**/*.cert)",
       "Read(**/*.crt)",
