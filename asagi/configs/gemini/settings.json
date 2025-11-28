@@ -1,9 +1,21 @@
 {
-  "vimMode": true,
-  "fileFiltering": {
-    "respectGitIgnore": true,
-    "enableRecursiveFileSearch": false
+  "context": {
+    "fileFiltering": {
+      "respectGitIgnore": true,
+      "enableRecursiveFileSearch": true
+    }
   },
-  "model": "gemini-2.5-flash",
-  "selectedAuthType": "oauth"
+  "security": {
+    "auth": {
+      "selectedType": "oauth-personal"
+    }
+  },
+  "general": {
+    "vimMode": false,
+    "previewFeatures": true,
+    "enablePromptCompletion": true
+  },
+  "ui": {
+    "showMemoryUsage": true
+  }
 }
