@@ -61,6 +61,12 @@ task run:python /path/to/workspace
 # Push to registry (requires authentication)
 task push                 # Push all containers
 task push:python         # Push Python container only
+
+# CI/CD (GitHub Actions)
+# - PR builds: Automatic on PR to validate changes
+# - Deployments: Manual trigger from GitHub UI (Actions tab)
+# - Version: Managed in Taskfile.yml (VERSION variable)
+# - Registry: tsuchiya55docker/akatsuki
 ```
 
 ## Architecture

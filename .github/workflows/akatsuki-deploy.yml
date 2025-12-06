@@ -1,0 +1,79 @@
+name: Akatsuki Docker Deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  extract-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.extract.outputs.version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract VERSION from Taskfile.yml
+        id: extract
+        run: |
+          VERSION=$(grep '^  VERSION:' akatsuki/Taskfile.yml | awk '{print $2}')
+          echo "Extracted VERSION: $VERSION"
+          if [ -z "$VERSION" ]; then
+            echo "ERROR: VERSION is empty"
+            exit 1
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+  deploy-images:
+    needs: extract-version
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - name: default-arm
+            dockerfile: akatsuki/akatsuki-default-arm/Dockerfile
+            context: akatsuki/akatsuki-default-arm
+            platform: linux/arm64
+
+          - name: default-amd
+            dockerfile: akatsuki/akatsuki-default-amd/Dockerfile
+            context: akatsuki/akatsuki-default-amd
+            platform: linux/amd64
+
+          - name: python
+            dockerfile: akatsuki/akatsuki-python/Dockerfile
+            context: akatsuki/akatsuki-python
+            platform: linux/arm64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          platforms: ${{ matrix.platform }}
+          push: true
+          tags: |
+            tsuchiya55docker/akatsuki:${{ matrix.name }}-${{ needs.extract-version.outputs.version }}
+            tsuchiya55docker/akatsuki:${{ matrix.name }}-latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Log deployment details
+        run: |
+          echo "Deployed: tsuchiya55docker/akatsuki:${{ matrix.name }}-${{ needs.extract-version.outputs.version }}"
+          echo "Deployed: tsuchiya55docker/akatsuki:${{ matrix.name }}-latest"
+          echo "Platform: ${{ matrix.platform }}"
+          echo "Timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
