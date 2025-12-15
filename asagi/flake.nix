@@ -7,8 +7,6 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    nixpkgs-firefox-darwin.url = "github:bandithedoge/nixpkgs-firefox-darwin";
-    nixpkgs-firefox-darwin.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -18,7 +16,6 @@
       nixpkgs-unstable,
       nix-darwin,
       home-manager,
-      nixpkgs-firefox-darwin,
       ...
     }:
     let
@@ -28,7 +25,6 @@
         config = {
           allowUnfree = true;
         };
-        overlays = [ nixpkgs-firefox-darwin.overlay ];
       };
       pkgsUnstable = import nixpkgs-unstable {
         inherit system;
@@ -59,6 +55,7 @@
                 "aquaskk"
                 "arc"
                 "docker"
+                "firefox"
                 "steam"
                 "wezterm"
                 "zoom"
