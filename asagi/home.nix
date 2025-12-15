@@ -9,6 +9,7 @@
 {
   imports = [
     ./modules/claude.nix
+    ./modules/firefox.nix
     ./modules/gemini.nix
     ./modules/skk.nix
     ./modules/wezterm.nix
