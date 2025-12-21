@@ -64,10 +64,11 @@
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "ANTHROPIC_MODEL": "claude-sonnet-4-5-20250929",
-    "BASH_DEFAULT_TIMEOUT_MS": "180000"
+    "BASH_DEFAULT_TIMEOUT_MS": "180000",
+    "MAX_THINKING_TOKENS": "10000"
   },
 
-  "includeCoAuthoredBy": true,
-  "defaultMode": "interactive"
+  "includeCoAuthoredBy": false,
+  "defaultMode": "interactive",
 }
 
