@@ -11,7 +11,7 @@
 
   programs.zsh = {
     enable = true;
-    dotDir = ".config/zsh";
+    dotDir = "${config.xdg.configHome}/zsh";
     syntaxHighlighting.enable = true;
     autosuggestion.enable = true;
 
@@ -25,7 +25,7 @@
       unalias -m '*' # 🗑️👋 trash auto added aliases
 
       setopt extendedglob
-      for f in $HOME/.config/zsh/**/*.zsh; do
+      for f in ${config.xdg.configHome}/zsh/**/*.zsh; do
         source "$f"
       done
     '';
