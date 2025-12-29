@@ -6,21 +6,12 @@
 
 `configs/claude/` ディレクトリには以下の設定ファイルが含まれています：
 
-- **agents/** - 専門的なタスクを処理するサブエージェント定義
 - **commands/** - カスタムスラッシュコマンド（`/command_name` で呼び出し）
 - **skills/** - カスタムスキル定義
 - **settings.json** - Claude Code の権限設定と環境変数
 - **CLAUDE.md** (このファイル) - 各設定の参照と使用ガイドライン
 
 詳細な技術情報やアーキテクチャについては、`../../CLAUDE.md` を参照してください。
-
-## Agents
-
-特定のタスクは、専門的なサブエージェントに委譲してください：
-
-- **Nix 操作**: Nix Command Agent (`./agents/nix_agent.md`)
-- **Git/GitHub 操作**: Version Management System Agent (`./agents/git_gh_agent.md`)
-- **Task 実行**: Go-Task Agent (`./agents/task_agent.md`)
 
 ## Commands
 
@@ -36,3 +27,9 @@
 
 - **SDD Issue Maker** - スペック駆動開発の Issue 作成 (`./skills/sdd.md`)
   - Issue 作成時はこのガイドラインに厳格に従ってください
+- **Version Management System** - Git/GitHub 操作 (`./skills/git_gh.md`)
+  - リポジトリ操作、コミット、プルリクエスト、Issue管理などのタスク
+- **Nix Command** - Nix パッケージ管理 (`./skills/nix.md`)
+  - パッケージ管理、システム設定、開発環境構築
+- **Go-Task** - Taskfile.yml タスク実行 (`./skills/task.md`)
+  - Taskfile.ymlに定義されたタスクの実行と管理
