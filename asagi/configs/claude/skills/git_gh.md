@@ -21,6 +21,7 @@
 
 - Commit And Push: git commit -m "..." && git push
 - Create Pull Request: gh pr create ...
+- View Issue: gh issue view ...
 
 ## 注意
 
