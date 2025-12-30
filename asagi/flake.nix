@@ -57,6 +57,7 @@
                 "docker"
                 "firefox"
                 "steam"
+                "visual-studio-code"
                 "wezterm"
                 "zoom"
               ];

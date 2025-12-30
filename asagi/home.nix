@@ -12,6 +12,7 @@
     ./modules/firefox.nix
     ./modules/gemini.nix
     ./modules/skk.nix
+    ./modules/vscode.nix
     ./modules/wezterm.nix
     ./modules/zsh.nix
   ];
