@@ -1,15 +1,10 @@
 {
+  "model": "claude-sonnet-4-5-20250929",
+  "defaultMode": "interactive",
   "permissions": {
     "allow": [
-      "Bash(cat:*)",
-      "Bash(find:*)",
       "Bash(gemini:*)",
-      "Bash(gh issue view:*)",
-      "Bash(gh pr create:*)",
       "Bash(gh:*)",
-      "Bash(git fetch:*)",
-      "Bash(git log:*)",
-      "Bash(git push:*)",
       "Bash(git:*)",
       "Bash(man:*)",
       "Bash(nix:*)",
@@ -24,12 +19,11 @@
       "TodoWrite",
       "WebFetch",
       "WebSearch",
-      "Write(*)",
+      "Write(*)"
     ],
     "deny": [
       "Read(.env)",
       "Read(**/.env*)",
-
       "Read(**/*.cert)",
       "Read(**/*.crt)",
       "Read(**/*.key)",
@@ -38,12 +32,10 @@
       "Read(**/secrets/**)",
       "Read(**/credential/**)",
       "Read(**/credentials/**)",
-
       "Bash(rm -rf /)",
       "Bash(rm -rf /*)",
       "Bash(rm -rf ~)",
       "Bash(rm -rf $HOME)",
-
       "Bash(sudo:*)",
       "Bash(diskutil:*)",
       "Bash(chmod:*)",
@@ -51,24 +43,18 @@
       "Bash(dd:*)",
       "Bash(mkfs:*)",
       "Bash(mount:*)",
-      "Bash(ln -s:*)",
+      "Bash(ln -s:*)"
     ],
     "ask": [
-      "Bash(git -rm:*)",
+      "Bash(git rm:*)",
       "Bash(git merge:*)",
       "Bash(git push -f:*)",
-      "Bash(git revert:*)",
+      "Bash(git revert:*)"
     ]
   },
-
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
-    "ANTHROPIC_MODEL": "claude-sonnet-4-5-20250929",
     "BASH_DEFAULT_TIMEOUT_MS": "180000",
     "MAX_THINKING_TOKENS": "10000"
-  },
-
-  "includeCoAuthoredBy": false,
-  "defaultMode": "interactive",
+  }
 }
-
