@@ -71,13 +71,66 @@ Epic Issueから実装可能な粒度のSub Issueを作成するエージェン�
 4. Issue分割（ロジック80行以下、テスト100行以下、5ファイル以下/Issue）
 5. ユーザー承認後に `gh issue create` で作成
 
+### Document Writer (`./agents/document_writer.md`)
+
+コードベースを分析してREADME.md、技術仕様書、API仕様書などのドキュメントを自動生成するエージェント。
+
+| 項目 | 内容 |
+|------|------|
+| name | `document-writer` |
+| tools | Bash, Read, Glob, Grep, WebFetch, WebSearch |
+| model | inherit |
+
+**対応ドキュメント**:
+- README.md - プロジェクト概要、セットアップ、使い方
+- 技術仕様書 - アーキテクチャ、設計方針、実装詳細
+- API仕様書 - エンドポイント、パラメータ、レスポンス形式
+
+**処理フロー**:
+1. ドキュメントタイプと既存ドキュメントの確認
+2. コードベース調査（構造、設定、エントリーポイント、主要コンポーネント）
+3. タイプ別テンプレートでドキュメント作成
+4. ユーザーレビュー → フィードバック反映
+5. 承認後に適切な場所へファイル配置
+
+### Pull Request Writer (`./agents/pull_request_writer.md`)
+
+git diffやコミット履歴を分析してPR説明文を自動生成し、レビュー支援、Issue連携、テンプレート適用を行うエージェント。
+
+| 項目 | 内容 |
+|------|------|
+| name | `pull-request-writer` |
+| tools | Bash, Read, Glob, Grep |
+| model | inherit |
+
+**機能**:
+- PR説明文の自動生成（git diff/logを分析）
+- レビューポイントのリストアップ
+- Issue番号からPR作成と関連付け
+- PRテンプレート適用
+
+**処理フロー**:
+1. GitHub CLI認証確認 → ブランチとリモート状態の確認
+2. コミット履歴・変更ファイル・コード差分の取得
+3. Issue番号検出 → Issue情報取得 → PRテンプレート確認
+4. 構造化されたPR説明文を生成 → ユーザーレビュー
+5. 承認後に `gh pr create` でPR作成 → Issue連携
+
 ### エージェントの連携
 
 ```
 [ユーザーの初期Epic] → [epic-issue-enhancer] → [強化済みEpic]
                                                       ↓
                                           [sub-issue-creator] → [Sub Issues]
+                                                                       ↓
+                                                              [実装作業]
+                                                                       ↓
+                                                        [pull-request-writer] → [PR作成]
+                                                                       ↓
+                                                           [document-writer] → [ドキュメント]
 ```
 
 - **epic-issue-enhancer**: 不完全なEpic Issueを構造化・補完
 - **sub-issue-creator**: 完全なEpic Issueを実装単位に分割
+- **pull-request-writer**: 実装後にPRを作成してレビュー支援
+- **document-writer**: 必要に応じてドキュメントを生成
