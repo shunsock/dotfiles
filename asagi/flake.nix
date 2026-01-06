@@ -56,6 +56,7 @@
                 "arc"
                 "docker"
                 "firefox"
+                "sketchybar"
                 "steam"
                 "visual-studio-code"
                 "wezterm"

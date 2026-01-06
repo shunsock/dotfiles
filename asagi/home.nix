@@ -11,6 +11,7 @@
     ./modules/claude.nix
     ./modules/firefox.nix
     ./modules/gemini.nix
+    ./modules/sketchybar.nix
     ./modules/skk.nix
     ./modules/wezterm.nix
     ./modules/zsh.nix
