@@ -3,4 +3,4 @@
 # Apple Menu Plugin
 # Shows system menu on click
 
-sketchybar --set $NAME label=""
+/opt/homebrew/opt/sketchybar/bin/sketchybar --set $NAME label=""

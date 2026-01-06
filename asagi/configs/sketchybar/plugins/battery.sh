@@ -27,4 +27,4 @@ else
   fi
 fi
 
-sketchybar --set $NAME icon="$ICON" label="${PERCENTAGE}"
+/opt/homebrew/opt/sketchybar/bin/sketchybar --set $NAME icon="$ICON" label="${PERCENTAGE}"

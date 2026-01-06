@@ -14,4 +14,4 @@ else
   LABEL="$SSID"
 fi
 
-sketchybar --set $NAME icon="$ICON" label="$LABEL"
+/opt/homebrew/opt/sketchybar/bin/sketchybar --set $NAME icon="$ICON" label="$LABEL"

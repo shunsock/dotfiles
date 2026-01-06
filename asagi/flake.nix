@@ -45,18 +45,26 @@
             system.primaryUser = "shunsock";
             nixpkgs.config.allowUnfree = true;
             ids.gids.nixbld = 350;
+
+            # macOS system defaults
+            system.defaults.NSGlobalDomain._HIHideMenuBar = true;
           }
 
           # Homebrew configuration
           {
             homebrew = {
               enable = true;
+              taps = [
+                "FelixKratz/formulae"
+              ];
+              brews = [
+                "FelixKratz/formulae/sketchybar"
+              ];
               casks = [
                 "aquaskk"
                 "arc"
                 "docker"
                 "firefox"
-                "sketchybar"
                 "steam"
                 "visual-studio-code"
                 "wezterm"
