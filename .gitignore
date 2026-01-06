@@ -12,3 +12,6 @@ bin/
 
 # Nix
 result
+
+# Tailscale
+/etc/tailscale/authkey
