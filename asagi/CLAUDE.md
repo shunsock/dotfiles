@@ -32,7 +32,7 @@ This is a Nix Home Manager configuration for macOS (aarch64-darwin) that manages
 ### Structure
 - `flake.nix`: Main Nix Darwin configuration defining packages, user settings, and zsh configuration
 - `home.nix`: Home Manager configuration
-- `modules/`: Nix configuration modules (wezterm.nix)
+- `modules/`: Nix configuration modules (host.nix, wezterm.nix)
 - `zsh/`: Modular zsh configuration files organized by purpose
   - `basic/`: Core shell configurations (aliases, editor settings, options, PATH)
   - `command/`: Command-specific configurations (docker, git aliases)
@@ -53,6 +53,23 @@ Core development tools include: claude-code, dotnetCorePackages.dotnet_9.sdk, gi
 2. Zsh files are copied to `~/.config/zsh/` recursively
 3. initContent in programs.zsh sources all `.zsh` files automatically
 4. Oh My Zsh and autosuggestions are configured last
+
+## Manual Setup Required
+
+### Tailscale Authentication
+The Tailscale configuration requires a manually managed authentication key file that is **not managed by Nix**:
+
+- **File**: `/etc/tailscale/authkey`
+- **Purpose**: Contains the Tailscale authentication key for automatic connection
+- **Setup**:
+  1. Generate an auth key from Tailscale admin console
+  2. Create the directory: `sudo mkdir -p /etc/tailscale`
+  3. Save the key: `sudo sh -c 'echo "YOUR_AUTH_KEY" > /etc/tailscale/authkey'`
+  4. Set permissions: `sudo chmod 600 /etc/tailscale/authkey`
+- **Security**: This file is added to `.gitignore` to prevent accidental commits
+- **Auto-connection**: The launchd daemon in `modules/host.nix` reads this file to automatically connect Tailscale on system startup
+
+**Note**: This is a departure from the declarative Nix approach, but is necessary for securely managing authentication keys outside of the Nix store.
 
 ## Reference Documentation
 
