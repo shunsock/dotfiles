@@ -47,6 +47,9 @@
             ids.gids.nixbld = 350;
           }
 
+          # Host configuration (Tailscale)
+          ./modules/host.nix
+
           # Homebrew configuration
           {
             homebrew = {
