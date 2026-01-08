@@ -15,15 +15,15 @@ if [[ $CHARGING != "" ]]; then
   ICON="󰂄"
 else
   if [ $PERCENTAGE -gt 80 ]; then
-    ICON="󰁹"
+    ICON="󰂂"
   elif [ $PERCENTAGE -gt 60 ]; then
-    ICON="󰂀"
+    ICON="󰁿"
   elif [ $PERCENTAGE -gt 40 ]; then
-    ICON="󰁾"
+    ICON="󰁽"
   elif [ $PERCENTAGE -gt 20 ]; then
-    ICON="󰁼"
+    ICON="󰁻"
   else
-    ICON="󰁺"
+    ICON="󰂃"
   fi
 fi
 

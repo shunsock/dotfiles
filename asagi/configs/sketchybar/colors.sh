@@ -15,7 +15,7 @@ export GREY=0xff939ab7
 export TRANSPARENT=0x00000000
 
 # Bar and Item Colors (Updated for island style with 90% opacity)
-export BAR_COLOR=0xe6363a4f           # 90% opacity bar (0xe6 = ~230/255 ≈ 90%)
+export BAR_COLOR=0xcc363a4f           # 80% opacity bar (0xcc = 204/255 ≈ 80%)
 export ITEM_BG_COLOR=0x00000000       # Transparent (items use group background)
 export ACCENT_COLOR=$BLUE
 

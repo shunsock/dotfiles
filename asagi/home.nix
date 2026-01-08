@@ -36,7 +36,7 @@
       ghq
       git
       go-task
-      hackgen-nf-font
+      nerd-fonts.jetbrains-mono
       hyperfine
       mise
       nixfmt-rfc-style

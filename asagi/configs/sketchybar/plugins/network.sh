@@ -13,10 +13,10 @@ if ifconfig $WIFI_DEVICE 2>/dev/null | grep -q "status: active"; then
 
   if [ -z "$SSID" ]; then
     # If SSID can't be retrieved, just show as connected
-    ICON="󰖩"
+    ICON="󰖟"
     LABEL="Connected"
   else
-    ICON="󰖩"
+    ICON="󰖟"
     # Truncate SSID if longer than 15 characters
     if [ ${#SSID} -gt 15 ]; then
       LABEL="${SSID:0:12}..."

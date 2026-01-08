@@ -20,13 +20,12 @@ ${SKETCHYBAR} --bar height=36 \
                  margin=15 \
                  y_offset=5 \
                  corner_radius=12 \
-                 border_width=1 \
-                 border_color=$GROUP_BORDER_COLOR
+                 border_width=0
 
 # Default item settings
-${SKETCHYBAR} --default icon.font="HackGen35 Console NF:Bold:16.0" \
+${SKETCHYBAR} --default icon.font="JetBrainsMono Nerd Font:Bold:16.0" \
                      icon.color=$WHITE \
-                     label.font="HackGen35 Console NF:Medium:13.0" \
+                     label.font="JetBrainsMono Nerd Font:Medium:13.0" \
                      label.color=$WHITE \
                      padding_left=6 \
                      padding_right=6 \
@@ -41,8 +40,7 @@ ${SKETCHYBAR} --default icon.font="HackGen35 Console NF:Bold:16.0" \
 # Popup default styling
 ${SKETCHYBAR} --default popup.background.color=$GROUP_BG_COLOR \
                      popup.background.corner_radius=8 \
-                     popup.background.border_width=1 \
-                     popup.background.border_color=$GROUP_BORDER_COLOR \
+                     popup.background.border_width=0 \
                      popup.blur_radius=30 \
                      popup.background.shadow.drawing=on \
                      popup.background.shadow.color=0x80000000 \
@@ -54,7 +52,7 @@ ${SKETCHYBAR} --default popup.background.color=$GROUP_BG_COLOR \
 # Apple Logo
 ${SKETCHYBAR} --add item apple.logo left \
            --set apple.logo icon= \
-                            icon.font="HackGen35 Console NF:Bold:16.0" \
+                            icon.font="JetBrainsMono Nerd Font:Bold:16.0" \
                             background.padding_left=8 \
                             background.padding_right=12 \
                             label.drawing=off \
@@ -82,8 +80,7 @@ ${SKETCHYBAR} --add bracket spaces_group '/space\..*/' \
            --set spaces_group background.color=$GROUP_BG_COLOR \
                               background.corner_radius=6 \
                               background.height=28 \
-                              background.border_width=1 \
-                              background.border_color=$GROUP_BORDER_COLOR
+                              background.border_width=0
 
 # Front App (Current Application) with icon
 ${SKETCHYBAR} --add item front_app left \
@@ -94,10 +91,10 @@ ${SKETCHYBAR} --add item front_app left \
                            background.padding_right=8 \
                            icon.color=$WHITE \
                            icon.drawing=on \
-                           icon.font="HackGen35 Console NF:Bold:16.0" \
+                           icon.font="JetBrainsMono Nerd Font:Bold:16.0" \
                            icon.padding_right=8 \
                            label.color=$WHITE \
-                           label.font="HackGen35 Console NF:Semibold:13.0" \
+                           label.font="JetBrainsMono Nerd Font:Semibold:13.0" \
                            script="$PLUGIN_DIR/front_app.sh" \
                            click_script="$PLUGIN_DIR/front_app_click.sh" \
            --subscribe front_app front_app_switched
@@ -116,7 +113,7 @@ ${SKETCHYBAR} --add item network right \
 # CPU
 ${SKETCHYBAR} --add item cpu right \
            --set cpu update_freq=5 \
-                     icon= \
+                     icon=󰘚 \
                      icon.padding_left=8 \
                      icon.padding_right=4 \
                      background.drawing=off \
@@ -156,8 +153,7 @@ ${SKETCHYBAR} --add bracket system_status network cpu volume battery \
            --set system_status background.color=$GROUP_BG_COLOR \
                                background.corner_radius=6 \
                                background.height=28 \
-                               background.border_width=1 \
-                               background.border_color=$GROUP_BORDER_COLOR
+                               background.border_width=0
 
 # Clock (separate from system status for emphasis)
 ${SKETCHYBAR} --add item clock right \
@@ -169,15 +165,14 @@ ${SKETCHYBAR} --add item clock right \
                        background.color=$GROUP_BG_COLOR \
                        background.corner_radius=6 \
                        background.height=28 \
-                       background.border_width=1 \
-                       background.border_color=$GROUP_BORDER_COLOR \
+                       background.border_width=0 \
                        script="$PLUGIN_DIR/clock.sh"
 
 # Volume popup (center of screen)
 ${SKETCHYBAR} --add item volume_popup center \
            --set volume_popup drawing=off \
-                              icon.font="HackGen35 Console NF:Bold:32.0" \
-                              label.font="HackGen35 Console NF:Bold:24.0" \
+                              icon.font="JetBrainsMono Nerd Font:Bold:32.0" \
+                              label.font="JetBrainsMono Nerd Font:Bold:24.0" \
                               background.color=$GROUP_BG_COLOR \
                               background.corner_radius=12 \
                               background.height=80 \

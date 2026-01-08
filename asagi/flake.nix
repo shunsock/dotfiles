@@ -65,6 +65,7 @@
                 "arc"
                 "docker"
                 "firefox"
+                "sf-symbols"
                 "steam"
                 "visual-studio-code"
                 "wezterm"

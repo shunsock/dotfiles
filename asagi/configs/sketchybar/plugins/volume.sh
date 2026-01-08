@@ -9,7 +9,7 @@ MUTED=$(osascript -e "output muted of (get volume settings)")
 
 # Determine icon based on volume level and mute status
 if [[ $MUTED == "true" ]]; then
-  ICON="󰖁"
+  ICON="󰝟"
   LABEL="Muted"
 else
   if [ $VOLUME -gt 66 ]; then
@@ -19,7 +19,7 @@ else
   elif [ $VOLUME -gt 0 ]; then
     ICON="󰕿"
   else
-    ICON="󰝟"
+    ICON="󰸈"
   fi
   LABEL="${VOLUME}%"
 fi
