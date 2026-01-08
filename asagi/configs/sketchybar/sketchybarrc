@@ -23,7 +23,7 @@ ${SKETCHYBAR} --bar height=36 \
                  border_width=0
 
 # Default item settings
-${SKETCHYBAR} --default icon.font="JetBrainsMono Nerd Font:Bold:16.0" \
+${SKETCHYBAR} --default icon.font="sketchybar-app-font:Regular:16.0" \
                      icon.color=$WHITE \
                      label.font="JetBrainsMono Nerd Font:Medium:13.0" \
                      label.color=$WHITE \
@@ -52,7 +52,7 @@ ${SKETCHYBAR} --default popup.background.color=$GROUP_BG_COLOR \
 # Apple Logo
 ${SKETCHYBAR} --add item apple.logo left \
            --set apple.logo icon= \
-                            icon.font="JetBrainsMono Nerd Font:Bold:16.0" \
+                            icon.font="sketchybar-app-font:Regular:16.0" \
                             background.padding_left=8 \
                             background.padding_right=12 \
                             label.drawing=off \
@@ -91,7 +91,7 @@ ${SKETCHYBAR} --add item front_app left \
                            background.padding_right=8 \
                            icon.color=$WHITE \
                            icon.drawing=on \
-                           icon.font="JetBrainsMono Nerd Font:Bold:16.0" \
+                           icon.font="sketchybar-app-font:Regular:16.0" \
                            icon.padding_right=8 \
                            label.color=$WHITE \
                            label.font="JetBrainsMono Nerd Font:Semibold:13.0" \
@@ -166,7 +166,7 @@ ${SKETCHYBAR} --add item clock right \
 # Volume popup (center of screen)
 ${SKETCHYBAR} --add item volume_popup center \
            --set volume_popup drawing=off \
-                              icon.font="JetBrainsMono Nerd Font:Bold:32.0" \
+                              icon.font="sketchybar-app-font:Regular:32.0" \
                               label.font="JetBrainsMono Nerd Font:Bold:24.0" \
                               background.color=$GROUP_BG_COLOR \
                               background.corner_radius=12 \

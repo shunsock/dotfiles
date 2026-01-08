@@ -65,6 +65,7 @@
                 "arc"
                 "docker"
                 "firefox"
+                "font-sketchybar-app-font"
                 "sf-symbols"
                 "steam"
                 "visual-studio-code"
