@@ -119,25 +119,14 @@ ${SKETCHYBAR} --add item cpu right \
                      background.drawing=off \
                      script="$PLUGIN_DIR/cpu.sh"
 
-# Volume with slider
+# Volume
 ${SKETCHYBAR} --add item volume right \
            --set volume icon.padding_left=8 \
                         icon.padding_right=4 \
                         background.drawing=off \
                         script="$PLUGIN_DIR/volume.sh" \
                         click_script="$PLUGIN_DIR/volume_toggle_mute.sh" \
-           --subscribe volume volume_change \
-           \
-           --add slider volume_slider right \
-           --set volume_slider slider.background.height=4 \
-                               slider.background.corner_radius=2 \
-                               slider.background.color=$GREY \
-                               slider.highlight_color=$ACCENT_COLOR \
-                               slider.percentage=50 \
-                               slider.width=80 \
-                               background.drawing=off \
-                               script="$PLUGIN_DIR/volume_change.sh" \
-                               click_script="$PLUGIN_DIR/volume_click.sh"
+           --subscribe volume volume_change
 
 # Battery
 ${SKETCHYBAR} --add item battery right \
