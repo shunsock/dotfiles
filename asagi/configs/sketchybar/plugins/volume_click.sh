@@ -7,4 +7,4 @@ if [[ ! "$PERCENTAGE" =~ ^[0-9]+$ ]] || [ "$PERCENTAGE" -lt 0 ] || [ "$PERCENTAG
 fi
 
 osascript -e "set volume output volume $PERCENTAGE"
-$HOME/.config/sketchybar/plugins/volume.sh
+bash "$HOME/.config/sketchybar/plugins/volume.sh"

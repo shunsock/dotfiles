@@ -9,4 +9,4 @@ else
 fi
 
 # Update display
-$HOME/.config/sketchybar/plugins/volume.sh
+bash "$HOME/.config/sketchybar/plugins/volume.sh"

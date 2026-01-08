@@ -24,9 +24,13 @@ else
   LABEL="${VOLUME}%"
 fi
 
-# Update main volume item with slider
-$SKETCHYBAR --set $NAME icon="$ICON" label="$LABEL" \
-            --set volume_slider slider.percentage=$VOLUME
+# Update main volume item
+$SKETCHYBAR --set $NAME icon="$ICON" label="$LABEL"
+
+# Update slider if it exists
+if $SKETCHYBAR --query volume_slider &>/dev/null; then
+  $SKETCHYBAR --set volume_slider slider.percentage=$VOLUME
+fi
 
 # Show volume popup temporarily when volume changes
 $SKETCHYBAR --set volume_popup drawing=on \

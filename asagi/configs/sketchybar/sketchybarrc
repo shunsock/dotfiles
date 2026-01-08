@@ -128,6 +128,12 @@ ${SKETCHYBAR} --add item volume right \
                         click_script="$PLUGIN_DIR/volume_toggle_mute.sh" \
            --subscribe volume volume_change
 
+# Volume slider (for popup control)
+${SKETCHYBAR} --add slider volume_slider right \
+           --set volume_slider slider.percentage=50 \
+                               background.drawing=off \
+                               drawing=off
+
 # Battery
 ${SKETCHYBAR} --add item battery right \
            --set battery update_freq=120 \
@@ -169,5 +175,10 @@ ${SKETCHYBAR} --add item volume_popup center \
                               background.padding_right=20 \
                               icon.padding_right=10
 
-# Finalize
+# Finalize - Force initial updates for all items
+${SKETCHYBAR} --update
+${SKETCHYBAR} --trigger front_app_switched
+${SKETCHYBAR} --trigger volume_change
+${SKETCHYBAR} --trigger system_woke
+sleep 0.5
 ${SKETCHYBAR} --update
