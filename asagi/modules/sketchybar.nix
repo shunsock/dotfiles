@@ -53,6 +53,26 @@
     executable = true;
   };
 
+  home.file.".config/sketchybar/plugins/volume_toggle_mute.sh" = {
+    source = ../configs/sketchybar/plugins/volume_toggle_mute.sh;
+    executable = true;
+  };
+
+  home.file.".config/sketchybar/plugins/volume_click.sh" = {
+    source = ../configs/sketchybar/plugins/volume_click.sh;
+    executable = true;
+  };
+
+  home.file.".config/sketchybar/plugins/volume_change.sh" = {
+    source = ../configs/sketchybar/plugins/volume_change.sh;
+    executable = true;
+  };
+
+  home.file.".config/sketchybar/plugins/front_app_click.sh" = {
+    source = ../configs/sketchybar/plugins/front_app_click.sh;
+    executable = true;
+  };
+
   # Activation script to reload SketchyBar
   home.activation.reloadSketchyBar = config.lib.dag.entryAfter ["writeBoundary"] ''
     if pgrep -x "sketchybar" > /dev/null; then

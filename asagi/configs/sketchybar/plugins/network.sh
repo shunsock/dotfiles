@@ -17,11 +17,16 @@ if ifconfig $WIFI_DEVICE 2>/dev/null | grep -q "status: active"; then
     LABEL="Connected"
   else
     ICON="󰖩"
-    LABEL="$SSID"
+    # Truncate SSID if longer than 15 characters
+    if [ ${#SSID} -gt 15 ]; then
+      LABEL="${SSID:0:12}..."
+    else
+      LABEL="$SSID"
+    fi
   fi
 else
   ICON="󰖪"
-  LABEL="Disconnected"
+  LABEL="Offline"
 fi
 
 /opt/homebrew/opt/sketchybar/bin/sketchybar --set $NAME icon="$ICON" label="$LABEL"
