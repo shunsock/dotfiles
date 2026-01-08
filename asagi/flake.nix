@@ -54,18 +54,11 @@
           {
             homebrew = {
               enable = true;
-              taps = [
-                "FelixKratz/formulae"
-              ];
-              brews = [
-                "FelixKratz/formulae/sketchybar"
-              ];
               casks = [
                 "aquaskk"
                 "arc"
                 "docker"
                 "firefox"
-                "font-sketchybar-app-font"
                 "sf-symbols"
                 "steam"
                 "visual-studio-code"
