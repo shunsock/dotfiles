@@ -36,6 +36,7 @@
       git
       go-task
       hackgen-nf-font
+      hadolint
       hyperfine
       mise
       nixfmt-rfc-style
