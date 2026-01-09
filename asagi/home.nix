@@ -37,6 +37,7 @@
       go-task
       hackgen-nf-font
       hadolint
+      hurl
       hyperfine
       mise
       nerd-fonts.jetbrains-mono
