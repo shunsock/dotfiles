@@ -31,6 +31,10 @@
   - 組み込みweb_searchの代わりにGemini CLIを使用した高度な検索
 - **Nix Packages Info** - HomeManager管理パッケージ情報取得 (`./skills/nix_packages_info.md`)
   - GitHubリポジトリからhome.nixを取得してパッケージ一覧を表示
+- **Dockerfile Best Practices** - Dockerfileの最適化とベストプラクティス (`./skills/dockerfile/SKILL.md`)
+  - イメージサイズ削減、セキュリティ強化、ビルド速度向上
+  - マルチステージビルド、distroless、非root実行
+  - Docker Scout、Hadolintによる品質保証
 
 ## Custom Agents
 

@@ -50,6 +50,9 @@
             system.defaults.NSGlobalDomain._HIHideMenuBar = true;
           }
 
+          # Host configuration (Tailscale)
+          ./modules/host.nix
+
           # Homebrew configuration
           {
             homebrew = {

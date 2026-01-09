@@ -36,9 +36,10 @@
       git
       go-task
       hackgen-nf-font
-      nerd-fonts.jetbrains-mono
+      hadolint
       hyperfine
       mise
+      nerd-fonts.jetbrains-mono
       nixfmt-rfc-style
       npins
       rustup
