@@ -45,6 +45,9 @@
             system.primaryUser = "shunsock";
             nixpkgs.config.allowUnfree = true;
             ids.gids.nixbld = 350;
+
+            # macOS system defaults
+            system.defaults.NSGlobalDomain._HIHideMenuBar = true;
           }
 
           # Host configuration (Tailscale)
@@ -59,6 +62,7 @@
                 "arc"
                 "docker"
                 "firefox"
+                "sf-symbols"
                 "steam"
                 "visual-studio-code"
                 "wezterm"
