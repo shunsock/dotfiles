@@ -36,7 +36,6 @@
       ghq
       git
       go-task
-      google-cloud-sdk
       hackgen-nf-font
       hadolint
       hurl
