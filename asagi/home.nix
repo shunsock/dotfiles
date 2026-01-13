@@ -28,6 +28,7 @@
   home.packages =
     with pkgs;
     [
+      awscli2
       bun
       dotnet-sdk_10
       fzf
