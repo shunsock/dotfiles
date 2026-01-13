@@ -10,6 +10,7 @@
       "Bash(nix:*)",
       "Bash(task:*)",
       "Bash(tree:*)",
+      "Bash(uv:*)",
       "Bash(which:*)",
       "Edit(*)",
       "Glob",
@@ -22,6 +23,10 @@
       "Write(*)"
     ],
     "deny": [
+      "Read(python3/**)",
+      "Read(npm/**)",
+      "Read(pnpm/**)",
+      "Read(yarn/**)",
       "Read(.env)",
       "Read(**/.env*)",
       "Read(**/*.cert)",
