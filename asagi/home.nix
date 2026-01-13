@@ -28,6 +28,7 @@
   home.packages =
     with pkgs;
     [
+      awscli2
       bun
       dotnet-sdk_10
       fzf
@@ -35,6 +36,7 @@
       ghq
       git
       go-task
+      google-cloud-sdk
       hackgen-nf-font
       hadolint
       hurl
