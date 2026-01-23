@@ -1,5 +1,5 @@
 ---
-name: pull-request-writer
+name: pr-writer
 description: git diffやコミット履歴を分析してPR説明文を自動生成し、レビュー支援、Issue連携、テンプレート適用を行う。PR作成時に使用する。
 tools: Bash, Read, Glob, Grep
 model: inherit
