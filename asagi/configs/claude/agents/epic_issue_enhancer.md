@@ -78,6 +78,74 @@ Issue内に記載されたURLやファイルパスを検出し、可能であれ
 
 ---
 
+### Phase 2.5: サブエージェントの起動（オプション）
+
+Issueの内容に応じて、以下のサブエージェントを起動してより深い分析を行います。
+
+#### 2.5.1 ビジネス分析とインフラ調査の並列起動
+
+**business_analystの起動**:
+
+Task toolで以下を実行：
+
+```
+「以下のEpic Issueに対して、ビジネス要件を分析してシステム要件に落とし込んでください。
+
+Issue番号: #<issue-number>
+Issue内容: [Issue本文]
+
+ユーザーと対話しながら情報を収集し、ビジネス分析レポートを作成してください。」
+```
+
+**infrastructure_researcherの起動（並列）**:
+
+Task toolで以下を実行：
+
+```
+「以下のEpic Issueに対して、既存インフラリソースのIaC管理状況を調査してください。
+
+Issue番号: #<issue-number>
+Issue内容: [Issue本文]
+
+ユーザーと対話しながらIaCファイルを特定し、リソース一覧とIaC成熟度を報告してください。」
+```
+
+**code_researcherの4つ並列起動**:
+
+Task toolで以下を4つ並列実行：
+
+```
+「以下のEpic Issueに対して、コードベースを調査してください。
+
+Issue番号: #<issue-number>
+Issue内容: [Issue本文]
+Perspective: pattern
+Project Path: [プロジェクトパス]
+
+YAML形式で成果物を出力してください。」
+```
+
+同様に、`perspective: impact`、`perspective: technology`、`perspective: testing` の3つも並列実行します。
+
+#### 2.5.2 サブエージェント結果の取得
+
+各エージェントが出力したファイルを読み込みます：
+- business_analyst_output.yaml または business_analyst_output.md
+- infrastructure_researcher_output.yaml または infrastructure_researcher_output.md
+- pattern_research_*.yaml
+- impact_scope_*.yaml
+- tech_stack_*.yaml
+- test_structure_*.yaml
+
+#### 2.5.3 結果の統合確認
+
+ユーザーに各エージェントの調査結果を提示し、以下を確認してください：
+- 調査結果の網羅性
+- エージェント間の矛盾検出
+- 追加調査の必要性
+
+---
+
 ### Phase 3: 情報収集
 
 #### 3.1 質問の優先順位
@@ -96,6 +164,45 @@ Issue内に記載されたURLやファイルパスを検出し、可能であれ
 #### 3.3 回答の整理
 
 ユーザーの回答を構造化された形式に整理してください。
+
+---
+
+### Phase 3.5: ソリューションアーキテクチャの策定
+
+Phase 2.5で収集した全ての情報を統合し、solution_architectを起動して最適なソリューションを提案します。
+
+#### 3.5.1 solution_architectの起動
+
+Phase 2.5で収集した全ての情報を統合し、solution_architectを起動：
+
+Task toolで以下を実行：
+
+```
+「以下のEpic Issueに対して、最適なソリューションアーキテクチャを提案してください。
+
+Issue番号: #<issue-number>
+
+入力エージェント結果:
+- business_analyst: [ファイルパス]
+- infrastructure_researcher: [ファイルパス]
+- code_researcher x4: [ファイルパス]
+
+複数のソリューション案を比較検討し、推奨案を明確な根拠とともに提示してください。」
+```
+
+#### 3.5.2 ソリューション提案の確認
+
+solution_architectが提案した複数案をユーザーに提示：
+- 各案の比較マトリックス
+- 推奨案の選定理由
+- トレードオフ分析
+- リスク評価
+
+ユーザーに最終的な方向性を確認してください。
+
+#### 3.5.3 Phase 4への引き継ぎ
+
+solution_architectの推奨案をPhase 4の強化案作成に活用します。
 
 ---
 
