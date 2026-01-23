@@ -120,6 +120,76 @@ git diffやコミット履歴を分析してPR説明文を自動生成し、レ�
 4. 構造化されたPR説明文を生成 → ユーザーレビュー
 5. 承認後に `gh pr create` でPR作成 → Issue連携
 
+### Implementation Strategist (`./agents/implementation_strategist.md`)
+
+Issueを元にコードレベルの具体的な実装戦略を策定するエージェント。
+
+| 項目 | 内容 |
+|------|------|
+| name | `implementation-strategist` |
+| tools | Bash, Read, Write, Glob, Grep, WebSearch |
+| model | inherit |
+
+**策定内容**:
+- 技術選定とアーキテクチャ設計
+- ファイル構成と実装詳細
+- 実装順序とフェーズ分け
+- 品質保証とリスク対策
+
+**処理フロー**:
+1. Issue内容の分析 → コードベース調査
+2. 既存パターン・ライブラリ・設定ファイルの確認
+3. 技術選定 → アーキテクチャ設計 → ファイル構成策定
+4. 実装詳細の具体化（関数設計、データモデル、API定義）
+5. 実装順序の計画 → 品質・セキュリティ・リスク評価
+6. ユーザーレビュー → 承認後に成果物を出力
+
+### Test Designer (`./agents/test_designer.md`)
+
+Issueと実装戦略を元に、AAAパターンに基づくテスト設計を行うエージェント。
+
+| 項目 | 内容 |
+|------|------|
+| name | `test-creator` |
+| tools | Bash, Read, Write, Glob, Grep, WebSearch |
+| model | inherit |
+
+**設計方針**:
+- AAAパターン（Arrange, Act, Assert）の採用
+- Mockを使わず実インフラ/エミュレータを利用
+- Fixtureによる効率的なテスト準備
+
+**処理フロー**:
+1. Issue・実装戦略の分析 → テスト対象の特定
+2. コードベース調査（既存テスト構造、インフラ設定）
+3. テストケース設計（description, infrastructure, AAA）
+4. ユーザーレビュー → 承認後に成果物を出力
+
+### Code Reviewer (`./agents/code_reviewer.md`)
+
+PR作成前にコード品質をレビューし、DRY原則・凝集性・命名・PR粒度などの観点からフィードバックを提供するエージェント。
+
+| 項目 | 内容 |
+|------|------|
+| name | `code-reviewer` |
+| tools | Bash, Read, Glob, Grep |
+| model | inherit |
+
+**レビュー観点**:
+- DRY原則（重複コードの検出）
+- 凝集性（単一責任原則の遵守）
+- 命名規則（明確性と一貫性）
+- PR粒度（適切なサイズと論理的まとまり）
+- コーディング規約、テストカバレッジ
+- パフォーマンス・セキュリティ懸念
+
+**処理フロー**:
+1. git diff/変更ファイルの取得 → 既存パターン・規約の確認
+2. 観点別レビュー（DRY、凝集性、命名、PR粒度など）
+3. 必要に応じてPR分割を提案
+4. 優先度別に推奨アクション整理 → ユーザーレビュー
+5. レビュー結果を pull-request-writer に引き継ぎ
+
 ### エージェントの連携
 
 ```
@@ -127,7 +197,19 @@ git diffやコミット履歴を分析してPR説明文を自動生成し、レ�
                                                       ↓
                                           [sub-issue-creator] → [Sub Issues]
                                                                        ↓
-                                                              [実装作業]
+                                                    [implementation-strategist] → [実装戦略]
+                                                                       ↓
+                                                              +--------+--------+
+                                                              |                 |
+                                                        [test-creator]    [実装作業]
+                                                              |                 |
+                                                        [テスト設計]       [コード実装]
+                                                              ↓                 ↓
+                                                              +--------+--------+
+                                                                       ↓
+                                                              [code-reviewer] → [コード品質チェック]
+                                                                       ↓
+                                                          (必要に応じてPR分割・修正)
                                                                        ↓
                                                         [pull-request-writer] → [PR作成]
                                                                        ↓
@@ -136,5 +218,9 @@ git diffやコミット履歴を分析してPR説明文を自動生成し、レ�
 
 - **epic-issue-enhancer**: 不完全なEpic Issueを構造化・補完
 - **sub-issue-creator**: 完全なEpic Issueを実装単位に分割
-- **pull-request-writer**: 実装後にPRを作成してレビュー支援
+- **implementation-strategist**: Sub Issueからコードレベルの実装戦略を策定
+- **test-creator**: 実装戦略を元にテスト設計を作成
+- **実装作業**: 実装戦略とテスト設計に基づいて実装
+- **code-reviewer**: DRY原則、凝集性、命名規則、PR粒度などの観点でコード品質をレビュー
+- **pull-request-writer**: レビュー結果を踏まえてPRを作成してレビュー支援
 - **document-writer**: 必要に応じてドキュメントを生成
