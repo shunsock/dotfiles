@@ -17,24 +17,24 @@
 
 以下のカスタムスキルが定義されています：
 
-- **SDD Issue Maker** - スペック駆動開発の Issue 作成 (`./skills/sdd/SKILL.md`)
+- **SDD Issue Maker** - スペック駆動開発の Issue 作成 (`./skills/write__sdd_issue/SKILL.md`)
   - Issue 作成時はこのガイドラインに厳格に従ってください
-- **Version Management System** - Git/GitHub 操作 (`./skills/git-gh/SKILL.md`)
+- **Version Management System** - Git/GitHub 操作 (`./skills/manage__git_github/SKILL.md`)
   - リポジトリ操作、コミット、プルリクエスト、Issue管理などのタスク
-- **Nix Command** - Nix パッケージ管理 (`./skills/nix/SKILL.md`)
+- **Nix Command** - Nix パッケージ管理 (`./skills/manage__nix_system/SKILL.md`)
   - パッケージ管理、システム設定、開発環境構築
-- **Nix Run** - 一時的なコマンド実行 (`./skills/nix-run/SKILL.md`)
+- **Nix Run** - 一時的なコマンド実行 (`./skills/dispatch__nix_run_pkgs/SKILL.md`)
   - ホストOSに存在しないコマンドを `nix run` で一時的に実行
   - nixpkgsから直接パッケージを取得してシステムを汚さずに利用
-- **Go-Task** - Taskfile.yml タスク実行 (`./skills/task/SKILL.md`)
+- **Go-Task** - Taskfile.yml タスク実行 (`./skills/execute__go_task/SKILL.md`)
   - Taskfile.ymlに定義されたタスクの実行と管理
-- **AWS Permission Request** - AWS IAM権限申請メッセージ生成 (`./skills/aws-permission-request/SKILL.md`)
+- **AWS Permission Request** - AWS IAM権限申請メッセージ生成 (`./skills/request__aws_iam_permission/SKILL.md`)
   - エラーログとGit差分を元に権限申請メッセージを自動生成
-- **Gemini Web Search** - Gemini CLI を使用した Web 検索 (`./skills/gemini-search/SKILL.md`)
+- **Gemini Web Search** - Gemini CLI を使用した Web 検索 (`./skills/search__web_by_gemini/SKILL.md`)
   - 組み込みweb_searchの代わりにGemini CLIを使用した高度な検索
-- **Nix Packages Info** - HomeManager管理パッケージ情報取得 (`./skills/nix-packages-info/SKILL.md`)
+- **Nix Packages Info** - HomeManager管理パッケージ情報取得 (`./skills/search__nix_packages/SKILL.md`)
   - GitHubリポジトリからhome.nixを取得してパッケージ一覧を表示
-- **Dockerfile Best Practices** - Dockerfileの最適化とベストプラクティス (`./skills/dockerfile/SKILL.md`)
+- **Dockerfile Best Practices** - Dockerfileの最適化とベストプラクティス (`./skills/write__dockerfile/SKILL.md`)
   - イメージサイズ削減、セキュリティ強化、ビルド速度向上
   - マルチステージビルド、distroless、非root実行
   - Docker Scout、Hadolintによる品質保証

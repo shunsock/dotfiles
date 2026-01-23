@@ -3,9 +3,13 @@
   "defaultMode": "interactive",
   "permissions": {
     "allow": [
+      "Bash(awk:*)",
+      "Bash(cat:*)",
+      "Bash(find:*)",
       "Bash(gemini:*)",
       "Bash(gh:*)",
       "Bash(git:*)",
+      "Bash(ls:*)",
       "Bash(man:*)",
       "Bash(nix:*)",
       "Bash(task:*)",
@@ -23,10 +27,11 @@
       "Write(*)"
     ],
     "deny": [
-      "Read(python3/**)",
-      "Read(npm/**)",
-      "Read(pnpm/**)",
-      "Read(yarn/**)",
+      "Bash(node:*)",
+      "Bash(npm:*)",
+      "Bash(pnpm:*)",
+      "Bash(python3:*)",
+      "Read(yarn:*)",
       "Read(.env)",
       "Read(**/.env*)",
       "Read(**/*.cert)",
