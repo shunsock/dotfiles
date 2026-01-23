@@ -31,7 +31,7 @@
       "Bash(npm:*)",
       "Bash(pnpm:*)",
       "Bash(python3:*)",
-      "Read(yarn:*)",
+      "Bash(yarn:*)",
       "Read(.env)",
       "Read(**/.env*)",
       "Read(**/*.cert)",
