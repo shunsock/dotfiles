@@ -439,6 +439,43 @@ TDD（テスト駆動開発）に基づいて実装を行い、code-reviewerと�
 
 ---
 
+## Coding Rules
+
+以下のコーディングルールとエージェント使用ルールが `configs/claude/rules/` に定義されています：
+
+- **Format and Structure** - YAML形式、命名規則、成果物形式、エージェント間入出力 (`./rules/format_and_structure.md`)
+  - YAML frontmatter必須項目、ネスト規則
+  - 変数・関数・ファイル命名規則
+  - 成果物のファイル命名パターン
+  - Phase間の成果物の受け渡しフロー
+- **Agent Design Patterns** - 処理フロー、エージェント設計、並列処理 (`./rules/agent_design_patterns.md`)
+  - 5フェーズ構造とユーザー確認ポイント
+  - 役割と責務の定義
+  - Accept vs Denyパターン
+  - 並列実行可能フェーズ
+  - 小規模ソフトウェアエンジニアリング受託企業モデル
+- **Quality and Testing** - 品質基準、TDD、コードレビュー (`./rules/quality_and_testing.md`)
+  - 品質ゲート（検証可能なチェックリスト）
+  - TDD (Red-Green-Refactor) サイクル
+  - AAAパターン、Mock不使用
+  - code-reviewer修正ループ（最大3回）
+- **Development Process** - 開発工程、GitHub/git使用ルール、コードベース調査 (`./rules/development_process.md`)
+  - 開発工程の7フェーズとスキップ判定基準
+  - GitHub CLI (gh) 使用ルール
+  - git操作の厳密性（禁止操作、コミットメッセージ構造）
+  - コードベース調査の4観点（pattern, impact, technology, testing）
+- **Security and Best Practices** - セキュリティ、パフォーマンス、エラーハンドリング (`./rules/security_and_best_practices.md`)
+  - セキュリティチェック項目（SQLインジェクション、XSS、認証・認可）
+  - パフォーマンスチェック項目（N+1クエリ、メモリ効率、キャッシング）
+  - エラーハンドリングとユーザーエスカレーション
+  - ドキュメント記述の原則（Why説明、アーキテクチャ図）
+
+これらのルールは、skills/ と agents/ から抽出した15カテゴリの一般的なルールを、
+中程度に統合した5つのMarkdownファイルとして整理されています。
+各ファイルには、具体例（✅ Good / ❌ Bad）、チェックリスト、YAMLテンプレート、参照リンクが含まれています。
+
+---
+
 ## エージェント群の位置づけ - 小さなソフトウェアエンジニアリング受託企業として
 
 Claude Codeのカスタムエージェント群は、**小規模なソフトウェアエンジニアリング受託企業**の開発体制を模した設計になっています。
