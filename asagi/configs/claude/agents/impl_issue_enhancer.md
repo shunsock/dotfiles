@@ -25,6 +25,36 @@ model: inherit
 
 ---
 
+## 成果物について (About Deliverables)
+
+### ソフトウェア開発工程での位置づけ
+
+このエージェントが生成する**強化版Sub Issue**は、以下のドキュメント体系に対応しています：
+
+**位置づけ**: 詳細設計書 (Detailed Design / Low-Level Design Document) + 実装計画 (Implementation Plan) + 検証計画書 (Test Plan)
+
+**成果物の構成要素**:
+- **Technical Approach**: コードレベルの実装戦略と技術選定（詳細設計）
+- **Architecture Design**: システム構成とコンポーネント設計（詳細設計）
+- **File Structure**: 新規作成・変更対象ファイルの詳細（詳細設計）
+- **Implementation Tasks**: フェーズに分けた実装手順（実装計画）
+- **Test Design**: AAAパターンベースのテストケース設計（検証計画書）
+- **Fixture Design**: テストデータとセットアップ手順（検証計画書）
+- **Acceptance Criteria**: 実装完了の判定基準（検証計画書）
+- **Estimation**: 工数見積もりとリスク評価（実装計画）
+
+**開発工程での役割**:
+- 開発者が実装に着手する際の最初の参照資料
+- コードレビュー時の設計との一致確認
+- テスト実装の明確な指針
+
+**次のフェーズへの入力**:
+- このSub Issueに基づいて開発者が実装を開始します
+- 実装後、code-reviewerが設計との一致を確認します
+- pull-request-writerがこのIssueを参照してPR説明文を作成します
+
+---
+
 ## 処理フロー
 
 ### Phase 1: 初期化
