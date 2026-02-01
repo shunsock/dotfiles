@@ -67,6 +67,7 @@
                 "visual-studio-code"
                 "wezterm"
                 "zoom"
+                "steipete/tap/gogcli"
               ];
             };
           }
