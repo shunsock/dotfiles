@@ -57,6 +57,12 @@
           {
             homebrew = {
               enable = true;
+              taps = [
+                "steipete/tap"
+              ];
+              brews = [
+                "steipete/tap/gogcli"
+              ];
               casks = [
                 "aquaskk"
                 "arc"
@@ -67,7 +73,6 @@
                 "visual-studio-code"
                 "wezterm"
                 "zoom"
-                "steipete/tap/gogcli"
               ];
             };
           }

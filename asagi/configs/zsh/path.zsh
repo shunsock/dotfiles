@@ -1,5 +1,8 @@
 export PATH="$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:$PATH"
 
+# Homebrew
+export PATH="/opt/homebrew/bin:$PATH"
+
 # Bun
 export PATH="$HOME/.bun/bin:$PATH"
 
