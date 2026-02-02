@@ -50,6 +50,9 @@
             system.defaults.NSGlobalDomain._HIHideMenuBar = true;
           }
 
+          # Keyboard remapping configuration
+          ./modules/keymap.nix
+
           # Host configuration (Tailscale)
           ./modules/host.nix
 
