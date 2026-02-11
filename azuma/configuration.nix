@@ -3,9 +3,6 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ./modules/neovim.nix
-    ./modules/wezterm.nix
-    ./modules/zsh.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
@@ -111,9 +108,6 @@
   # List packages installed in system profile. To search, run: $ nix search wget
   environment.systemPackages = with pkgs; [
     curl
-    fastfetch
-    gh
-    go-task
     vim
   ];
 
@@ -123,6 +117,7 @@
     git = { enable = true; };
     dconf = { enable = true; };
     starship = { enable = true; };
+    zsh = { enable = true; };
   };
 
   system.stateVersion = "25.05";
