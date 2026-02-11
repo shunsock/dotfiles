@@ -3,6 +3,7 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ./modules/keymap.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
