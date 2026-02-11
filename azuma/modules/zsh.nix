@@ -1,39 +1,31 @@
 { config, pkgs, ... }:
 
 {
-  # Install zsh plugins
-  environment.systemPackages = with pkgs; [
+  home.file.".config/zsh".source = ../configs/zsh;
+  home.file.".config/zsh".recursive = true;
+
+  home.packages = with pkgs; [
     zsh-autosuggestions
     zsh-syntax-highlighting
   ];
 
-  # Deploy zsh configuration files to system-wide location
-  environment.etc."zsh/custom/basic/option.zsh".source = ../configs/zsh/basic/option.zsh;
-  environment.etc."zsh/custom/basic/alias.zsh".source = ../configs/zsh/basic/alias.zsh;
-  environment.etc."zsh/custom/command/git/alias.zsh".source = ../configs/zsh/command/git/alias.zsh;
-  environment.etc."zsh/custom/command/docker/docker.zsh".source = ../configs/zsh/command/docker/docker.zsh;
-
-  # Zsh and Oh My Zsh configuration
   programs.zsh = {
     enable = true;
+    syntaxHighlighting.enable = true;
+    autosuggestion.enable = true;
 
-    # Enable Oh My Zsh
-    ohMyZsh = {
+    "oh-my-zsh" = {
       enable = false;
       theme = "kennethreitz";
-      plugins = [];
+      plugins = [ ];
     };
 
-    # Source custom configuration files
-    interactiveShellInit = ''
+    initContent = ''
       unalias -m '*'
       setopt extendedglob
-      for f in /etc/zsh/custom/**/*.zsh; do
-       source "$f"
+      for f in ${config.home.homeDirectory}/.config/zsh/**/*.zsh; do
+        source "$f"
       done
-
-      # Load zsh-autosuggestions (must be loaded after other configs)
-      source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
     '';
   };
 }

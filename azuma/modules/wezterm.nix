@@ -1,15 +1,10 @@
 { config, pkgs, ... }:
 
 {
-  # Install WezTerm package
-  environment.systemPackages = with pkgs; [
-    wezterm
-  ];
-
-  # Deploy WezTerm configuration to system-wide XDG config location
-  environment.etc."xdg/wezterm/wezterm.lua".text = ''
-    local wezterm = require 'wezterm'
-
+  # WezTerm configuration
+  programs.wezterm = {
+    enable = true;
+    extraConfig = ''
     local config = {}
 
     -- General settings
@@ -122,5 +117,6 @@
 
     -- Return the final configuration
     return config
-  '';
+    '';
+  };
 }
