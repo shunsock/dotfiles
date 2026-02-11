@@ -14,7 +14,7 @@
     config.enable_csi_u_key_encoding = true
 
     -- Font settings
-    config.font = wezterm.font("JetBrainsMono Nerd Font", {
+    config.font = wezterm.font("HackGen35 Console NF", {
       weight = "Regular",
       stretch = "Normal",
       style = "Normal"
@@ -50,7 +50,7 @@
       border_top_color = border_color,
 
       font = wezterm.font(
-        "JetBrainsMono Nerd Font",
+        "HackGen35 Console NF",
         {
           weight = "Regular",
           stretch = "Normal",
