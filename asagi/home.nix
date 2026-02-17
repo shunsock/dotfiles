@@ -44,8 +44,8 @@
       nerd-fonts.jetbrains-mono
       nixfmt-rfc-style
       npins
+      presenterm
       rustup
-      slides
       tree
       wthrr
       yazi
