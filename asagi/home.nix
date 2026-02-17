@@ -45,6 +45,7 @@
       nixfmt-rfc-style
       npins
       rustup
+      slides
       tree
       wthrr
       yazi
