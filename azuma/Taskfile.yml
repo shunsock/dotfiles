@@ -1,0 +1,33 @@
+version: '3'
+
+tasks:
+  apply:
+    desc: Apply the configuration with nixos-rebuild
+    cmds:
+      - sudo nixos-rebuild switch --flake .#myNixOS
+
+  build:
+    desc: Build and validate configuration without applying
+    cmds:
+      - nix build .#nixosConfigurations.myNixOS.config.system.build.toplevel
+
+  check:
+    desc: Validate flake configuration
+    cmds:
+      - nix flake check
+
+  update:
+    desc: Update flake dependencies
+    cmds:
+      - nix flake update
+
+  validate:
+    desc: Run comprehensive validation (build + check)
+    deps:
+      - build
+      - check
+
+  format:
+    desc: Format Nix Settings
+    cmds:
+      - nix fmt
