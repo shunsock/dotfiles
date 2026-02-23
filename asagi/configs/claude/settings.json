@@ -1,5 +1,4 @@
 {
-  "model": "claude-sonnet-4-5-20250929",
   "defaultMode": "interactive",
   "permissions": {
     "allow": [
@@ -32,11 +31,6 @@
       "Write(*)"
     ],
     "deny": [
-      "Bash(node:*)",
-      "Bash(npm:*)",
-      "Bash(pnpm:*)",
-      "Bash(python3:*)",
-      "Bash(yarn:*)",
       "Read(.env)",
       "Read(**/.env*)",
       "Read(**/*.cert)",
