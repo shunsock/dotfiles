@@ -15,12 +15,6 @@
     syntaxHighlighting.enable = true;
     autosuggestion.enable = true;
 
-    "oh-my-zsh" = {
-      enable = true;
-      theme = "kennethreitz";
-      plugins = [ ];
-    };
-
     initContent = ''
       unalias -m '*' # 🗑️👋 trash auto added aliases
 
