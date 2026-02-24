@@ -9,17 +9,13 @@
     zsh-syntax-highlighting
   ];
 
+  programs.starship.enable = true;
+
   programs.zsh = {
     enable = true;
     dotDir = "${config.xdg.configHome}/zsh";
     syntaxHighlighting.enable = true;
     autosuggestion.enable = true;
-
-    "oh-my-zsh" = {
-      enable = true;
-      theme = "kennethreitz";
-      plugins = [ ];
-    };
 
     initContent = ''
       unalias -m '*' # 🗑️👋 trash auto added aliases
