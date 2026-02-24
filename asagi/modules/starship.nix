@@ -2,7 +2,12 @@
 
 {
   # nix develop が bash を使うため、bash でも starship init が効くようにする
-  programs.bash.enable = true;
+  programs.bash = {
+    enable = true;
+    initExtra = ''
+      shopt -s autocd
+    '';
+  };
 
   programs.starship = {
     enable = true;
