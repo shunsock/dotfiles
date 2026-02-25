@@ -27,6 +27,11 @@ tasks:
       - build
       - check
 
+  reload:
+    desc: Reload Sway configuration
+    cmds:
+      - swaymsg reload
+
   format:
     desc: Format Nix Settings
     cmds:

@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports = [
@@ -107,6 +107,20 @@
 
   # Noctalia Shell (panel, dock, notifications)
   services.noctalia-shell.enable = true;
+
+  # Noctalia needs PATH to find sh, nmcli, brightnessctl, etc.
+  systemd.user.services.noctalia-shell.environment.PATH = lib.mkOverride 49 (
+    lib.makeBinPath [
+      pkgs.coreutils
+      pkgs.bash
+      pkgs.networkmanager
+      pkgs.brightnessctl
+      pkgs.grim
+      pkgs.slurp
+      pkgs.wl-clipboard
+      pkgs.iw
+    ]
+  );
 
   # XDG portals (screen sharing, etc.)
   xdg.portal = {

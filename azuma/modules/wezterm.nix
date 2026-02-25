@@ -25,7 +25,7 @@
 
     -- Color scheme and opacity
     config.color_scheme = 'Tokyo Night Storm (Gogh)'
-    config.window_background_opacity = 0.9
+    config.window_background_opacity = 0.85
 
     -- Tab bar settings
     config.window_decorations = "RESIZE"

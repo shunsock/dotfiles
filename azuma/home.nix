@@ -9,6 +9,7 @@
 {
   imports = [
     ./modules/claude.nix
+    ./modules/noctalia.nix
     ./modules/sway.nix
     ./modules/neovim.nix
     ./modules/skk.nix
@@ -32,6 +33,7 @@
       gh
       go-task
       tree
+      yazi
     ]
     ++ [
       pkgsUnstable.claude-code
