@@ -21,6 +21,15 @@ in
     # Application launcher
     set $menu wmenu-run
 
+    # Natural scrolling
+    input "type:pointer" {
+      natural_scroll enabled
+    }
+    input "type:touchpad" {
+      natural_scroll enabled
+      tap enabled
+    }
+
     # Disable default swaybar (Noctalia provides panel)
     bar {
       mode invisible
@@ -53,26 +62,26 @@ in
     bindsym $mod+Shift+space floating toggle
     bindsym $mod+space focus mode_toggle
 
-    # Workspaces
-    bindsym $mod+1 workspace number 1
-    bindsym $mod+2 workspace number 2
-    bindsym $mod+3 workspace number 3
-    bindsym $mod+4 workspace number 4
-    bindsym $mod+5 workspace number 5
-    bindsym $mod+6 workspace number 6
-    bindsym $mod+7 workspace number 7
-    bindsym $mod+8 workspace number 8
-    bindsym $mod+9 workspace number 9
+    # Workspaces (Super+Shift+N to switch, Super+Shift+Ctrl+N to move)
+    bindsym $mod+Shift+1 workspace number 1
+    bindsym $mod+Shift+2 workspace number 2
+    bindsym $mod+Shift+3 workspace number 3
+    bindsym $mod+Shift+4 workspace number 4
+    bindsym $mod+Shift+5 workspace number 5
+    bindsym $mod+Shift+6 workspace number 6
+    bindsym $mod+Shift+7 workspace number 7
+    bindsym $mod+Shift+8 workspace number 8
+    bindsym $mod+Shift+9 workspace number 9
 
-    bindsym $mod+Shift+1 move container to workspace number 1
-    bindsym $mod+Shift+2 move container to workspace number 2
-    bindsym $mod+Shift+3 move container to workspace number 3
-    bindsym $mod+Shift+4 move container to workspace number 4
-    bindsym $mod+Shift+5 move container to workspace number 5
-    bindsym $mod+Shift+6 move container to workspace number 6
-    bindsym $mod+Shift+7 move container to workspace number 7
-    bindsym $mod+Shift+8 move container to workspace number 8
-    bindsym $mod+Shift+9 move container to workspace number 9
+    bindsym $mod+Shift+Ctrl+1 move container to workspace number 1
+    bindsym $mod+Shift+Ctrl+2 move container to workspace number 2
+    bindsym $mod+Shift+Ctrl+3 move container to workspace number 3
+    bindsym $mod+Shift+Ctrl+4 move container to workspace number 4
+    bindsym $mod+Shift+Ctrl+5 move container to workspace number 5
+    bindsym $mod+Shift+Ctrl+6 move container to workspace number 6
+    bindsym $mod+Shift+Ctrl+7 move container to workspace number 7
+    bindsym $mod+Shift+Ctrl+8 move container to workspace number 8
+    bindsym $mod+Shift+Ctrl+9 move container to workspace number 9
 
     # Resize mode
     mode "resize" {
@@ -91,6 +100,7 @@ in
     assign [app_id="firefox"] workspace number 2
 
     # Autostart
+    exec fcitx5 -r
     exec wezterm
     exec firefox
 
