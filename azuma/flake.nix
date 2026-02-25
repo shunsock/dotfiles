@@ -5,6 +5,10 @@
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
   };
 
   outputs =
@@ -13,6 +17,7 @@
       nixpkgs,
       nixpkgs-unstable,
       home-manager,
+      noctalia,
       ...
     }:
     let
@@ -38,6 +43,7 @@
           inherit system;
           modules = [
             ./configuration.nix
+            noctalia.nixosModules.default
 
             # Home Manager integration
             home-manager.nixosModules.home-manager

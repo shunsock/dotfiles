@@ -27,6 +27,16 @@ tasks:
       - build
       - check
 
+  reload:
+    desc: Reload Sway configuration
+    cmds:
+      - swaymsg reload
+
+  restart-noctalia:
+    desc: Restart Noctalia Shell
+    cmds:
+      - systemctl --user restart noctalia-shell
+
   format:
     desc: Format Nix Settings
     cmds:

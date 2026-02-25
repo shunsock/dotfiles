@@ -25,39 +25,41 @@
 
     -- Color scheme and opacity
     config.color_scheme = 'Tokyo Night Storm (Gogh)'
-    config.window_background_opacity = 0.9
+    config.window_background_opacity = 0.85
 
     -- Tab bar settings
-    config.window_decorations = "RESIZE"
+    config.window_decorations = "NONE"
     config.show_new_tab_button_in_tab_bar = false
     config.show_close_tab_button_in_tabs = false
+    config.window_frame = {
+      font = wezterm.font("HackGen35 Console NF"),
+      font_size = 16.0,
+      active_titlebar_bg = "#1a1b26",
+      inactive_titlebar_bg = "#1a1b26",
+      active_titlebar_fg = "#c0caf5",
+      inactive_titlebar_fg = "#565f89",
+      border_left_width = 0,
+      border_right_width = 0,
+      border_top_height = 0,
+      border_bottom_height = 0,
+    }
     config.colors = {
        tab_bar = {
+         background = "#1a1b26",
+         active_tab = {
+           bg_color = "#24283b",
+           fg_color = "#c0caf5",
+         },
+         inactive_tab = {
+           bg_color = "#1a1b26",
+           fg_color = "#565f89",
+         },
+         inactive_tab_hover = {
+           bg_color = "#24283b",
+           fg_color = "#c0caf5",
+         },
          inactive_tab_edge = "none",
        },
-    }
-
-    -- Border settings
-    local border_color = '#783aa1'
-    config.window_frame = {
-      border_left_width = '1.0cell',
-      border_right_width = '1.0cell',
-      border_bottom_height = '0.25cell',
-      border_top_height = '0.25cell',
-      border_left_color = border_color,
-      border_right_color = border_color,
-      border_bottom_color = border_color,
-      border_top_color = border_color,
-
-      font = wezterm.font(
-        "HackGen35 Console NF",
-        {
-          weight = "Regular",
-          stretch = "Normal",
-          style = "Normal"
-        }
-      ),
-      font_size = 20.0,
     }
 
     -- Key bindings
