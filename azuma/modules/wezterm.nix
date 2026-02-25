@@ -28,7 +28,7 @@
     config.window_background_opacity = 0.85
 
     -- Tab bar settings
-    config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
+    config.window_decorations = "NONE"
     config.show_new_tab_button_in_tab_bar = false
     config.show_close_tab_button_in_tabs = false
     config.window_frame = {

@@ -75,7 +75,8 @@
                     "id": "Launcher"
                 },
                 {
-                    "id": "Clock"
+                    "id": "Clock",
+                    "formatHorizontal": "yyyy-MM-dd hh:mm, ddd"
                 },
                 {
                     "id": "SystemMonitor"
@@ -246,7 +247,7 @@
         "autoStartAuth": false,
         "avatarImage": "/home/shunsock/.face",
         "boxRadiusRatio": 1,
-        "clockFormat": "yyyy-MM-dd ddd hh:mm",
+        "clockFormat": "yyyy-MM-dd hh:mm, ddd",
         "clockStyle": "custom",
         "compactLockScreen": false,
         "dimmerOpacity": 0.2,

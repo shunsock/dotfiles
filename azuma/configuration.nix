@@ -119,6 +119,7 @@
       pkgs.slurp
       pkgs.wl-clipboard
       pkgs.iw
+      pkgs.sway
     ]
   );
 
