@@ -30,6 +30,9 @@ in
       tap enabled
     }
 
+    # Wallpaper
+    output * bg ${../assets/background/rainbow_sunset.jpg} fill
+
     # Disable window title bars and borders
     default_border none
     default_floating_border none

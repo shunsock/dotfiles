@@ -32,6 +32,11 @@ tasks:
     cmds:
       - swaymsg reload
 
+  restart-noctalia:
+    desc: Restart Noctalia Shell
+    cmds:
+      - systemctl --user restart noctalia-shell
+
   format:
     desc: Format Nix Settings
     cmds:

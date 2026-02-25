@@ -486,7 +486,7 @@
         "automationEnabled": false,
         "directory": "/home/shunsock/Pictures/Wallpapers",
         "enableMultiMonitorDirectories": false,
-        "enabled": true,
+        "enabled": false,
         "favorites": [
         ],
         "fillColor": "#000000",
