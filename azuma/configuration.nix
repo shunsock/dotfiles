@@ -71,16 +71,56 @@
     };
   };
 
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-
-  # Enable the GNOME Desktop Environment.
-  services.displayManager.gdm.enable = true;
-  services.desktopManager.gnome.enable = true;
-
-  # Configure keymap in X11
-  services.xserver.xkb = { layout = "us"; variant = "";
+  # Sway (tiling Wayland compositor)
+  programs.sway = {
+    enable = true;
+    wrapperFeatures.gtk = true;
+    extraPackages = with pkgs; [
+      swaylock
+      swayidle
+      brightnessctl
+      grim
+      slurp
+      wmenu
+      wl-clipboard
+    ];
   };
+
+  # UWSM (Universal Wayland Session Manager)
+  programs.uwsm = {
+    enable = true;
+    waylandCompositors.sway = {
+      prettyName = "Sway";
+      comment = "Sway compositor managed by UWSM";
+      binPath = "/run/current-system/sw/bin/sway";
+    };
+  };
+
+  # greetd + tuigreet (login screen)
+  services.greetd = {
+    enable = true;
+    settings.default_session = {
+      command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-user-session --sessions ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions";
+      user = "greeter";
+    };
+  };
+
+  # Noctalia Shell (panel, dock, notifications)
+  services.noctalia-shell.enable = true;
+
+  # XDG portals (screen sharing, etc.)
+  xdg.portal = {
+    enable = true;
+    wlr.enable = true;
+  };
+
+  # Polkit authentication agent
+  security.polkit.enable = true;
+
+  # GNOME Keyring + swaylock PAM
+  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.greetd.enableGnomeKeyring = true;
+  security.pam.services.swaylock = {};
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -109,6 +149,7 @@
   # List packages installed in system profile. To search, run: $ nix search wget
   environment.systemPackages = with pkgs; [
     curl
+    polkit_gnome
     vim
   ];
 

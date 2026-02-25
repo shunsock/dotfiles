@@ -9,7 +9,7 @@
 {
   imports = [
     ./modules/claude.nix
-    ./modules/gnome.nix
+    ./modules/sway.nix
     ./modules/neovim.nix
     ./modules/skk.nix
     ./modules/wezterm.nix
