@@ -30,6 +30,10 @@ in
       tap enabled
     }
 
+    # Disable window title bars and borders
+    default_border none
+    default_floating_border none
+
     # Disable default swaybar (Noctalia provides panel)
     bar {
       mode invisible
