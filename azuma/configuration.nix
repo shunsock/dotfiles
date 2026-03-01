@@ -137,6 +137,9 @@
   security.pam.services.greetd.enableGnomeKeyring = true;
   security.pam.services.swaylock = {};
 
+  # UPower (battery detection for noctalia-shell, etc.)
+  services.upower.enable = true;
+
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
