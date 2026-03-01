@@ -99,7 +99,8 @@
                     "id": "NotificationHistory"
                 },
                 {
-                    "id": "Battery"
+                    "id": "Battery",
+                    "alwaysShowPercentage": true
                 },
                 {
                     "id": "Volume"
