@@ -9,6 +9,7 @@
 
 {
   imports = [
+    ./modules/bash.nix
     ./modules/claude.nix
     ./modules/firefox.nix
     ./modules/gemini.nix
