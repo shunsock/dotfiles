@@ -1,5 +1,11 @@
 {
   description = "Flake for NixOS";
+
+  nixConfig = {
+    extra-substituters = [ "https://llm-agents.cachix.org" ];
+    extra-trusted-public-keys = [ "llm-agents.cachix.org-1:wfJEbMSqFHJkRycnmHmOGNbs5MJORFYVo8JbJCVsjJY=" ];
+  };
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -9,6 +15,7 @@
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    llm-agents.url = "github:numtide/llm-agents.nix";
   };
 
   outputs =
@@ -18,6 +25,7 @@
       nixpkgs-unstable,
       home-manager,
       noctalia,
+      llm-agents,
       ...
     }:
     let
@@ -34,6 +42,7 @@
           allowUnfree = true;
         };
       };
+      pkgsLlmAgents = llm-agents.packages.${system};
     in
     {
       formatter.${system} = pkgs.nixfmt-rfc-style;
@@ -54,6 +63,7 @@
 
                 extraSpecialArgs = {
                   inherit pkgsUnstable;
+                  inherit pkgsLlmAgents;
                 };
 
                 users.shunsock = import ./home.nix;

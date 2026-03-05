@@ -1,5 +1,11 @@
 {
   description = "Flake for macOS";
+
+  nixConfig = {
+    extra-substituters = [ "https://llm-agents.cachix.org" ];
+    extra-trusted-public-keys = [ "llm-agents.cachix.org-1:wfJEbMSqFHJkRycnmHmOGNbs5MJORFYVo8JbJCVsjJY=" ];
+  };
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -7,6 +13,7 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    llm-agents.url = "github:numtide/llm-agents.nix";
   };
 
   outputs =
@@ -16,6 +23,7 @@
       nixpkgs-unstable,
       nix-darwin,
       home-manager,
+      llm-agents,
       ...
     }:
     let
@@ -32,6 +40,7 @@
           allowUnfree = true;
         };
       };
+      pkgsLlmAgents = llm-agents.packages.${system};
     in
     {
       formatter.${system} = pkgs.nixfmt-rfc-style;
@@ -89,6 +98,7 @@
 
               extraSpecialArgs = {
                 inherit pkgsUnstable;
+                inherit pkgsLlmAgents;
               };
 
               users.shunsock = import ./home.nix;

@@ -2,6 +2,7 @@
   config,
   pkgs,
   pkgsUnstable,
+  pkgsLlmAgents,
   lib,
   ...
 }:
@@ -36,6 +37,6 @@
       yazi
     ]
     ++ [
-      pkgsUnstable.claude-code
+      pkgsLlmAgents.claude-code
     ];
 }
