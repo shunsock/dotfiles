@@ -2,6 +2,7 @@
   config,
   pkgs,
   pkgsUnstable,
+  pkgsLlmAgents,
   lib,
   ...
 }:
@@ -53,8 +54,8 @@
       zoxide
     ]
     ++ [
-      pkgsUnstable.claude-code
+      pkgsLlmAgents.claude-code
       pkgsUnstable.google-cloud-sdk
-      pkgsUnstable.gemini-cli
+      pkgsLlmAgents.gemini-cli
     ];
 }
