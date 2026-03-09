@@ -71,12 +71,15 @@
               enable = true;
               taps = [
                 "steipete/tap"
+                "Warashi/tap"
               ];
               brews = [
+                "curl"
                 "steipete/tap/gogcli"
               ];
               casks = [
                 "aquaskk"
+                "cage"
                 "arc"
                 "docker"
                 "firefox"
