@@ -1,22 +1,15 @@
 {
-  "defaultMode": "interactive",
   "permissions": {
+    "defaultMode": "bypassPermissions",
     "allow": [
       "Bash(cat:*)",
-      "Bash(cp:*)",
-      "Bash(cargo:*)",
       "Bash(find:*)",
-      "Bash(gemini:*)",
       "Bash(gh:*)",
       "Bash(git:*)",
       "Bash(ls:*)",
       "Bash(man:*)",
-      "Bash(mv:*)",
       "Bash(nix:*)",
-      "Bash(nix run nixpkgs#:*)",
       "Bash(task:*)",
-      "Bash(tree:*)",
-      "Bash(uv:*)",
       "Bash(wc:*)",
       "Bash(which:*)",
       "Edit(*)",
@@ -52,12 +45,6 @@
       "Bash(mkfs:*)",
       "Bash(mount:*)",
       "Bash(ln -s:*)"
-    ],
-    "ask": [
-      "Bash(git rm:*)",
-      "Bash(git merge:*)",
-      "Bash(git push -f:*)",
-      "Bash(git revert:*)"
     ]
   },
   "env": {
