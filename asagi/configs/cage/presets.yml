@@ -1,0 +1,31 @@
+presets:
+  base:
+    allow:
+      - "."
+      - "$HOME/.cache"
+      - "$HOME/.local/share"
+      - "$HOME/.config"
+      - "/dev/tty"
+      - "/private/tmp"
+      - "/var/folders"
+      - "/Library/Caches"
+      - "$HOME/Library/Caches"
+
+  git-enabled:
+    allow-git: true
+    allow-keychain: true
+
+  claude-code:
+    allow:
+      - "$HOME/.claude"
+      - "$HOME/.claude.lock"
+      - "$HOME/.claude.json"
+      - "$HOME/.claude.json.lock"
+      - "$HOME/.claude.json.tmp.*"
+
+auto-presets:
+  - command: claude
+    presets:
+      - base
+      - git-enabled
+      - claude-code

@@ -2,7 +2,6 @@
   "defaultMode": "interactive",
   "permissions": {
     "allow": [
-      "Bash(awk:*)",
       "Bash(cat:*)",
       "Bash(cp:*)",
       "Bash(cargo:*)",
@@ -65,5 +64,18 @@
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "BASH_DEFAULT_TIMEOUT_MS": "180000",
     "MAX_THINKING_TOKENS": "10000"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/validate-bash.sh"
+          }
+        ]
+      }
+    ]
   }
 }
