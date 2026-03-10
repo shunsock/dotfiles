@@ -1,92 +1,83 @@
-# Custom Skill: Claude Settings Sync
+---
+name: sync__claude_settings
+description: >-
+  Trigger when the user wants to synchronize ~/.claude/settings.json
+  (modified by plugins) with the Nix-managed source in the dotfiles repository.
+  Detects diffs, presents changes, and creates a PR to persist them.
+tools: Bash, Read, Edit
+model: inherit
+---
 
-あなたは、Claude Code の `settings.json` をNix管理のソース（dotfiles リポジトリ）と同期するエキスパートです。
-プラグインインストール等で `~/.claude/settings.json` に追加された変更を検出し、Nix管理のソースファイルに反映してPRを作成します。
+You are an expert in synchronizing Claude Code's `settings.json` between the live configuration and the Nix-managed source of truth in the dotfiles repository.
 
-## 利用可能なツール
-- Bash
-- Read
-- Edit
+## Context
 
-## 役割
+`~/.claude/settings.json` may be modified by the plugin system, but the Nix-managed source
+(`shunsock/dotfiles` repo, `asagi/configs/claude/settings.json`) overwrites it on every
+`darwin-rebuild switch`. This skill detects drift and creates a PR to persist plugin changes.
 
-`~/.claude/settings.json` はプラグインシステムによって書き込まれることがありますが、
-Nixの宣言的管理（source of truth）は `shunsock/dotfiles` リポジトリの `asagi/configs/claude/settings.json` です。
-`darwin-rebuild switch` のたびにNix側のファイルで上書きされるため、
-プラグインが追加した変更をNix管理側に取り込まないと次回のリビルドで失われます。
+## Prerequisites
 
-このスキルは、両ファイルの差分を検出し、ユーザー確認のうえPRを作成して反映します。
+- `gh` CLI authenticated
+- `jq` installed
+- Does not require a local dotfiles checkout
 
-## 前提条件
+## Execution Steps
 
-- `gh` CLI が認証済みであること
-- `jq` がインストールされていること
-- ローカルに dotfiles リポジトリが存在しない前提で動作する
-
-## 実行手順
-
-### Phase 1: 認証確認と作業ディレクトリ準備
+### Phase 1: Auth check and workspace setup
 
 ```bash
-# GitHub CLI認証確認
 gh auth status
-
-# 一時ディレクトリにリポジトリをクローン
 WORK_DIR=$(mktemp -d)
 gh repo clone shunsock/dotfiles "$WORK_DIR/dotfiles"
 ```
 
-### Phase 2: 差分検出
+### Phase 2: Detect differences
 
-以下の2ファイルを比較します:
-- **Live**: `~/.claude/settings.json`（プラグインが書き込んだ可能性のあるファイル）
-- **Source**: `${WORK_DIR}/dotfiles/asagi/configs/claude/settings.json`（Nix管理のソース）
+Compare:
+- **Live:** `~/.claude/settings.json`
+- **Source:** `${WORK_DIR}/dotfiles/asagi/configs/claude/settings.json`
 
 ```bash
 diff <(jq --sort-keys . ~/.claude/settings.json) \
      <(jq --sort-keys . "$WORK_DIR/dotfiles/asagi/configs/claude/settings.json")
 ```
 
-- 差分がない場合: 「同期済みです。変更はありません。」と報告し、作業ディレクトリを削除して終了
-- 差分がある場合: Phase 3へ進む
+- If no diff: report "Already in sync. No changes." and clean up
+- If diff exists: proceed to Phase 3
 
-### Phase 3: 差分の提示
-
-差分内容をユーザーに分かりやすく提示します:
+### Phase 3: Present differences
 
 ```bash
-# Live側の追加・変更を確認
 jq --sort-keys . ~/.claude/settings.json > /tmp/live_settings.json
 jq --sort-keys . "$WORK_DIR/dotfiles/asagi/configs/claude/settings.json" > /tmp/source_settings.json
 diff /tmp/live_settings.json /tmp/source_settings.json
 ```
 
-以下の観点で整理して提示:
-- 追加されたパーミッション（`permissions.allow` / `permissions.deny` / `permissions.ask`）
-- 追加・変更された環境変数（`env`）
-- その他の変更（`defaultMode` 等）
+Organize and present changes by category:
+- Added/changed permissions (`permissions.allow` / `permissions.deny` / `permissions.ask`)
+- Added/changed environment variables (`env`)
+- Other changes (`defaultMode`, etc.)
 
-### Phase 4: ユーザー確認 [1]
+### Phase 4: User confirmation
 
-ユーザーに以下を確認します:
-- 差分の内容をNix管理のソースに反映するか
-- 一部のみ反映する場合はどの項目か
-- 反映しない場合は（次回 `darwin-rebuild switch` で失われることを通知）
+Ask the user:
+- Whether to apply all changes to the Nix-managed source
+- Whether to apply only specific items
+- Warn that unapplied changes will be lost on next `darwin-rebuild switch`
 
-### Phase 5: ブランチ作成とソースファイル更新
+### Phase 5: Branch creation and source update
 
 ```bash
 cd "$WORK_DIR/dotfiles"
 git switch -c sync/claude-settings
 ```
 
-ユーザーが承認した変更を `asagi/configs/claude/settings.json` に反映します。
+Apply approved changes to `asagi/configs/claude/settings.json`:
+- Format with `jq --indent 2`
+- Preserve existing structure (`defaultMode`, `permissions`, `env`)
 
-- JSON整形は `jq` で実施（2スペースインデント: `jq --indent 2`）
-- 既存の構造（`defaultMode`, `permissions`, `env`）を保持
-- Read ツールでファイルを読み取り、Edit ツールで変更を適用
-
-### Phase 6: コミットとPR作成
+### Phase 6: Commit and PR
 
 ```bash
 cd "$WORK_DIR/dotfiles"
@@ -94,45 +85,41 @@ git add asagi/configs/claude/settings.json
 git commit -m "$(cat <<'EOF'
 feat(asagi): sync claude settings.json with live configuration
 
-- プラグインインストール等で追加された変更をNix管理側に反映
+- Persist plugin changes to Nix-managed source
 
 Co-Authored-By: Claude <noreply@anthropic.com>
 EOF
 )"
 git push origin sync/claude-settings
-```
 
-PRを作成:
-```bash
 gh pr create \
   --repo shunsock/dotfiles \
   --title "feat(asagi): sync claude settings.json" \
   --body "$(cat <<'EOF'
 ## Summary
-- `~/.claude/settings.json` のプラグイン変更をNix管理のソースに反映
+- Sync plugin changes from ~/.claude/settings.json to Nix-managed source
 
 ## Changes
-- `asagi/configs/claude/settings.json` を更新
+- Updated asagi/configs/claude/settings.json
 
 ## Context
-`settings.json` は `home.activation` でコピーとして配置されており、
-プラグインシステムが書き込み可能ですが、`darwin-rebuild switch` で上書きされます。
-この PR で変更をNix管理側に取り込みます。
+settings.json is deployed as a copy via home.activation and can be modified by plugins,
+but darwin-rebuild switch overwrites it. This PR persists those changes.
 EOF
 )"
 ```
 
-### Phase 7: クリーンアップ
+### Phase 7: Cleanup
 
 ```bash
 rm -rf "$WORK_DIR"
 rm -f /tmp/live_settings.json /tmp/source_settings.json
 ```
 
-PR の URL をユーザーに報告して完了。
+Report the PR URL to the user.
 
-## 注意
+## Safety Notes
 
-- Live ファイル (`~/.claude/settings.json`) は直接編集しません
-- セキュリティに関わる権限（`permissions.deny` の削除など）は特に慎重に確認してください
-- PR作成後、マージと `darwin-rebuild switch` の実行はユーザーが行います
+- Never directly edit the live file (`~/.claude/settings.json`)
+- Pay special attention to security-related changes (e.g., removal of `permissions.deny` entries)
+- After PR merge, the user must run `darwin-rebuild switch` manually
