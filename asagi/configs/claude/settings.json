@@ -1,6 +1,10 @@
 {
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
+    "BASH_DEFAULT_TIMEOUT_MS": "180000",
+    "MAX_THINKING_TOKENS": "10000"
+  },
   "permissions": {
-    "defaultMode": "bypassPermissions",
     "allow": [
       "Bash(cat:*)",
       "Bash(find:*)",
@@ -45,12 +49,8 @@
       "Bash(mkfs:*)",
       "Bash(mount:*)",
       "Bash(ln -s:*)"
-    ]
-  },
-  "env": {
-    "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
-    "BASH_DEFAULT_TIMEOUT_MS": "180000",
-    "MAX_THINKING_TOKENS": "10000"
+    ],
+    "defaultMode": "bypassPermissions"
   },
   "hooks": {
     "PreToolUse": [
@@ -64,5 +64,17 @@
         ]
       }
     ]
+  },
+  "extraKnownMarketplaces": {
+    "anthropic-agent-skills": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/skills"
+      }
+    }
+  },
+  "skipDangerousModePermissionPrompt": true,
+  "enabledPlugins": {
+    "document-skills@anthropic-agent-skills": true
   }
 }
