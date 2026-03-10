@@ -1,5 +1,5 @@
 ---
-name: draft__aws_permission
+name: flow__aws_permission
 description: >-
   Trigger when the user encounters an AWS IAM permission error and needs to
   draft a permission request message for their team.

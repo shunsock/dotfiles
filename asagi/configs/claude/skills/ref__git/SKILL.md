@@ -1,5 +1,5 @@
 ---
-name: manage__git
+name: ref__git
 description: >-
   Trigger when the user wants to perform local git operations: branching,
   committing, staging, stashing, amending, reverting, or resetting.

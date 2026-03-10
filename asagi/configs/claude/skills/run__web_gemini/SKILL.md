@@ -1,5 +1,5 @@
 ---
-name: search__web_gemini
+name: run__web_gemini
 description: >-
   Trigger when the user wants to search the web for information.
   Uses the Google Gemini CLI instead of built-in web search tools.

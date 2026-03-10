@@ -1,5 +1,5 @@
 ---
-name: sync__claude_settings
+name: flow__claude_sync
 description: >-
   Trigger when the user wants to synchronize ~/.claude/settings.json
   (modified by plugins) with the Nix-managed source in the dotfiles repository.

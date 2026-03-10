@@ -1,5 +1,5 @@
 ---
-name: operate__git_sync
+name: flow__git_sync
 description: >-
   Trigger when the user wants to pull remote changes, push local commits,
   fetch updates, or rebase the current branch onto a remote branch.

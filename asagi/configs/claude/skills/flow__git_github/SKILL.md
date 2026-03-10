@@ -1,5 +1,5 @@
 ---
-name: operate__git_github
+name: flow__git_github
 description: >-
   Trigger when the user wants to interact with GitHub: creating or viewing
   pull requests, managing issues, checking CI status, or verifying gh authentication.

@@ -1,5 +1,5 @@
 ---
-name: write__github_issue
+name: flow__github_issue
 description: >-
   Trigger when the user wants to create a GitHub issue with structured
   context, requirements, technical specs, and acceptance criteria.

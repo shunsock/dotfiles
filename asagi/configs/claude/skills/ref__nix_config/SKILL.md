@@ -1,5 +1,5 @@
 ---
-name: manage__nix_config
+name: ref__nix_config
 description: >-
   Trigger when the user wants to build, check, update, or apply Nix system configuration.
   Covers nix-darwin, NixOS, Nix Flakes, and Home Manager operations.

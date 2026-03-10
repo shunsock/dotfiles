@@ -1,5 +1,5 @@
 ---
-name: query__nix_packages
+name: ref__nix_packages
 description: >-
   Trigger when the user wants to know which packages are managed by Home Manager
   or wants to list installed Nix packages from the dotfiles repository.

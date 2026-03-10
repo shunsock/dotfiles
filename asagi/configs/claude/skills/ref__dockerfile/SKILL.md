@@ -1,5 +1,5 @@
 ---
-name: write__dockerfile
+name: ref__dockerfile
 description: >-
   Trigger when the user wants to create, improve, or review a Dockerfile.
   Applies best practices for image size, build speed, security, and maintainability.
