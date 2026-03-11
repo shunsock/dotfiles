@@ -1,11 +1,6 @@
 {
   description = "Flake for NixOS";
 
-  nixConfig = {
-    extra-substituters = [ "https://llm-agents.cachix.org" ];
-    extra-trusted-public-keys = [ "llm-agents.cachix.org-1:wfJEbMSqFHJkRycnmHmOGNbs5MJORFYVo8JbJCVsjJY=" ];
-  };
-
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
