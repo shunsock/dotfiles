@@ -69,6 +69,7 @@
                 "Warashi/tap"
               ];
               brews = [
+                "colima"
                 "curl"
                 "steipete/tap/gogcli"
               ];
