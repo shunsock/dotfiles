@@ -141,6 +141,9 @@
   # UPower (battery detection for noctalia-shell, etc.)
   services.upower.enable = true;
 
+  # Tailscale VPN
+  services.tailscale.enable = true;
+
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
