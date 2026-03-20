@@ -12,11 +12,14 @@ set -euo pipefail
 COMMAND_RULES=(
   "awk::awk is prohibited. Use the Edit tool or perl for text processing."
   "sed::sed is prohibited. Use the Edit tool or perl for text processing."
+  "python::python is prohibited. Use uv for running python"
+  "uvx::uvx is prohibited. Use tools via nix"
+  "npx::npx is prohibited. Use tools via nix"
+  "bunx::bunx is prohibited. Use tools via nix"
 )
 
 # Format: "regex_pattern::reason"  — passed to grep -qE as-is
 PATTERN_RULES=(
-  '\bgit\s+push\b::git push is prohibited. Please ask the user to run git push manually.'
   '\bgit\s+add\s+(-A|--all|\.)::git add -A/--all/. is prohibited. Specify file names explicitly to avoid staging unintended files.'
 )
 
