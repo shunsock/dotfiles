@@ -12,6 +12,10 @@
     source = ../configs/claude/skills;
     recursive = true;
   };
+  home.file.".claude/rules" = {
+    source = ../configs/claude/rules;
+    recursive = true;
+  };
   # settings.json はコピーとして配置（プラグインシステムが書き込み可能）
   # source of truth は configs/claude/settings.json
   # darwin-rebuild switch のたびに上書きされる
