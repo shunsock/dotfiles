@@ -13,5 +13,9 @@ bin/
 # Nix
 result
 
+# Claude Code
+.claude/settings.local.json
+.claude/worktrees/
+
 # Tailscale
 /etc/tailscale/authkey
