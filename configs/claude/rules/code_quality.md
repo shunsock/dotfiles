@@ -7,7 +7,6 @@
 ### 実行方法
 
 ```bash
-nix run nixpkgs#cargo -- install complexity
 complexity <対象ディレクトリ>
 ```
 

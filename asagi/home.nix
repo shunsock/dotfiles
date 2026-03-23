@@ -3,6 +3,7 @@
   pkgs,
   pkgsUnstable,
   pkgsLlmAgents,
+  complexity,
   lib,
   ...
 }:
@@ -55,6 +56,7 @@
       zoxide
     ]
     ++ [
+      complexity
       pkgsLlmAgents.claude-code
       pkgsUnstable.google-cloud-sdk
       pkgsUnstable.gws
