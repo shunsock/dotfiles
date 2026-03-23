@@ -3,6 +3,7 @@
   pkgs,
   pkgsUnstable,
   pkgsLlmAgents,
+  complexity,
   lib,
   ...
 }:
@@ -37,6 +38,7 @@
       yazi
     ]
     ++ [
+      complexity
       pkgsLlmAgents.claude-code
     ];
 }

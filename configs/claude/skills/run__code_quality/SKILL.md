@@ -19,13 +19,7 @@ a language-agnostic tool that approximates complexity per file using indentation
 
 ## Execution Steps
 
-### Phase 1: Install complexity
-
-```bash
-nix run nixpkgs#cargo -- install complexity
-```
-
-### Phase 2: Run complexity analysis
+### Phase 1: Run complexity analysis
 
 ```bash
 complexity <target_directory>
@@ -35,7 +29,7 @@ Options:
 - `--format json` or `--format csv` for structured output
 - `--only .py,.rs,.ts` to filter by file extension
 
-### Phase 3: Run test coverage (if applicable)
+### Phase 2: Run test coverage (if applicable)
 
 Use the project's test runner with coverage enabled. Identify the appropriate tool
 from the project configuration:
@@ -49,7 +43,7 @@ from the project configuration:
 If the project uses a different language or framework, check the project's configuration
 files (package.json, pyproject.toml, Cargo.toml, etc.) to determine the correct command.
 
-### Phase 4: Report results
+### Phase 3: Report results
 
 1. List files ordered by complexity score (highest first)
 2. Flag files with notably high scores as refactoring candidates

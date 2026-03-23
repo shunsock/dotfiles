@@ -36,6 +36,19 @@
         };
       };
       pkgsLlmAgents = llm-agents.packages.${system};
+
+      # thoughtbot/complexity: cognitive complexity measurement tool
+      complexity = pkgs.rustPlatform.buildRustPackage rec {
+        pname = "complexity";
+        version = "0.4.2";
+        src = pkgs.fetchFromGitHub {
+          owner = "thoughtbot";
+          repo = "complexity";
+          rev = version;
+          hash = "sha256-lyc6ofDi7J2gIfBal1ARwxLzMtR+CdkCYumgMzQDghw=";
+        };
+        cargoHash = "sha256-c/1rm2rxoBAjK1abJHtjyhnmQq0WmXgZ7kdZy8pDOnM=";
+      };
     in
     {
       formatter.${system} = pkgs.nixfmt-rfc-style;
@@ -98,6 +111,7 @@
               extraSpecialArgs = {
                 inherit pkgsUnstable;
                 inherit pkgsLlmAgents;
+                inherit complexity;
               };
 
               users.shunsock = import ./home.nix;
