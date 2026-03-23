@@ -29,4 +29,5 @@
 ### 開発用コマンド
 
 - 存在しないコマンドは `nix run nixpkgs#command_name` を利用して実行する
+- プロジェクトに flake.nix (devShell) がある場合は `nix develop -c <command>` を利用する
 - ローカルのbrewはNix Darwinを通じてのみ利用する
