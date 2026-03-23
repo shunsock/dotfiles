@@ -57,6 +57,7 @@
     ++ [
       pkgsLlmAgents.claude-code
       pkgsUnstable.google-cloud-sdk
+      pkgsUnstable.gws
       pkgsLlmAgents.gemini-cli
     ];
 }
