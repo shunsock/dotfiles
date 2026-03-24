@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 
 {
-  # Common configs shared between asagi and azuma
+  # Common configs shared between nix-darwin and nix-os
   home.file.".config/zsh/common".source = ../../configs/zsh;
   home.file.".config/zsh/common".recursive = true;
 

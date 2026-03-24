@@ -4,8 +4,8 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - 'akatsuki/**'
-      - '.github/workflows/akatsuki-build.yml'
+      - 'neovim-docker/**'
+      - '.github/workflows/neovim-docker-build.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -18,19 +18,19 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - name: akatsuki-default-arm
-            dockerfile: akatsuki/akatsuki-default-arm/Dockerfile
-            context: akatsuki/akatsuki-default-arm
+          - name: neovim-docker-default-arm
+            dockerfile: neovim-docker/neovim-docker-default-arm/Dockerfile
+            context: neovim-docker/neovim-docker-default-arm
             platform: linux/arm64
 
-          - name: akatsuki-default-amd
-            dockerfile: akatsuki/akatsuki-default-amd/Dockerfile
-            context: akatsuki/akatsuki-default-amd
+          - name: neovim-docker-default-amd
+            dockerfile: neovim-docker/neovim-docker-default-amd/Dockerfile
+            context: neovim-docker/neovim-docker-default-amd
             platform: linux/amd64
 
-          - name: akatsuki-python
-            dockerfile: akatsuki/akatsuki-python/Dockerfile
-            context: akatsuki/akatsuki-python
+          - name: neovim-docker-python
+            dockerfile: neovim-docker/neovim-docker-python/Dockerfile
+            context: neovim-docker/neovim-docker-python
             platform: linux/arm64
 
     steps:

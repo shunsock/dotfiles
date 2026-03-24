@@ -77,7 +77,7 @@ git checkout -b claude-config/<変更内容の要約>
 #### Darwin (macOS) の場合
 
 ```bash
-cd /tmp/dotfiles-claude-update/asagi
+cd /tmp/dotfiles-claude-update/nix-darwin
 nix build .#darwinConfigurations.shunsock-darwin.system
 nix flake check
 ```
@@ -85,7 +85,7 @@ nix flake check
 #### Linux の場合
 
 ```bash
-cd /tmp/dotfiles-claude-update/azuma
+cd /tmp/dotfiles-claude-update/nix-os
 nix build .#nixosConfigurations.myNixOS.config.system.build.toplevel
 nix flake check
 ```

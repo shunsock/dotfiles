@@ -1,9 +1,9 @@
-## Akatsuki: A Containerized IDE Based on Neovim
+## neovim-docker: A Containerized IDE Based on Neovim
 
-Akatsuki provides portable, reproducible development environments packaged as Docker containers. Each container includes Neovim v0.11.1 with pre-configured plugins, language servers, and development tools.
+neovim-docker provides portable, reproducible development environments packaged as Docker containers. Each container includes Neovim v0.11.1 with pre-configured plugins, language servers, and development tools.
 
 **Base**: Ubuntu 24.04
-**Registry**: [tsuchiya55docker/akatsuki](https://hub.docker.com/r/tsuchiya55docker/akatsuki)
+**Registry**: [tsuchiya55docker/neovim-docker](https://hub.docker.com/r/tsuchiya55docker/neovim-docker)
 **Architecture**: Multi-architecture support (ARM64 and AMD64)
 
 ### Available Images
@@ -20,18 +20,18 @@ Akatsuki provides portable, reproducible development environments packaged as Do
 
 #### Build Status
 
-[![Akatsuki Build](https://github.com/shunsock/dotfiles/actions/workflows/akatsuki-build.yml/badge.svg)](https://github.com/shunsock/dotfiles/actions/workflows/akatsuki-build.yml)
-[![Akatsuki Deploy](https://github.com/shunsock/dotfiles/actions/workflows/akatsuki-deploy.yml/badge.svg)](https://github.com/shunsock/dotfiles/actions/workflows/akatsuki-deploy.yml)
+[![neovim-docker Build](https://github.com/shunsock/dotfiles/actions/workflows/neovim-docker-build.yml/badge.svg)](https://github.com/shunsock/dotfiles/actions/workflows/neovim-docker-build.yml)
+[![neovim-docker Deploy](https://github.com/shunsock/dotfiles/actions/workflows/neovim-docker-deploy.yml/badge.svg)](https://github.com/shunsock/dotfiles/actions/workflows/neovim-docker-deploy.yml)
 
 #### Workflows
 
-**1. Build Workflow** (`akatsuki-build.yml`)
-- **Trigger**: Automatic on pull requests affecting `akatsuki/` directory
+**1. Build Workflow** (`neovim-docker-build.yml`)
+- **Trigger**: Automatic on pull requests affecting `neovim-docker/` directory
 - **Purpose**: Validate Docker image builds without pushing
 - **Images**: Builds all 3 images in parallel
 - **Caching**: Uses GitHub Actions cache for faster builds
 
-**2. Deploy Workflow** (`akatsuki-deploy.yml`)
+**2. Deploy Workflow** (`neovim-docker-deploy.yml`)
 - **Trigger**: Manual (workflow_dispatch) from GitHub Actions tab
 - **Purpose**: Build and push versioned images to Docker Hub
 - **Images**: Deploys all 3 images with version and latest tags
@@ -43,7 +43,7 @@ To deploy a new version:
 
 1. **Update Version**
    ```bash
-   # Edit akatsuki/Taskfile.yml
+   # Edit neovim-docker/Taskfile.yml
    # Update VERSION variable (line 4)
    VERSION: 0.0.3  # Bump version
    ```
@@ -55,15 +55,15 @@ To deploy a new version:
 
 3. **Merge and Deploy**
    - Merge PR to main
-   - Navigate to [Actions tab](https://github.com/shunsock/dotfiles/actions/workflows/akatsuki-deploy.yml)
+   - Navigate to [Actions tab](https://github.com/shunsock/dotfiles/actions/workflows/neovim-docker-deploy.yml)
    - Click "Run workflow" button
    - Select `main` branch
    - Click "Run workflow" to start deployment
 
 4. **Verify Deployment**
    - Check workflow logs for success
-   - Verify images on [Docker Hub](https://hub.docker.com/r/tsuchiya55docker/akatsuki/tags)
-   - Pull and test: `docker pull tsuchiya55docker/akatsuki:default-arm-0.0.3`
+   - Verify images on [Docker Hub](https://hub.docker.com/r/tsuchiya55docker/neovim-docker/tags)
+   - Pull and test: `docker pull tsuchiya55docker/neovim-docker:default-arm-0.0.3`
 
 #### Docker Hub Authentication
 
@@ -72,7 +72,7 @@ The deploy workflow requires GitHub Secrets for Docker Hub authentication:
 1. **Generate Access Token**
    - Visit [Docker Hub Security Settings](https://hub.docker.com/settings/security)
    - Click "New Access Token"
-   - Name: `github-actions-akatsuki`
+   - Name: `github-actions-neovim-docker`
    - Permissions: Read & Write
    - Copy token (shown only once)
 
@@ -87,7 +87,7 @@ The deploy workflow requires GitHub Secrets for Docker Hub authentication:
 
 #### Version Management
 
-- **Source of Truth**: `akatsuki/Taskfile.yml` line 4
+- **Source of Truth**: `neovim-docker/Taskfile.yml` line 4
 - **Format**: `VERSION: X.Y.Z` (semantic versioning)
 - **Extraction**: Deploy workflow reads VERSION automatically
 - **Tags**: Each image receives two tags:
@@ -99,7 +99,7 @@ The deploy workflow requires GitHub Secrets for Docker Hub authentication:
 #### Building Images
 
 ```bash
-cd akatsuki/
+cd neovim-docker/
 
 # Build individual images
 task build:default:arm    # ARM architecture
@@ -120,9 +120,9 @@ task run:python /path/to/your/project
 ```
 
 **Persistent Data**: Neovim configuration, plugins, and cache are stored in:
-- `~/.akatsuki-<container>/share` - Plugin data
-- `~/.akatsuki-<container>/cache` - Cache files
-- `~/.akatsuki-<container>/state` - State files
+- `~/.neovim-docker-<container>/share` - Plugin data
+- `~/.neovim-docker-<container>/cache` - Cache files
+- `~/.neovim-docker-<container>/state` - State files
 
 #### Pushing to Registry
 
@@ -162,7 +162,7 @@ docker login
 - pyright (Node-based Python LSP)
 - python3-venv (virtual environment support)
 
-**Configuration**: Neovim configs copied from `akatsuki-*/config/` directories
+**Configuration**: Neovim configs copied from `neovim-docker-*/config/` directories
 
 ### Contributing
 
