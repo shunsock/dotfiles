@@ -88,7 +88,6 @@
               ];
               casks = [
                 "aquaskk"
-                "cage"
                 "arc"
                 "docker-desktop"
                 "firefox"

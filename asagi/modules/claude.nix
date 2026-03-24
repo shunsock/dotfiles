@@ -29,7 +29,4 @@
     run mkdir -p $HOME/.claude/hooks
     run install -Dm755 ${../../configs/claude/hooks/validate-bash.sh} $HOME/.claude/hooks/validate-bash.sh
   '';
-
-  # cage プリセット設定
-  home.file."Library/Application Support/cage/presets.yml".source = ../configs/cage/presets.yml;
 }
