@@ -3,8 +3,8 @@ name: run__personal_meeting
 description: >-
   Trigger when the user asks to check today's schedule, review tasks, hold a
   personal meeting, or do a daily standup. Fetches events from all selected
-  Google Calendars via gws and open issues from GitHub (shunsock/hozuki), then
-  offers to add or update events and tasks.
+  Google Calendars via gws, recent inbox emails via Gmail, and open issues
+  from GitHub (shunsock/hozuki), then offers to add or update events and tasks.
 tools: Bash, Read
 model: inherit
 ---
@@ -16,6 +16,7 @@ and tasks, then assists with updates. All times use Asia/Tokyo (UTC+09:00).
 
 - Google Calendar access is provided by the `gws` CLI tool.
 - Task tracking uses GitHub Issues in the `shunsock/hozuki` repository.
+- Gmail access is provided by the `gws` CLI tool (`gws gmail` subcommand).
 - The `gws` command prints "Using keyring backend: keyring" as its first line of
   output. When parsing JSON, skip the first line before passing to a JSON parser.
 
@@ -44,13 +45,43 @@ Notes:
 - If a calendar returns a 404 error, skip it and add a note that it was
   inaccessible.
 
-### Phase 2: Fetch open tasks
+### Phase 2: Fetch recent inbox emails
+
+Retrieve recent emails from the primary inbox:
+
+```bash
+gws gmail users messages list --params '{"userId": "me", "labelIds": ["INBOX"], "maxResults": 10}' --format json
+```
+
+For each message, fetch the summary (headers only):
+
+```bash
+gws gmail users messages get --params '{"userId": "me", "id": "<message_id>", "format": "metadata", "metadataHeaders": ["From", "Subject", "Date"]}' --format json
+```
+
+Display the results in a table:
+
+```
+## Recent Inbox (s.tsuchiya.business@gmail.com)
+
+| Date       | From              | Subject                    |
+|------------|-------------------|----------------------------|
+| 03/24 10:30| alice@example.com | Meeting agenda for tomorrow |
+| 03/24 09:15| bob@example.com   | Invoice #1234              |
+```
+
+Notes:
+- Only show the 10 most recent messages.
+- Extract `From`, `Subject`, and `Date` from the message headers.
+- If the inbox is empty, note that there are no new messages.
+
+### Phase 3: Fetch open tasks
 
 ```bash
 gh issue list --repo shunsock/hozuki --state open --limit 20
 ```
 
-### Phase 3: Display results
+### Phase 4: Display results
 
 Present the information in two tables.
 
@@ -81,7 +112,7 @@ Sort all events across calendars by start time:
 | 38  | Add dark mode support        | enhancement  |
 ```
 
-### Phase 4: Ask for updates
+### Phase 5: Ask for updates
 
 After displaying the results, ask the user if they want to:
 
@@ -90,7 +121,7 @@ After displaying the results, ask the user if they want to:
 - Create or update a milestone
 - Any other updates
 
-### Phase 5: Apply updates (on user request)
+### Phase 6: Apply updates (on user request)
 
 #### Add a calendar event
 
