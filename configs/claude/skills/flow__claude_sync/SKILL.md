@@ -13,7 +13,7 @@ You are an expert in synchronizing Claude Code's `settings.json` between the liv
 ## Context
 
 `~/.claude/settings.json` may be modified by the plugin system, but the Nix-managed source
-(`shunsock/dotfiles` repo, `asagi/configs/claude/settings.json`) overwrites it on every
+(`shunsock/dotfiles` repo, `nix-darwin/configs/claude/settings.json`) overwrites it on every
 `darwin-rebuild switch`. This skill detects drift and creates a PR to persist plugin changes.
 
 ## Prerequisites
@@ -36,11 +36,11 @@ gh repo clone shunsock/dotfiles "$WORK_DIR/dotfiles"
 
 Compare:
 - **Live:** `~/.claude/settings.json`
-- **Source:** `${WORK_DIR}/dotfiles/asagi/configs/claude/settings.json`
+- **Source:** `${WORK_DIR}/dotfiles/nix-darwin/configs/claude/settings.json`
 
 ```bash
 diff <(jq --sort-keys . ~/.claude/settings.json) \
-     <(jq --sort-keys . "$WORK_DIR/dotfiles/asagi/configs/claude/settings.json")
+     <(jq --sort-keys . "$WORK_DIR/dotfiles/nix-darwin/configs/claude/settings.json")
 ```
 
 - If no diff: report "Already in sync. No changes." and clean up
@@ -50,7 +50,7 @@ diff <(jq --sort-keys . ~/.claude/settings.json) \
 
 ```bash
 jq --sort-keys . ~/.claude/settings.json > /tmp/live_settings.json
-jq --sort-keys . "$WORK_DIR/dotfiles/asagi/configs/claude/settings.json" > /tmp/source_settings.json
+jq --sort-keys . "$WORK_DIR/dotfiles/nix-darwin/configs/claude/settings.json" > /tmp/source_settings.json
 diff /tmp/live_settings.json /tmp/source_settings.json
 ```
 
@@ -73,7 +73,7 @@ cd "$WORK_DIR/dotfiles"
 git switch -c sync/claude-settings
 ```
 
-Apply approved changes to `asagi/configs/claude/settings.json`:
+Apply approved changes to `nix-darwin/configs/claude/settings.json`:
 - Format with `jq --indent 2`
 - Preserve existing structure (`defaultMode`, `permissions`, `env`)
 
@@ -81,9 +81,9 @@ Apply approved changes to `asagi/configs/claude/settings.json`:
 
 ```bash
 cd "$WORK_DIR/dotfiles"
-git add asagi/configs/claude/settings.json
+git add nix-darwin/configs/claude/settings.json
 git commit -m "$(cat <<'EOF'
-feat(asagi): sync claude settings.json with live configuration
+feat(nix-darwin): sync claude settings.json with live configuration
 
 - Persist plugin changes to Nix-managed source
 
@@ -94,13 +94,13 @@ git push origin sync/claude-settings
 
 gh pr create \
   --repo shunsock/dotfiles \
-  --title "feat(asagi): sync claude settings.json" \
+  --title "feat(nix-darwin): sync claude settings.json" \
   --body "$(cat <<'EOF'
 ## Summary
 - Sync plugin changes from ~/.claude/settings.json to Nix-managed source
 
 ## Changes
-- Updated asagi/configs/claude/settings.json
+- Updated nix-darwin/configs/claude/settings.json
 
 ## Context
 settings.json is deployed as a copy via home.activation and can be modified by plugins,

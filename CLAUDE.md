@@ -6,15 +6,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a comprehensive dotfiles repository containing three main projects:
 
-- **`asagi/`** - Nix Darwin configuration for macOS (active)
-- **`azuma/`** - NixOS configuration for Linux (active)
-- **`akatsuki/`** - Docker container environments (active)
+- **`nix-darwin/`** - Nix Darwin configuration for macOS (active)
+- **`nix-os/`** - NixOS configuration for Linux (active)
+- **`neovim-docker/`** - Docker container environments (active)
 
 ## Commands
 
-### Asagi (Nix Darwin for macOS)
+### nix-darwin (Nix Darwin for macOS)
 ```bash
-cd asagi/
+cd nix-darwin/
 
 # System management
 task init      # First-time setup (installs nix-darwin system-wide)
@@ -31,9 +31,9 @@ nix flake check
 nix flake update
 ```
 
-### Azuma (NixOS for Linux)
+### nix-os (NixOS for Linux)
 ```bash
-cd azuma/
+cd nix-os/
 
 # System management
 sudo nixos-rebuild switch --flake .#myNixOS  # Apply configuration
@@ -44,9 +44,9 @@ nix flake update                              # Update dependencies
 nix build .#nixosConfigurations.myNixOS.config.system.build.toplevel
 ```
 
-### Akatsuki (Docker Containers)
+### neovim-docker (Docker Containers)
 ```bash
-cd akatsuki/
+cd neovim-docker/
 
 # Build containers
 task build:default:arm    # Build ARM architecture container
@@ -66,12 +66,12 @@ task push:python         # Push Python container only
 # - PR builds: Automatic on PR to validate changes
 # - Deployments: Manual trigger from GitHub UI (Actions tab)
 # - Version: Managed in Taskfile.yml (VERSION variable)
-# - Registry: tsuchiya55docker/akatsuki
+# - Registry: tsuchiya55docker/neovim-docker
 ```
 
 ## Architecture
 
-### Asagi (Nix Darwin for macOS)
+### nix-darwin (Nix Darwin for macOS)
 - **Purpose**: Declarative macOS system configuration using Nix Darwin
 - **Target**: aarch64-darwin (Apple Silicon Macs)
 - **User**: shunsock with home directory `/Users/shunsock`
@@ -88,7 +88,7 @@ task push:python         # Push Python container only
 - SKK Japanese input configuration
 - Font management with fontconfig
 
-### Azuma (NixOS for Linux)
+### nix-os (NixOS for Linux)
 - **Purpose**: Complete Linux desktop environment using NixOS
 - **Target**: x86_64-linux
 - **User**: shunsock
@@ -107,41 +107,41 @@ task push:python         # Push Python container only
 - Fonts: Noto CJK, Noto Emoji, JetBrains Mono Nerd Font
 - Starship prompt, Git, Dconf
 
-### Akatsuki (Docker Containers)
+### neovim-docker (Docker Containers)
 - **Purpose**: Portable development environments in Docker containers
 - **Base**: Ubuntu 24.04
 - **Architecture**: Multi-architecture support (ARM and AMD64)
 - **Available Images**:
-  1. `akatsuki-default-arm` - ARM architecture development environment
-  2. `akatsuki-default-amd` - AMD/Intel architecture development environment
-  3. `akatsuki-python` - Python-focused development environment
+  1. `neovim-docker-default-arm` - ARM architecture development environment
+  2. `neovim-docker-default-amd` - AMD/Intel architecture development environment
+  3. `neovim-docker-python` - Python-focused development environment
 
 **Key Features**:
 - Neovim v0.11.1 from source
 - Node.js 24.x
 - .NET 8.0 SDK
-- Docker registry: tsuchiya55docker/akatsuki
+- Docker registry: tsuchiya55docker/neovim-docker
 - Volume mounting for workspace and persistent data
 
 ## Important Notes
 
 ### Claude Code Limitations
-- **Sudo Commands**: Commands requiring sudo (like `task apply` in asagi) cannot be executed by Claude Code and must be run manually
+- **Sudo Commands**: Commands requiring sudo (like `task apply` in nix-darwin) cannot be executed by Claude Code and must be run manually
 - **Docker Operations**: Docker commands may require manual execution depending on setup
 
 ### Development Workflow
-1. **macOS Development**: Use asagi for macOS system configuration changes
-2. **Linux Development**: Use azuma for Linux system configuration changes
-3. **Container Development**: Use akatsuki for portable development environments
-4. **Testing**: Use `task build` and `task validate` (asagi) or `nix flake check` (azuma) before applying changes
+1. **macOS Development**: Use nix-darwin for macOS system configuration changes
+2. **Linux Development**: Use nix-os for Linux system configuration changes
+3. **Container Development**: Use neovim-docker for portable development environments
+4. **Testing**: Use `task build` and `task validate` (nix-darwin) or `nix flake check` (nix-os) before applying changes
 
 ### File Organization
 - Configuration files are organized by tool within each project
 - Nix configurations use modular imports for maintainability
-- Both asagi and azuma share similar modular structure for consistency
+- Both nix-darwin and nix-os share similar modular structure for consistency
 - Docker containers use multi-stage builds for optimization
 
 ## Project Status
-- **Active**: asagi (Nix Darwin) - macOS system configuration
-- **Active**: azuma (NixOS) - Linux system configuration
-- **Active**: akatsuki (Docker) - Portable container environments
+- **Active**: nix-darwin (Nix Darwin) - macOS system configuration
+- **Active**: nix-os (NixOS) - Linux system configuration
+- **Active**: neovim-docker (Docker) - Portable container environments

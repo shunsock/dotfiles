@@ -21,7 +21,7 @@ A comprehensive development environment configuration using Nix Darwin, Go-based
 
 2. **Set up Nix Darwin system** (recommended):
    ```bash
-   cd asagi/
+   cd nix-darwin/
    task init    # First-time setup
    task apply   # Apply configuration
    ```
@@ -30,14 +30,14 @@ A comprehensive development environment configuration using Nix Darwin, Go-based
 
 ```
 dotfiles/
-├── asagi/          # Nix Darwin configuration for macOS
-├── azuma/          # NixOS configuration for Linux
-└── akatsuki/       # Docker container environments
+├── nix-darwin/     # Nix Darwin configuration for macOS
+├── nix-os/         # NixOS configuration for Linux
+└── neovim-docker/  # Docker container environments
 ```
 
 ## Projects
 
-### 🚀 Asagi
+### 🚀 nix-darwin
 
 **Nix Darwin configuration for macOS**
 
@@ -54,13 +54,13 @@ dotfiles/
 
 **Quick Commands**:
 ```bash
-cd asagi/
+cd nix-darwin/
 task apply     # Apply changes (requires sudo)
 task build     # Test build without applying
 task validate  # Comprehensive validation
 ```
 
-### 🐧 Azuma
+### 🐧 nix-os
 
 **NixOS configuration for Linux systems**
 
@@ -77,12 +77,12 @@ task validate  # Comprehensive validation
 
 **Quick Commands**:
 ```bash
-cd azuma/
+cd nix-os/
 sudo nixos-rebuild switch --flake .#myNixOS
 nix flake update
 ```
 
-### 🐳 Akatsuki
+### 🐳 neovim-docker
 
 **Docker container environments for development**
 
@@ -91,13 +91,13 @@ nix flake update
 - **Status**: ✅ Active
 
 **Available Containers**:
-- `akatsuki-default-arm` - ARM architecture
-- `akatsuki-default-amd` - AMD/Intel architecture
-- `akatsuki-python` - Python development environment
+- `neovim-docker-default-arm` - ARM architecture
+- `neovim-docker-default-amd` - AMD/Intel architecture
+- `neovim-docker-python` - Python development environment
 
 **Quick Commands**:
 ```bash
-cd akatsuki/
+cd neovim-docker/
 task build:default:arm    # Build ARM container
 task run:default:arm      # Run ARM container
 task build:python         # Build Python container
@@ -107,7 +107,7 @@ task build:python         # Build Python container
 
 ### Included Tools
 
-**System Packages** (via Asagi):
+**System Packages** (via nix-darwin):
 - Claude Code - AI-powered development assistant
 - .NET 10 SDK - Cross-platform development
 - Git & GitHub CLI - Version control
@@ -150,29 +150,29 @@ configs/zsh/
 
 ### Daily Development
 
-1. **macOS System Updates** (Asagi):
+1. **macOS System Updates** (nix-darwin):
    ```bash
-   cd asagi/
+   cd nix-darwin/
    task update    # Update dependencies
    task apply     # Apply changes
    ```
 
-2. **Linux System Updates** (Azuma):
+2. **Linux System Updates** (nix-os):
    ```bash
-   cd azuma/
+   cd nix-os/
    sudo nixos-rebuild switch --flake .#myNixOS
    ```
 
-3. **Container Development** (Akatsuki):
+3. **Container Development** (neovim-docker):
    ```bash
-   cd akatsuki/
+   cd neovim-docker/
    task build:default:arm
    task run:default:arm /path/to/workspace
    ```
 
 ### Adding New Packages
 
-Edit `asagi/home.nix`:
+Edit `nix-darwin/home.nix`:
 ```nix
 home.packages = with pkgs; [
   # existing packages...
@@ -182,7 +182,7 @@ home.packages = with pkgs; [
 
 ### Extending Shell Configuration
 
-Create new `.zsh` files in `asagi/configs/zsh/`:
+Create new `.zsh` files in `nix-darwin/configs/zsh/`:
 - Files are automatically sourced
 - Organize by purpose (basic/ for core, command/ for tool-specific)
 
@@ -191,8 +191,8 @@ Create new `.zsh` files in `asagi/configs/zsh/`:
 ### Configuration Management
 
 **Declarative Systems**:
-- **Asagi** (macOS): Nix Darwin + Home Manager
-- **Azuma** (Linux): NixOS with flakes
+- **nix-darwin** (macOS): Nix Darwin + Home Manager
+- **nix-os** (Linux): NixOS with flakes
 
 Both use modular imports to organize configurations by tool, making them maintainable and reusable.
 
@@ -212,9 +212,9 @@ This repository supports multiple platforms:
 
 ## Project Status
 
-- **✅ Active**: Asagi - macOS system configuration
-- **✅ Active**: Azuma - Linux system configuration
-- **✅ Active**: Akatsuki - Docker container environments
+- **✅ Active**: nix-darwin - macOS system configuration
+- **✅ Active**: nix-os - Linux system configuration
+- **✅ Active**: neovim-docker - Docker container environments
 
 ## Troubleshooting
 

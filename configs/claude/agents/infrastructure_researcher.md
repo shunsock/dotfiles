@@ -52,7 +52,7 @@ Issue本文から「対象となるインフラストラクチャ」を検出：
 ```bash
 # リポジトリ構成の確認
 ls -la
-find . -maxdepth 2 -type d | grep -E "asagi|azuma|akatsuki|terraform|infra"
+find . -maxdepth 2 -type d | grep -E "nix-darwin|nix-os|neovim-docker|terraform|infra"
 ```
 
 #### 1.4 ユーザー確認ポイント [1]
@@ -191,15 +191,15 @@ IaC定義ファイルと実際の環境の差分：
 
 | 種別 | 場所 | 管理範囲 | 成熟度 |
 |-----|------|---------|--------|
-| Nix Darwin | `/asagi` | macOS system + Home Manager | レベル3 |
-| NixOS | `/azuma` | Linux system configuration | レベル2-3 |
-| Docker | `/akatsuki` | Container images | レベル3 |
+| Nix Darwin | `/nix-darwin` | macOS system + Home Manager | レベル3 |
+| NixOS | `/nix-os` | Linux system configuration | レベル2-3 |
+| Docker | `/neovim-docker` | Container images | レベル3 |
 
 ---
 
 ## 2. 詳細なリソース一覧
 
-### Nix Darwin (asagi)
+### Nix Darwin (nix-darwin)
 - **管理対象**: macOS system (aarch64-darwin)
 - **主要モジュール**:
   - `flake.nix` - メインマニフェスト
@@ -220,7 +220,7 @@ IaC定義ファイルと実際の環境の差分：
 
 ---
 
-### NixOS (azuma)
+### NixOS (nix-os)
 - **管理対象**: Linux system (x86_64-linux)
 - **主要モジュール**:
   - `flake.nix` - フレーク定義
@@ -240,17 +240,17 @@ IaC定義ファイルと実際の環境の差分：
 
 ---
 
-### Docker (akatsuki)
+### Docker (neovim-docker)
 - **管理対象**: Container images (ARM + AMD64)
 - **イメージ一覧**:
-  - `akatsuki-default-arm` - ARM開発環境
-  - `akatsuki-default-amd` - AMD64開発環境
-  - `akatsuki-python` - Python開発環境
+  - `neovim-docker-default-arm` - ARM開発環境
+  - `neovim-docker-default-amd` - AMD64開発環境
+  - `neovim-docker-python` - Python開発環境
 
 **管理リソース**:
 - [ ] Dockerfile（複数バージョン）
 - [ ] ビルドスクリプト（Taskfile.yml）
-- [ ] レジストリ（tsuchiya55docker/akatsuki）
+- [ ] レジストリ（tsuchiya55docker/neovim-docker）
 
 ---
 
@@ -358,9 +358,9 @@ IaC定義ファイルと実際の環境の差分：
 [調査結果の簡潔な要約]
 
 ### 既存IaC構成
-- Nix Darwin: `asagi/` - macOS system
-- NixOS: `azuma/` - Linux system
-- Docker: `akatsuki/` - Container images
+- Nix Darwin: `nix-darwin/` - macOS system
+- NixOS: `nix-os/` - Linux system
+- Docker: `neovim-docker/` - Container images
 
 ### IaC成熟度: レベル [X]
 
@@ -392,7 +392,7 @@ IaC定義ファイルと実際の環境の差分：
    - その他（[具体的に]）
 
 2. 「IaCファイルはどこで管理されていますか？」
-   - 例: ./asagi/flake.nix
+   - 例: ./nix-darwin/flake.nix
    - 例: ./terraform/
 ```
 
@@ -431,20 +431,20 @@ infrastructure_researcher が検索・確認すべき対象：
 
 ```
 [プロジェクトルート]
-├── asagi/
+├── nix-darwin/
 │   ├── flake.nix (⭐ 最優先)
 │   ├── home.nix
 │   ├── modules/ (🔍 全て確認)
 │   ├── zsh/ (🔍 全て確認)
 │   ├── Taskfile.yml (デプロイ手順)
 │   └── CLAUDE.md (設定・ガイド)
-├── azuma/
+├── nix-os/
 │   ├── flake.nix (⭐ 最優先)
 │   ├── configuration.nix (⭐ 最優先)
 │   ├── hardware-configuration.nix
 │   ├── modules/ (🔍 全て確認)
 │   └── CLAUDE.md
-├── akatsuki/
+├── neovim-docker/
 │   ├── Dockerfile* (🔍 全て確認)
 │   ├── Taskfile.yml (⭐ ビルド・デプロイ手順)
 │   └── docker-compose.yml (あれば)
