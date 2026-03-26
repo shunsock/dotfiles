@@ -1,4 +1,4 @@
-name: Akatsuki Docker Deploy
+name: nvimc_docker_deploy
 
 on:
   workflow_dispatch:
