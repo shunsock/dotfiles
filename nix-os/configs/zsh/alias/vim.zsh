@@ -6,4 +6,4 @@ alias v='docker run -it --rm \
   -v "$HOME/.config/nvimc/default/cache":/root/.cache/nvim \
   -v "$HOME/.config/nvimc/default/state":/root/.local/state/nvim \
   -w /workspace \
-  tsuchiya55docker/nvimc:default-amd-0.0.2'
+  tsuchiya55docker/nvimc:default-amd-0.0.5'

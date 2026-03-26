@@ -14,7 +14,7 @@ nvimc provides portable, reproducible development environments packaged as Docke
 | `default-amd` | linux/amd64 | AMD/Intel development | Neovim, Node.js 24.x, .NET 8.0 |
 | `python` | linux/arm64 | Python development | Above + basedpyright, ruff, pyright |
 
-**Current Version**: `0.0.2` (see [Taskfile.yml](Taskfile.yml))
+**Current Version**: `0.0.5` (see [Taskfile.yml](Taskfile.yml))
 
 ### CI/CD
 
@@ -91,7 +91,7 @@ The deploy workflow requires GitHub Secrets for Docker Hub authentication:
 - **Format**: `VERSION: X.Y.Z` (semantic versioning)
 - **Extraction**: Deploy workflow reads VERSION automatically
 - **Tags**: Each image receives two tags:
-  - Version tag: `<image-name>-<version>` (e.g., `python-0.0.2`)
+  - Version tag: `<image-name>-<version>` (e.g., `python-0.0.5`)
   - Latest tag: `<image-name>-latest` (e.g., `python-latest`)
 
 ### Local Development
