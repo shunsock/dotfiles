@@ -34,6 +34,7 @@
       fastfetch
       gh
       go-task
+      ssm-session-manager-plugin
       tree
       yazi
     ]
