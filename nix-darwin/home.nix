@@ -34,6 +34,7 @@
     [
       awscli2
       bun
+      ssm-session-manager-plugin
       dotnet-sdk_10
       fzf
       gh
