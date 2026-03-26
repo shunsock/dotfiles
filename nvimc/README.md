@@ -120,9 +120,9 @@ task run:python /path/to/your/project
 ```
 
 **Persistent Data**: Neovim configuration, plugins, and cache are stored in:
-- `~/.nvimc-<container>/share` - Plugin data
-- `~/.nvimc-<container>/cache` - Cache files
-- `~/.nvimc-<container>/state` - State files
+- `~/.config/nvimc/<container>/share` - Plugin data
+- `~/.config/nvimc/<container>/cache` - Cache files
+- `~/.config/nvimc/<container>/state` - State files
 
 #### Pushing to Registry
 
