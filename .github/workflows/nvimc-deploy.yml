@@ -15,7 +15,7 @@ jobs:
       - name: Extract VERSION from Taskfile.yml
         id: extract
         run: |
-          VERSION=$(grep '^  VERSION:' neovim-docker/Taskfile.yml | awk '{print $2}')
+          VERSION=$(grep '^  VERSION:' nvimc/Taskfile.yml | awk '{print $2}')
           echo "Extracted VERSION: $VERSION"
           if [ -z "$VERSION" ]; then
             echo "ERROR: VERSION is empty"
@@ -31,18 +31,18 @@ jobs:
       matrix:
         include:
           - name: default-arm
-            dockerfile: neovim-docker/neovim-docker-default-arm/Dockerfile
-            context: neovim-docker/neovim-docker-default-arm
+            dockerfile: nvimc/nvimc-default-arm/Dockerfile
+            context: nvimc/nvimc-default-arm
             platform: linux/arm64
 
           - name: default-amd
-            dockerfile: neovim-docker/neovim-docker-default-amd/Dockerfile
-            context: neovim-docker/neovim-docker-default-amd
+            dockerfile: nvimc/nvimc-default-amd/Dockerfile
+            context: nvimc/nvimc-default-amd
             platform: linux/amd64
 
           - name: python
-            dockerfile: neovim-docker/neovim-docker-python/Dockerfile
-            context: neovim-docker/neovim-docker-python
+            dockerfile: nvimc/nvimc-python/Dockerfile
+            context: nvimc/nvimc-python
             platform: linux/arm64
 
     steps:
@@ -66,14 +66,14 @@ jobs:
           platforms: ${{ matrix.platform }}
           push: true
           tags: |
-            tsuchiya55docker/neovim-docker:${{ matrix.name }}-${{ needs.extract-version.outputs.version }}
-            tsuchiya55docker/neovim-docker:${{ matrix.name }}-latest
+            tsuchiya55docker/nvimc:${{ matrix.name }}-${{ needs.extract-version.outputs.version }}
+            tsuchiya55docker/nvimc:${{ matrix.name }}-latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Log deployment details
         run: |
-          echo "Deployed: tsuchiya55docker/neovim-docker:${{ matrix.name }}-${{ needs.extract-version.outputs.version }}"
-          echo "Deployed: tsuchiya55docker/neovim-docker:${{ matrix.name }}-latest"
+          echo "Deployed: tsuchiya55docker/nvimc:${{ matrix.name }}-${{ needs.extract-version.outputs.version }}"
+          echo "Deployed: tsuchiya55docker/nvimc:${{ matrix.name }}-latest"
           echo "Platform: ${{ matrix.platform }}"
           echo "Timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"

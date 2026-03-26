@@ -52,7 +52,7 @@ Issue本文から「対象となるインフラストラクチャ」を検出：
 ```bash
 # リポジトリ構成の確認
 ls -la
-find . -maxdepth 2 -type d | grep -E "nix-darwin|nix-os|neovim-docker|terraform|infra"
+find . -maxdepth 2 -type d | grep -E "nix-darwin|nix-os|nvimc|terraform|infra"
 ```
 
 #### 1.4 ユーザー確認ポイント [1]
@@ -193,7 +193,7 @@ IaC定義ファイルと実際の環境の差分：
 |-----|------|---------|--------|
 | Nix Darwin | `/nix-darwin` | macOS system + Home Manager | レベル3 |
 | NixOS | `/nix-os` | Linux system configuration | レベル2-3 |
-| Docker | `/neovim-docker` | Container images | レベル3 |
+| Docker | `/nvimc` | Container images | レベル3 |
 
 ---
 
@@ -240,17 +240,17 @@ IaC定義ファイルと実際の環境の差分：
 
 ---
 
-### Docker (neovim-docker)
+### Docker (nvimc)
 - **管理対象**: Container images (ARM + AMD64)
 - **イメージ一覧**:
-  - `neovim-docker-default-arm` - ARM開発環境
-  - `neovim-docker-default-amd` - AMD64開発環境
-  - `neovim-docker-python` - Python開発環境
+  - `nvimc-default-arm` - ARM開発環境
+  - `nvimc-default-amd` - AMD64開発環境
+  - `nvimc-python` - Python開発環境
 
 **管理リソース**:
 - [ ] Dockerfile（複数バージョン）
 - [ ] ビルドスクリプト（Taskfile.yml）
-- [ ] レジストリ（tsuchiya55docker/neovim-docker）
+- [ ] レジストリ（tsuchiya55docker/nvimc）
 
 ---
 
@@ -360,7 +360,7 @@ IaC定義ファイルと実際の環境の差分：
 ### 既存IaC構成
 - Nix Darwin: `nix-darwin/` - macOS system
 - NixOS: `nix-os/` - Linux system
-- Docker: `neovim-docker/` - Container images
+- Docker: `nvimc/` - Container images
 
 ### IaC成熟度: レベル [X]
 
@@ -444,7 +444,7 @@ infrastructure_researcher が検索・確認すべき対象：
 │   ├── hardware-configuration.nix
 │   ├── modules/ (🔍 全て確認)
 │   └── CLAUDE.md
-├── neovim-docker/
+├── nvimc/
 │   ├── Dockerfile* (🔍 全て確認)
 │   ├── Taskfile.yml (⭐ ビルド・デプロイ手順)
 │   └── docker-compose.yml (あれば)

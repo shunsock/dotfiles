@@ -4,8 +4,8 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - 'neovim-docker/**'
-      - '.github/workflows/neovim-docker-build.yml'
+      - 'nvimc/**'
+      - '.github/workflows/nvimc-build.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -18,19 +18,19 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - name: neovim-docker-default-arm
-            dockerfile: neovim-docker/neovim-docker-default-arm/Dockerfile
-            context: neovim-docker/neovim-docker-default-arm
+          - name: nvimc-default-arm
+            dockerfile: nvimc/nvimc-default-arm/Dockerfile
+            context: nvimc/nvimc-default-arm
             platform: linux/arm64
 
-          - name: neovim-docker-default-amd
-            dockerfile: neovim-docker/neovim-docker-default-amd/Dockerfile
-            context: neovim-docker/neovim-docker-default-amd
+          - name: nvimc-default-amd
+            dockerfile: nvimc/nvimc-default-amd/Dockerfile
+            context: nvimc/nvimc-default-amd
             platform: linux/amd64
 
-          - name: neovim-docker-python
-            dockerfile: neovim-docker/neovim-docker-python/Dockerfile
-            context: neovim-docker/neovim-docker-python
+          - name: nvimc-python
+            dockerfile: nvimc/nvimc-python/Dockerfile
+            context: nvimc/nvimc-python
             platform: linux/arm64
 
     steps:
