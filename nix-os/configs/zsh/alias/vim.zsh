@@ -22,5 +22,5 @@ v() {
     -v "$HOME/.config/nvimc/default/cache":/root/.cache/nvim \
     -v "$HOME/.config/nvimc/default/state":/root/.local/state/nvim \
     -w /workspace \
-    tsuchiya55docker/nvimc:default-amd-0.0.5 "${nvim_args[@]}"
+    tsuchiya55docker/nvimc:default-amd-0.0.4 "${nvim_args[@]}"
 }

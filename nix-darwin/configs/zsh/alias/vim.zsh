@@ -22,7 +22,7 @@ v() {
     -v "$HOME/.config/nvimc/default/cache":/root/.cache/nvim \
     -v "$HOME/.config/nvimc/default/state":/root/.local/state/nvim \
     -w /workspace \
-    tsuchiya55docker/nvimc:default-arm-0.0.5 "${nvim_args[@]}"
+    tsuchiya55docker/nvimc:default-arm-0.0.4 "${nvim_args[@]}"
 }
 
 vpy() {
@@ -46,5 +46,5 @@ vpy() {
     -v "$HOME/.config/nvimc/python/cache":/root/.cache/nvim \
     -v "$HOME/.config/nvimc/python/state":/root/.local/state/nvim \
     -w /workspace \
-    tsuchiya55docker/nvimc:python-0.0.5 "${nvim_args[@]}"
+    tsuchiya55docker/nvimc:python-0.0.4 "${nvim_args[@]}"
 }
