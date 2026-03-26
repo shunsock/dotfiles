@@ -8,7 +8,7 @@ This is a comprehensive dotfiles repository containing three main projects:
 
 - **`nix-darwin/`** - Nix Darwin configuration for macOS (active)
 - **`nix-os/`** - NixOS configuration for Linux (active)
-- **`neovim-docker/`** - Docker container environments (active)
+- **`nvimc/`** - Docker container environments (active)
 
 ## Commands
 
@@ -44,9 +44,9 @@ nix flake update                              # Update dependencies
 nix build .#nixosConfigurations.myNixOS.config.system.build.toplevel
 ```
 
-### neovim-docker (Docker Containers)
+### nvimc (Docker Containers)
 ```bash
-cd neovim-docker/
+cd nvimc/
 
 # Build containers
 task build:default:arm    # Build ARM architecture container
@@ -66,7 +66,7 @@ task push:python         # Push Python container only
 # - PR builds: Automatic on PR to validate changes
 # - Deployments: Manual trigger from GitHub UI (Actions tab)
 # - Version: Managed in Taskfile.yml (VERSION variable)
-# - Registry: tsuchiya55docker/neovim-docker
+# - Registry: tsuchiya55docker/nvimc
 ```
 
 ## Architecture
@@ -107,20 +107,20 @@ task push:python         # Push Python container only
 - Fonts: Noto CJK, Noto Emoji, JetBrains Mono Nerd Font
 - Starship prompt, Git, Dconf
 
-### neovim-docker (Docker Containers)
+### nvimc (Docker Containers)
 - **Purpose**: Portable development environments in Docker containers
 - **Base**: Ubuntu 24.04
 - **Architecture**: Multi-architecture support (ARM and AMD64)
 - **Available Images**:
-  1. `neovim-docker-default-arm` - ARM architecture development environment
-  2. `neovim-docker-default-amd` - AMD/Intel architecture development environment
-  3. `neovim-docker-python` - Python-focused development environment
+  1. `nvimc-default-arm` - ARM architecture development environment
+  2. `nvimc-default-amd` - AMD/Intel architecture development environment
+  3. `nvimc-python` - Python-focused development environment
 
 **Key Features**:
 - Neovim v0.11.1 from source
 - Node.js 24.x
 - .NET 8.0 SDK
-- Docker registry: tsuchiya55docker/neovim-docker
+- Docker registry: tsuchiya55docker/nvimc
 - Volume mounting for workspace and persistent data
 
 ## Important Notes
@@ -132,7 +132,7 @@ task push:python         # Push Python container only
 ### Development Workflow
 1. **macOS Development**: Use nix-darwin for macOS system configuration changes
 2. **Linux Development**: Use nix-os for Linux system configuration changes
-3. **Container Development**: Use neovim-docker for portable development environments
+3. **Container Development**: Use nvimc for portable development environments
 4. **Testing**: Use `task build` and `task validate` (nix-darwin) or `nix flake check` (nix-os) before applying changes
 
 ### File Organization
@@ -144,4 +144,4 @@ task push:python         # Push Python container only
 ## Project Status
 - **Active**: nix-darwin (Nix Darwin) - macOS system configuration
 - **Active**: nix-os (NixOS) - Linux system configuration
-- **Active**: neovim-docker (Docker) - Portable container environments
+- **Active**: nvimc (Docker) - Portable container environments

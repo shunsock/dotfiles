@@ -32,7 +32,7 @@ A comprehensive development environment configuration using Nix Darwin, Go-based
 dotfiles/
 ├── nix-darwin/     # Nix Darwin configuration for macOS
 ├── nix-os/         # NixOS configuration for Linux
-└── neovim-docker/  # Docker container environments
+└── nvimc/  # Docker container environments
 ```
 
 ## Projects
@@ -82,7 +82,7 @@ sudo nixos-rebuild switch --flake .#myNixOS
 nix flake update
 ```
 
-### 🐳 neovim-docker
+### 🐳 nvimc
 
 **Docker container environments for development**
 
@@ -91,13 +91,13 @@ nix flake update
 - **Status**: ✅ Active
 
 **Available Containers**:
-- `neovim-docker-default-arm` - ARM architecture
-- `neovim-docker-default-amd` - AMD/Intel architecture
-- `neovim-docker-python` - Python development environment
+- `nvimc-default-arm` - ARM architecture
+- `nvimc-default-amd` - AMD/Intel architecture
+- `nvimc-python` - Python development environment
 
 **Quick Commands**:
 ```bash
-cd neovim-docker/
+cd nvimc/
 task build:default:arm    # Build ARM container
 task run:default:arm      # Run ARM container
 task build:python         # Build Python container
@@ -163,9 +163,9 @@ configs/zsh/
    sudo nixos-rebuild switch --flake .#myNixOS
    ```
 
-3. **Container Development** (neovim-docker):
+3. **Container Development** (nvimc):
    ```bash
-   cd neovim-docker/
+   cd nvimc/
    task build:default:arm
    task run:default:arm /path/to/workspace
    ```
@@ -214,7 +214,7 @@ This repository supports multiple platforms:
 
 - **✅ Active**: nix-darwin - macOS system configuration
 - **✅ Active**: nix-os - Linux system configuration
-- **✅ Active**: neovim-docker - Docker container environments
+- **✅ Active**: nvimc - Docker container environments
 
 ## Troubleshooting
 

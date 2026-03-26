@@ -1,0 +1,83 @@
+version: '3'
+
+vars:
+  VERSION: 0.0.2
+
+tasks:
+  default:
+    cmds:
+      - task -l
+    silent: true
+
+  build:default:arm:
+    desc: "build nvimc-default-arm"
+    dir: nvimc-default-arm
+    cmds:
+      - docker build -t nvimc-default-arm .
+    silent: true
+
+  run:default:arm:
+    desc: "run nvimc-default-arm (need build:default:arm before run this)"
+    cmds:
+      - bash ./entry_point.sh nvimc-default-arm {{.CLI_ARGS}}
+    silent: true
+
+  build:default:amd:
+    desc: "build nvimc-default-amd"
+    dir: nvimc-default-amd
+    cmds:
+      - docker build -t nvimc-default-amd .
+    silent: true
+
+  run:default:amd:
+    desc: "run nvimc-default-amd (need build:default:amd before run this)"
+    cmds:
+      - bash ./entry_point.sh nvimc-default-amd {{.CLI_ARGS}}
+    silent: true
+
+  build:python:
+    desc: "build nvimc-python"
+    dir: nvimc-python
+    cmds:
+      - docker build -t nvimc-python .
+    silent: true
+
+  run:python:
+    desc: "run nvimc-python (need build:python before run this)"
+    cmds:
+      - bash ./entry_point.sh nvimc-python {{.CLI_ARGS}}
+    silent: true
+
+  push:
+    desc: "build and push all containers"
+    cmds:
+      - task push:default:arm
+      - task push:default:amd
+      - task push:python
+
+  push:python:
+    desc: "build and push nvimc-python"
+    dir: nvimc-python
+    cmds:
+      - docker build -t nvimc-python .
+      - docker tag nvimc-python tsuchiya55docker/nvimc:python-{{.VERSION}}
+      - docker push "tsuchiya55docker/nvimc:python-{{.VERSION}}"
+    silent: true
+
+  push:default:arm:
+    desc: "build and push nvimc-default"
+    dir: nvimc-default-arm
+    cmds:
+      - docker build -t nvimc-default-arm .
+      - docker tag nvimc-default-arm tsuchiya55docker/nvimc:default-arm-{{.VERSION}}
+      - docker push "tsuchiya55docker/nvimc:default-arm-{{.VERSION}}"
+    silent: true
+
+  push:default:amd:
+    desc: "build and push nvimc-default"
+    dir: nvimc-default-amd
+    cmds:
+      - docker build -t nvimc-default-amd .
+      - docker tag nvimc-default-amd tsuchiya55docker/nvimc:default-amd-{{.VERSION}}
+      - docker push "tsuchiya55docker/nvimc:default-amd-{{.VERSION}}"
+    silent: true
