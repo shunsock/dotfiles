@@ -50,7 +50,7 @@ Notes:
 Retrieve recent emails from the primary inbox:
 
 ```bash
-gws gmail users messages list --params '{"userId": "me", "labelIds": ["INBOX"], "maxResults": 10}' --format json
+gws gmail users messages list --params '{"userId": "me", "labelIds": ["INBOX", "CATEGORY_PERSONAL"], "maxResults": 10}' --format json
 ```
 
 For each message, fetch the summary (headers only):
@@ -80,6 +80,16 @@ Notes:
 ```bash
 gh issue list --repo shunsock/hozuki --state open --limit 20
 ```
+
+#### Filtering rules
+
+After fetching the issues, apply the following filter before displaying:
+
+- **Monthly closing task filter**: Issues whose title matches the pattern
+  `個人事業のYYYY年N月の締め作業を行う` (where YYYY is a four-digit year and N is
+  a month number, with or without leading zero) must be filtered so that only
+  the one matching the current month (today's year and month in Asia/Tokyo) is
+  displayed. Monthly closing tasks for other months are hidden from the list.
 
 ### Phase 4: Display results
 
