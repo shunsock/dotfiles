@@ -3,8 +3,10 @@ name: run__personal_meeting
 description: >-
   Trigger when the user asks to check today's schedule, review tasks, hold a
   personal meeting, or do a daily standup. Fetches events from all selected
-  Google Calendars via gws, recent inbox emails via Gmail, and open issues
-  from GitHub (shunsock/hozuki), then offers to add or update events and tasks.
+  Google Calendars via gws, recent inbox emails via Gmail, open issues
+  from GitHub (shunsock/hozuki), and unreplied PR comments from GitHub
+  organizations (eversteel, BeLume-Inc), then offers to add or update events
+  and tasks.
 tools: Bash, Read
 model: inherit
 ---
@@ -19,6 +21,7 @@ and tasks, then assists with updates. All times use Asia/Tokyo (UTC+09:00).
 - Gmail access is provided by the `gws` CLI tool (`gws gmail` subcommand).
 - The `gws` command prints "Using keyring backend: keyring" as its first line of
   output. When parsing JSON, skip the first line before passing to a JSON parser.
+- PR comment review covers the `eversteel` and `BeLume-Inc` GitHub organizations.
 
 ## Execution Steps
 
@@ -91,9 +94,84 @@ After fetching the issues, apply the following filter before displaying:
   the one matching the current month (today's year and month in Asia/Tokyo) is
   displayed. Monthly closing tasks for other months are hidden from the list.
 
-### Phase 4: Display results
+### Phase 4: Fetch unreplied PR comments
 
-Present the information in two tables.
+Retrieve PR comments addressed to the user from the `eversteel` and `BeLume-Inc`
+organizations that have not yet been replied to.
+
+#### Step 1: Identify the user's GitHub login
+
+```bash
+gh api user --jq '.login'
+```
+
+Store the result as `<my_login>`.
+
+#### Step 2: Fetch notifications for PR comments
+
+For each organization (`eversteel`, `BeLume-Inc`), list repositories and then
+search for review comments and issue comments on pull requests that mention the
+user.
+
+Use the GitHub search API to find PR review comments where the user is mentioned
+or is a requested reviewer. For each organization, run:
+
+```bash
+gh api --paginate "search/issues?q=is:pr+is:open+org:<org>+commenter:@me+-author:@me&sort=updated&order=desc&per_page=30" --jq '.items[] | {number: .number, repo: .repository_url, title: .title, updated_at: .updated_at}'
+```
+
+This finds open PRs in the organization where the user has commented but is not
+the author (indicating involvement as a reviewer).
+
+Additionally, search for PRs where the user is a requested reviewer or was
+mentioned:
+
+```bash
+gh api --paginate "search/issues?q=is:pr+is:open+org:<org>+review-requested:<my_login>&sort=updated&order=desc&per_page=30" --jq '.items[] | {number: .number, repo: .repository_url, title: .title, updated_at: .updated_at}'
+```
+
+Merge and deduplicate results from both queries by PR URL.
+
+#### Step 3: Fetch comments on each PR and identify unreplied ones
+
+For each PR found, extract the owner and repo name from the `repository_url`
+field (format: `https://api.github.com/repos/<owner>/<repo>`).
+
+Fetch all comments (both review comments and issue comments) on the PR:
+
+```bash
+# Review comments (inline code comments)
+gh api --paginate "repos/<owner>/<repo>/pulls/<number>/comments" --jq '.[] | {id: .id, user: .user.login, body: .body, created_at: .created_at, in_reply_to_id: .in_reply_to_id, path: .path}'
+
+# Issue comments (general PR conversation)
+gh api --paginate "repos/<owner>/<repo>/issues/<number>/comments" --jq '.[] | {id: .id, user: .user.login, body: .body, created_at: .created_at}'
+```
+
+#### Step 4: Determine unreplied comments
+
+A comment is considered "unreplied" if all of the following conditions are met:
+
+1. The comment author is **not** `<my_login>` (it was written by someone else).
+2. The comment is directed at the user: either it explicitly mentions
+   `@<my_login>` in the body, or the user is a reviewer / participant on the PR.
+3. There is **no subsequent comment** by `<my_login>` that was created after
+   this comment on the same PR. For review comments (inline), check whether
+   `<my_login>` has replied in the same review thread (matching
+   `in_reply_to_id`). For issue comments, check whether `<my_login>` has posted
+   any comment after the target comment's `created_at` timestamp.
+
+If a PR has multiple unreplied comments from others, group them under the same
+PR entry and show the most recent one in the summary column.
+
+#### Step 5: Rate limit awareness
+
+The GitHub API has rate limits. If any API call returns a 403 with a rate-limit
+message, stop fetching and display what has been collected so far, with a note
+that results may be incomplete due to rate limiting.
+
+### Phase 5: Display results
+
+Present the information in the following sections.
 
 #### Calendar Events
 
@@ -122,7 +200,24 @@ Sort all events across calendars by start time:
 | 38  | Add dark mode support        | enhancement  |
 ```
 
-### Phase 5: Ask for updates
+#### Unreplied PR Comments
+
+```
+## Unreplied PR Comments (eversteel, BeLume-Inc)
+
+| PR   | Repository              | Commenter   | Comment (summary)                | Date             |
+|------|-------------------------|-------------|----------------------------------|------------------|
+| #123 | eversteel/api-server    | alice       | Suggested refactoring the loop   | 03/26 14:30      |
+| #456 | BeLume-Inc/web-frontend  | bob         | Asked about error handling logic  | 03/25 11:00      |
+```
+
+Notes:
+- Summarize each comment body to at most 50 characters.
+- Sort by date descending (most recent first).
+- If there are no unreplied comments, display a note: "No unreplied PR comments found."
+- If results were truncated due to rate limiting, add a note at the bottom.
+
+### Phase 6: Ask for updates
 
 After displaying the results, ask the user if they want to:
 
@@ -131,7 +226,7 @@ After displaying the results, ask the user if they want to:
 - Create or update a milestone
 - Any other updates
 
-### Phase 6: Apply updates (on user request)
+### Phase 7: Apply updates (on user request)
 
 #### Add a calendar event
 
