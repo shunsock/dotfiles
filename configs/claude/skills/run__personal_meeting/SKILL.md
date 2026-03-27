@@ -5,7 +5,7 @@ description: >-
   personal meeting, or do a daily standup. Fetches events from all selected
   Google Calendars via gws, recent inbox emails via Gmail, open issues
   from GitHub (shunsock/hozuki), and unreplied PR comments from GitHub
-  organizations (eversteel, belumeinc), then offers to add or update events
+  organizations (eversteel, BeLume-Inc), then offers to add or update events
   and tasks.
 tools: Bash, Read
 model: inherit
@@ -21,7 +21,7 @@ and tasks, then assists with updates. All times use Asia/Tokyo (UTC+09:00).
 - Gmail access is provided by the `gws` CLI tool (`gws gmail` subcommand).
 - The `gws` command prints "Using keyring backend: keyring" as its first line of
   output. When parsing JSON, skip the first line before passing to a JSON parser.
-- PR comment review covers the `eversteel` and `belumeinc` GitHub organizations.
+- PR comment review covers the `eversteel` and `BeLume-Inc` GitHub organizations.
 
 ## Execution Steps
 
@@ -96,7 +96,7 @@ After fetching the issues, apply the following filter before displaying:
 
 ### Phase 4: Fetch unreplied PR comments
 
-Retrieve PR comments addressed to the user from the `eversteel` and `belumeinc`
+Retrieve PR comments addressed to the user from the `eversteel` and `BeLume-Inc`
 organizations that have not yet been replied to.
 
 #### Step 1: Identify the user's GitHub login
@@ -109,7 +109,7 @@ Store the result as `<my_login>`.
 
 #### Step 2: Fetch notifications for PR comments
 
-For each organization (`eversteel`, `belumeinc`), list repositories and then
+For each organization (`eversteel`, `BeLume-Inc`), list repositories and then
 search for review comments and issue comments on pull requests that mention the
 user.
 
@@ -203,12 +203,12 @@ Sort all events across calendars by start time:
 #### Unreplied PR Comments
 
 ```
-## Unreplied PR Comments (eversteel, belumeinc)
+## Unreplied PR Comments (eversteel, BeLume-Inc)
 
 | PR   | Repository              | Commenter   | Comment (summary)                | Date             |
 |------|-------------------------|-------------|----------------------------------|------------------|
 | #123 | eversteel/api-server    | alice       | Suggested refactoring the loop   | 03/26 14:30      |
-| #456 | belumeinc/web-frontend  | bob         | Asked about error handling logic  | 03/25 11:00      |
+| #456 | BeLume-Inc/web-frontend  | bob         | Asked about error handling logic  | 03/25 11:00      |
 ```
 
 Notes:
