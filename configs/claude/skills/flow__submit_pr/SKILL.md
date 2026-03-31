@@ -25,7 +25,7 @@ Phase 4（CI監視）〜 Phase 6（修正・再監視）は省略不可の必須
 PR作成後、必ず以下を実行すること:
 
 1. `gh pr checks` でCIチェックの開始を待機する
-2. `gh pr checks --watch` で全チェックの完了を監視する
+2. ポーリングループで全チェックの完了を監視する（`--watch` は使用禁止）
 3. 失敗があれば `gh run view <run_id> --log-failed` でログを取得し、修正・コミット・プッシュする
 4. 再度CIを監視し、全チェックがパスするまで繰り返す（最大5回）
 5. 最終的なCI結果をサマリーとして出力する
@@ -189,24 +189,30 @@ done
 
 #### 4.2 ステータス監視
 
-```bash
-gh pr checks "$PR_NUMBER" --watch
-```
-
-`--watch` が使えない場合のフォールバック:
+**`gh pr checks --watch` は使用禁止** — 長時間CIでツールタイムアウトが発生する。
+代わりにポーリングループを使用する:
 
 ```bash
-while true; do
+# 30秒間隔でポーリング、最大30分（60回）でタイムアウト
+MAX_POLLS=60
+POLL_INTERVAL=30
+
+for i in $(seq 1 $MAX_POLLS); do
   CHECKS=$(gh pr checks "$PR_NUMBER" 2>&1)
   if ! echo "$CHECKS" | grep -q "pending"; then
     break
   fi
-  sleep 30
+  if [ "$i" -eq "$MAX_POLLS" ]; then
+    echo "TIMEOUT: CI checks still pending after 30 minutes"
+    break
+  fi
+  sleep $POLL_INTERVAL
 done
 ```
 
-全チェックがパスした場合 → Phase 7（サマリー出力）へスキップ。
-失敗がある場合 → Phase 5 へ進む。
+- 全チェックがパスした場合 → Phase 7（サマリー出力）へスキップ
+- 失敗がある場合 → Phase 5 へ進む
+- タイムアウトした場合 → ユーザーに報告して終了
 
 ---
 

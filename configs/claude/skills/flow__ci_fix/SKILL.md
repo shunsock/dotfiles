@@ -47,25 +47,33 @@ done
 
 ### Phase 2: Monitor CI status
 
-Poll CI status until all checks complete.
+Poll CI status until all checks complete. **Do NOT use `gh pr checks --watch`** — it
+blocks indefinitely and will hit tool timeouts on long-running CI pipelines.
+
+Instead, use a polling loop with explicit timeout:
 
 ```bash
-gh pr checks "$PR_NUMBER" --watch
-```
+# Poll every 30 seconds, timeout after 30 minutes (60 iterations)
+MAX_POLLS=60
+POLL_INTERVAL=30
 
-If `--watch` is not available, poll manually:
-
-```bash
-while true; do
+for i in $(seq 1 $MAX_POLLS); do
   CHECKS=$(gh pr checks "$PR_NUMBER" 2>&1)
   if ! echo "$CHECKS" | grep -q "pending"; then
     break
   fi
-  sleep 30
+  if [ "$i" -eq "$MAX_POLLS" ]; then
+    echo "TIMEOUT: CI checks still pending after 30 minutes"
+    break
+  fi
+  sleep $POLL_INTERVAL
 done
 ```
 
-If all checks pass, report success and exit. If any check fails, proceed to Phase 3.
+After the loop exits, inspect the result:
+- If all checks pass → report success and exit
+- If any check failed → proceed to Phase 3
+- If timed out with checks still pending → report timeout to the user and exit
 
 ### Phase 3: Diagnose failures
 

@@ -122,8 +122,24 @@ git push
 
 After pushing, monitor CI status briefly:
 
+**Do NOT use `gh pr checks --watch`** — it blocks indefinitely and will hit tool
+timeouts on long-running CI pipelines. Use a polling loop instead:
+
 ```bash
-gh pr checks "$PR_NUMBER" --watch
+MAX_POLLS=60
+POLL_INTERVAL=30
+
+for i in $(seq 1 $MAX_POLLS); do
+  CHECKS=$(gh pr checks "$PR_NUMBER" 2>&1)
+  if ! echo "$CHECKS" | grep -q "pending"; then
+    break
+  fi
+  if [ "$i" -eq "$MAX_POLLS" ]; then
+    echo "TIMEOUT: CI checks still pending after 30 minutes"
+    break
+  fi
+  sleep $POLL_INTERVAL
+done
 ```
 
 If CI fails after the review fixes, diagnose and fix (follow the same approach as flow__ci_fix).
