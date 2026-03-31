@@ -63,6 +63,17 @@
           }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/trigger-ci-fix.sh"
+          }
+        ]
+      }
     ]
   },
   "extraKnownMarketplaces": {
