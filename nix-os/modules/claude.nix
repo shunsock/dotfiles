@@ -24,9 +24,10 @@
     run install -Dm644 ${../../configs/claude/settings.json} $HOME/.claude/settings.json
   '';
 
-  # validate-bash.sh hook をコピーとして配置（実行権限が必要）
+  # hook スクリプトをコピーとして配置（実行権限が必要）
   home.activation.claudeHooks = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run mkdir -p $HOME/.claude/hooks
     run install -Dm755 ${../../configs/claude/hooks/validate-bash.sh} $HOME/.claude/hooks/validate-bash.sh
+    run install -Dm755 ${../../configs/claude/hooks/trigger-ci-fix.sh} $HOME/.claude/hooks/trigger-ci-fix.sh
   '';
 }
