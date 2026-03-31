@@ -1,8 +1,13 @@
 #!/bin/bash
 # trigger-ci-fix.sh - PostToolUse hook for Claude Code
-# After `git push` or `gh pr create`, injects a message to trigger the
-# flow__ci_fix skill so that CI failures are automatically monitored and
-# fixed without user intervention.
+# After `git push` or `gh pr create`, injects a mandatory instruction to
+# execute the flow__ci_fix skill so that CI failures are automatically
+# monitored and fixed without user intervention.
+#
+# The message uses explicit, step-by-step instructions because the "notify"
+# decision only injects text into the conversation — it does not force tool
+# execution. Concrete instructions maximize the likelihood that Claude will
+# act on the message immediately.
 
 set -euo pipefail
 
@@ -40,8 +45,15 @@ if [[ "$exit_code" != "0" ]]; then
   exit 0
 fi
 
-# Emit a message to trigger the CI fix skill
-jq -n '{
+# Build a contextual trigger description
+if [[ "$is_gh_pr_create" == "true" ]]; then
+  trigger_context="A PR was just created."
+else
+  trigger_context="Commits were just pushed to the PR branch."
+fi
+
+# Emit a mandatory instruction to execute the CI fix workflow.
+jq -n --arg ctx "$trigger_context" '{
   "decision": "notify",
-  "message": "A push or PR creation was detected. Automatically triggering the flow__ci_fix skill to monitor CI status and fix failures if any. Execute the skill now."
+  "message": ($ctx + "\n\n[MANDATORY ACTION REQUIRED] You MUST now execute the flow__ci_fix skill immediately. Do NOT skip this. Do NOT ask the user for confirmation. This is required by the project rules in CLAUDE.md.\n\nExecute these steps NOW:\n1. Get the current branch and PR number:\n   BRANCH=$(git branch --show-current)\n   PR_NUMBER=$(gh pr view \"$BRANCH\" --json number --jq \".number\")\n2. Wait for CI checks to be registered (poll for up to 60 seconds)\n3. Poll CI status every 30 seconds until all checks complete (timeout: 30 min)\n4. If all checks pass, report success\n5. If any check fails, read logs with: gh run view <run_id> --log-failed\n6. Diagnose the failure, fix the code, commit, and push\n7. Repeat from step 2 (max 5 iterations)\n\nDo NOT continue with any other task until this CI monitoring workflow is complete.")
 }'

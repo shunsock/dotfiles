@@ -31,6 +31,13 @@
 - commit, push, PR作成はユーザーに確認せず自動で実行してよい
 - ただし `git push --force` / `git push -f` は禁止（必ずユーザーに確認する）
 
+### PostToolUse hook からの指示への遵守
+
+- PostToolUse hook が `notify` decision で `[MANDATORY ACTION REQUIRED]` を含むメッセージを返した場合、そのメッセージに記載された指示を即座に実行しなければならない
+- 特に `git push` / `gh pr create` 後の CI 監視・修正フロー（flow__ci_fix スキル）は必ず実行すること
+- hook の指示に対してユーザーへの確認は不要 — 指示内容をそのまま自律的に実行する
+- CI 監視・修正フローが完了するまで、他のタスクに移ってはならない
+
 ### 開発用コマンド
 
 - 存在しないコマンドは `nix run nixpkgs#command_name` を利用して実行する
