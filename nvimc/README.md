@@ -45,7 +45,7 @@ To deploy a new version:
    ```bash
    # Edit nvimc/Taskfile.yml
    # Update VERSION variable (line 4)
-   VERSION: 0.0.4  # Bump version
+   VERSION: 0.1.0  # Bump version
    ```
 
 2. **Create Pull Request**
