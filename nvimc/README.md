@@ -14,7 +14,7 @@ nvimc provides portable, reproducible development environments packaged as Docke
 | `default-amd` | linux/amd64 | AMD/Intel development | Neovim, Node.js 24.x, .NET 8.0 |
 | `python` | linux/arm64 | Python development | Above + basedpyright, ruff, pyright |
 
-**Current Version**: `0.0.4` (see [Taskfile.yml](Taskfile.yml))
+**Current Version**: `0.1.0` (see [Taskfile.yml](Taskfile.yml))
 
 ### CI/CD
 
@@ -45,7 +45,7 @@ To deploy a new version:
    ```bash
    # Edit nvimc/Taskfile.yml
    # Update VERSION variable (line 4)
-   VERSION: 0.0.4  # Bump version
+   VERSION: 0.1.0  # Bump version
    ```
 
 2. **Create Pull Request**
@@ -63,7 +63,7 @@ To deploy a new version:
 4. **Verify Deployment**
    - Check workflow logs for success
    - Verify images on [Docker Hub](https://hub.docker.com/r/tsuchiya55docker/nvimc/tags)
-   - Pull and test: `docker pull tsuchiya55docker/nvimc:default-arm-0.0.4`
+   - Pull and test: `docker pull tsuchiya55docker/nvimc:default-arm-0.1.0`
 
 #### Docker Hub Authentication
 

@@ -7,10 +7,10 @@ FROM ubuntu:24.04 AS builder
 ARG ARCH=arm64
 ARG NEOVIM_VERSION=v0.11.1
 ARG NODE_VERSION=24.x
+ARG KAKEHASHI_VERSION=v0.4.1
 
 # 環境変数の設定
 ENV DEBIAN_FRONTEND=noninteractive
-ENV DOTNET_VERSION=8.0
 
 # 基本パッケージのインストール
 RUN apt-get update && apt-get install -y \
@@ -42,14 +42,11 @@ RUN curl -fsSL "https://deb.nodesource.com/setup_${NODE_VERSION}" | bash - \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# .NET SDKのインストール（Marksman用）
-RUN wget "https://packages.microsoft.com/config/ubuntu/24.04/packages-microsoft-prod.deb" -O packages-microsoft-prod.deb \
-    && dpkg -i packages-microsoft-prod.deb \
-    && rm packages-microsoft-prod.deb \
-    && apt-get update \
-    && apt-get install -y "dotnet-runtime-${DOTNET_VERSION}"\
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# kakehashiのインストール（Tree-sitter LSPサーバ）
+RUN curl -LO "https://github.com/atusy/kakehashi/releases/download/${KAKEHASHI_VERSION}/kakehashi-${KAKEHASHI_VERSION}-aarch64-unknown-linux-gnu.tar.gz" \
+    && tar xzf "kakehashi-${KAKEHASHI_VERSION}-aarch64-unknown-linux-gnu.tar.gz" \
+    && cp kakehashi /usr/local/bin/ \
+    && rm -f kakehashi "kakehashi-${KAKEHASHI_VERSION}-aarch64-unknown-linux-gnu.tar.gz"
 
 # ======================================
 # Runtime Stage
@@ -67,7 +64,6 @@ RUN apt-get update && apt-get install -y \
     fd-find \
     gcc \
     git \
-    libicu-dev \
     python3 \
     python3-pip \
     ripgrep \
@@ -78,7 +74,7 @@ RUN apt-get update && apt-get install -y \
 
 
 # 必要なディレクトリの作成とNvim設定のコピー
-RUN mkdir -p /root/.config/nvim /root/.local/share/nvim/mason
+RUN mkdir -p /root/.config/nvim
 COPY config/ /root/.config/nvim/
 
 # builderステージからバイナリと必要なツールをコピー
@@ -86,6 +82,6 @@ COPY --from=builder /usr/local/bin/nvim /usr/local/bin/
 COPY --from=builder /usr/local/share/nvim /usr/local/share/nvim
 COPY --from=builder /usr/bin/node /usr/bin/
 COPY --from=builder /usr/bin/npm /usr/bin/
-COPY --from=builder /usr/bin/dotnet /usr/bin/
+COPY --from=builder /usr/local/bin/kakehashi /usr/local/bin/
 
 ENTRYPOINT ["/usr/local/bin/nvim"]

@@ -20,7 +20,6 @@ require("lazy").setup({
   require("plugins.indent-blankline"),
   require("plugins.ionide-vim"),
   require("plugins.lsp.nvim-cmp"),
-  require("plugins.lsp.nvim-lspconfig"),
   require("plugins.lualine"),
   require("plugins.nvim-cursorline"),
   require("plugins.nvim-tree"),
