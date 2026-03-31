@@ -12,7 +12,6 @@
   imports = [
     ./modules/bash.nix
     ./modules/claude.nix
-    ./modules/firefox.nix
     ./modules/gemini.nix
     ./modules/skk.nix
     ./modules/starship.nix
