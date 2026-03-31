@@ -90,12 +90,9 @@
                 "aquaskk"
                 "arc"
                 "docker-desktop"
-                "firefox"
                 "sf-symbols"
                 "steam"
-                "visual-studio-code"
                 "wezterm"
-                "zoom"
               ];
             };
           }
