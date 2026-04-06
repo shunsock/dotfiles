@@ -158,8 +158,12 @@ Closes #<issue-number>
 
 ### Phase 3: PR作成
 
+コマンドの末尾にバイパスマーカーを付与する。これは PreToolUse hook
+（enforce-narrative-pr.sh）がこのスキル経由の `gh pr create` を許可するための識別子である。
+マーカーがないと hook がコマンドを拒否する。
+
 ```bash
-gh pr create --title "<タイトル>" --body "<Phase 2で生成した説明文>"
+gh pr create --title "<タイトル>" --body "<Phase 2で生成した説明文>" # @narrative-pr-bypass
 ```
 
 PR番号を取得して後続フェーズで使用する:

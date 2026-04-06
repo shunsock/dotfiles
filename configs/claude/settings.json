@@ -60,6 +60,10 @@
           {
             "type": "command",
             "command": "$HOME/.claude/hooks/validate-bash.sh"
+          },
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/enforce-narrative-pr.sh"
           }
         ]
       }
