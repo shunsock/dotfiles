@@ -10,10 +10,22 @@ local CACHE_TTL = 3
 -- Per-pane claude state: pane_id -> "Running" | "Idle"
 local pane_states = {}
 
+-- Per-tab unseen completion tracking: tab_id -> true if idle & not yet viewed
+local unseen_idle = {}
+
+-- Previous tab states for detecting Running -> Idle transitions: tab_id -> "Running" | "Idle" | nil
+local prev_tab_states = {}
+
 -- Tab indicator colors (Tokyo Night Storm palette)
 local STYLE = {
-  Running = { dot = "#7aa2f7", bg = "#1a1b36" },
-  Idle = { dot = "#9ece6a", bg = "#1a2b1a" },
+  Running = {
+    active = { dot = "#7aa2f7", bg = "#1a1b36", text = "#c0caf5" },
+    inactive = { dot = "#3d59a1", bg = "#16161e", text = "#565f89" },
+  },
+  Idle = {
+    active = { dot = "#9ece6a", bg = "#1a2b1a", text = "#c0caf5" },
+    inactive = { dot = "#4e6b3c", bg = "#16161e", text = "#565f89" },
+  },
 }
 
 --- Parse `ps -eo pid,ppid,comm` output into a list of process records.
@@ -156,30 +168,87 @@ end
 function M.setup()
   wezterm.on("update-right-status", function(_window, _pane)
     refresh_pane_states()
+
+    -- Detect Running -> Idle transitions on inactive tabs to mark as unseen
+    for _, mux_win in ipairs(wezterm.mux.all_windows()) do
+      local active_tab = mux_win:active_tab()
+      local active_tab_id = active_tab and active_tab:tab_id()
+      for _, tab in ipairs(mux_win:tabs()) do
+        local tab_id = tab:tab_id()
+        local current_state = resolve_tab_state(tab:panes())
+        local prev_state = prev_tab_states[tab_id]
+
+        if current_state == "Idle" and prev_state == "Running" and tab_id ~= active_tab_id then
+          unseen_idle[tab_id] = true
+        end
+
+        -- Clear unseen flag when user views the tab
+        if tab_id == active_tab_id then
+          unseen_idle[tab_id] = nil
+        end
+
+        -- Clear unseen flag if claude is no longer present
+        if not current_state then
+          unseen_idle[tab_id] = nil
+        end
+
+        prev_tab_states[tab_id] = current_state
+      end
+    end
   end)
 
   wezterm.on("format-tab-title", function(tab, _tabs, _panes, _config, _hover, max_width)
     local title = tab.active_pane.title
     local state = resolve_tab_state(tab.panes)
+    local tab_id = tab.tab_id
+    local is_active = tab.is_active
+
+    -- Clear unseen flag when user views the tab
+    if is_active then
+      unseen_idle[tab_id] = nil
+    end
 
     if not state then
       return title
     end
 
-    -- Reserve 2 chars for "● " prefix
-    local available = max_width - 2
-    if #title > available and available > 0 then
-      title = title:sub(1, available)
+    if state == "Running" then
+      -- Reserve 2 chars for "● " prefix
+      local available = max_width - 2
+      if #title > available and available > 0 then
+        title = title:sub(1, available)
+      end
+
+      local s = is_active and STYLE.Running.active or STYLE.Running.inactive
+      return {
+        { Background = { Color = s.bg } },
+        { Foreground = { Color = s.dot } },
+        { Text = "● " },
+        { Foreground = { Color = s.text } },
+        { Text = title },
+      }
     end
 
-    local s = STYLE[state]
-    return {
-      { Background = { Color = s.bg } },
-      { Foreground = { Color = s.dot } },
-      { Text = "● " },
-      { Foreground = { Color = "#c0caf5" } },
-      { Text = title },
-    }
+    -- state == "Idle"
+    if unseen_idle[tab_id] then
+      -- Reserve 2 chars for "・" prefix
+      local available = max_width - 2
+      if #title > available and available > 0 then
+        title = title:sub(1, available)
+      end
+
+      local s = is_active and STYLE.Idle.active or STYLE.Idle.inactive
+      return {
+        { Background = { Color = s.bg } },
+        { Foreground = { Color = s.dot } },
+        { Text = "・" },
+        { Foreground = { Color = s.text } },
+        { Text = title },
+      }
+    end
+
+    -- Idle and already seen: no indicator
+    return title
   end)
 end
 
