@@ -66,6 +66,15 @@
             "command": "$HOME/.claude/hooks/enforce-narrative-pr.sh"
           }
         ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/recommend-tasks.sh"
+          }
+        ]
       }
     ],
     "PostToolUse": [
