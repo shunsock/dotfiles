@@ -2,28 +2,34 @@ local wezterm = require("wezterm")
 
 local M = {}
 
--- State tracking
-local prev_states = {} -- claude_pid -> "Running" | "Idle"
-
--- Process tree cache
+-- Process tree cache (3-second TTL to avoid running ps on every tick)
 local ps_cache = nil
 local ps_cache_time = 0
-local CACHE_TTL = 3 -- seconds
+local CACHE_TTL = 3
+
+-- Per-pane claude state: pane_id -> "Running" | "Idle"
+local pane_states = {}
+
+-- Tab indicator colors (Tokyo Night Storm palette)
+local STYLE = {
+  Running = { dot = "#7aa2f7", bg = "#1a1b36" },
+  Idle = { dot = "#9ece6a", bg = "#1a2b1a" },
+}
 
 --- Parse `ps -eo pid,ppid,comm` output into a list of process records.
 --- @param output string
---- @return table[] -- each element: {pid=number, ppid=number, name=string}
+--- @return table[]
 local function parse_ps_output(output)
   local processes = {}
   local first_line = true
   for line in output:gmatch("[^\r\n]+") do
     if first_line then
-      first_line = false -- skip header
+      first_line = false
     else
       local pid_str, ppid_str, comm = line:match("^%s*(%d+)%s+(%d+)%s+(.+)$")
       if pid_str then
-        local name = comm:match("([^/]+)$") or comm -- basename
-        name = name:match("^%s*(.-)%s*$") -- trim whitespace
+        local name = comm:match("([^/]+)$") or comm
+        name = name:match("^%s*(.-)%s*$")
         table.insert(processes, {
           pid = tonumber(pid_str),
           ppid = tonumber(ppid_str),
@@ -35,9 +41,9 @@ local function parse_ps_output(output)
   return processes
 end
 
---- Build lookup tables from a flat process list.
+--- Build parent/child lookup tables from a flat process list.
 --- @param processes table[]
---- @return table -- {by_pid: table<number, table>, children: table<number, number[]>}
+--- @return table
 local function build_process_tree(processes)
   local by_pid = {}
   local children = {}
@@ -51,8 +57,8 @@ local function build_process_tree(processes)
   return { by_pid = by_pid, children = children }
 end
 
---- Scan system processes and return a process tree (cached).
---- @return table|nil -- process tree or nil on failure
+--- Return a cached process tree, refreshing if TTL expired.
+--- @return table|nil
 local function get_process_tree()
   local now = os.time()
   if ps_cache and (now - ps_cache_time) < CACHE_TTL then
@@ -64,35 +70,38 @@ local function get_process_tree()
     return nil
   end
 
-  local processes = parse_ps_output(stdout)
-  ps_cache = build_process_tree(processes)
+  ps_cache = build_process_tree(parse_ps_output(stdout))
   ps_cache_time = now
   return ps_cache
 end
 
---- Return a set of PIDs whose process name is "claude".
+--- Walk up the process tree to find a "claude" ancestor.
+--- @param pid number
 --- @param tree table
---- @return table<number, boolean>
-local function find_claude_pids(tree)
-  local pids = {}
-  for pid, proc in pairs(tree.by_pid) do
-    if proc.name == "claude" then
-      pids[pid] = true
+--- @return number|nil -- claude PID if found
+local function find_claude_ancestor(pid, tree)
+  local visited = {}
+  local current = pid
+  while current and current > 1 and not visited[current] do
+    visited[current] = true
+    local proc = tree.by_pid[current]
+    if not proc then
+      break
     end
+    if proc.name == "claude" then
+      return current
+    end
+    current = proc.ppid
   end
-  return pids
+  return nil
 end
 
---- Check whether a process has a "caffeinate" child (indicates Running state).
+--- Check whether a process has a "caffeinate" child (Running indicator).
 --- @param pid number
 --- @param tree table
 --- @return boolean
 local function has_caffeinate_child(pid, tree)
-  local child_pids = tree.children[pid]
-  if not child_pids then
-    return false
-  end
-  for _, child_pid in ipairs(child_pids) do
+  for _, child_pid in ipairs(tree.children[pid] or {}) do
     local child = tree.by_pid[child_pid]
     if child and child.name == "caffeinate" then
       return true
@@ -101,72 +110,76 @@ local function has_caffeinate_child(pid, tree)
   return false
 end
 
---- Send a macOS native notification via osascript.
---- @param title string
---- @param message string
-local function send_notification(title, message)
-  wezterm.run_child_process({
-    "osascript",
-    "-e",
-    'display notification "' .. message .. '" with title "' .. title .. '"',
-  })
+--- Scan all mux panes and update pane_states table.
+local function refresh_pane_states()
+  local tree = get_process_tree()
+  if not tree then
+    return
+  end
+
+  local new_states = {}
+  for _, mux_win in ipairs(wezterm.mux.all_windows()) do
+    for _, tab in ipairs(mux_win:tabs()) do
+      for _, pane in ipairs(tab:panes()) do
+        local info = pane:get_foreground_process_info()
+        if info then
+          local claude_pid = find_claude_ancestor(info.pid, tree)
+          if claude_pid then
+            local running = has_caffeinate_child(claude_pid, tree)
+            new_states[pane:pane_id()] = running and "Running" or "Idle"
+          end
+        end
+      end
+    end
+  end
+  pane_states = new_states
 end
 
---- Format the right status bar content.
---- @param running_count number
---- @param idle_count number
---- @return table -- wezterm.format elements
-local function format_status(running_count, idle_count)
-  local elements = {}
-  if running_count > 0 then
-    table.insert(elements, { Foreground = { Color = "#7aa2f7" } })
-    table.insert(elements, { Text = "Running:" .. running_count .. " " })
+--- Determine the aggregate claude state for a tab's panes.
+--- Running takes priority over Idle.
+--- @param panes table[] -- TabInformation.panes (PaneInformation list)
+--- @return string|nil -- "Running", "Idle", or nil
+local function resolve_tab_state(panes)
+  local has_idle = false
+  for _, pane_info in ipairs(panes) do
+    local state = pane_states[pane_info.pane_id]
+    if state == "Running" then
+      return "Running"
+    elseif state == "Idle" then
+      has_idle = true
+    end
   end
-  if idle_count > 0 then
-    table.insert(elements, { Foreground = { Color = "#9ece6a" } })
-    table.insert(elements, { Text = "Idle:" .. idle_count })
-  end
-  return elements
+  return has_idle and "Idle" or nil
 end
 
 --- Register event handlers for agent monitoring.
 function M.setup()
-  wezterm.on("update-right-status", function(window, _pane)
-    local tree = get_process_tree()
-    if not tree then
-      return
+  wezterm.on("update-right-status", function(_window, _pane)
+    refresh_pane_states()
+  end)
+
+  wezterm.on("format-tab-title", function(tab, _tabs, _panes, _config, _hover, max_width)
+    local title = tab.active_pane.title
+    local state = resolve_tab_state(tab.panes)
+
+    if not state then
+      return title
     end
 
-    local claude_pids = find_claude_pids(tree)
-    if not next(claude_pids) then
-      window:set_right_status("")
-      return
+    -- Reserve 2 chars for "● " prefix
+    local available = max_width - 2
+    if #title > available and available > 0 then
+      title = title:sub(1, available)
     end
 
-    local running_count = 0
-    local idle_count = 0
-    local new_states = {}
-
-    for claude_pid, _ in pairs(claude_pids) do
-      local state
-      if has_caffeinate_child(claude_pid, tree) then
-        state = "Running"
-        running_count = running_count + 1
-      else
-        state = "Idle"
-        idle_count = idle_count + 1
-      end
-
-      new_states[claude_pid] = state
-
-      -- Running -> Idle transition: agent finished
-      if prev_states[claude_pid] == "Running" and state == "Idle" then
-        send_notification("Claude Code", "Agent task completed")
-      end
-    end
-
-    prev_states = new_states
-    window:set_right_status(wezterm.format(format_status(running_count, idle_count)))
+    local s = STYLE[state]
+    return {
+      { Background = { Color = s.bg } },
+      { Foreground = { Color = s.dot } },
+      { Text = "● " },
+      { Foreground = { Color = "#c0caf5" } },
+      { Text = title },
+    }
   end)
 end
 
