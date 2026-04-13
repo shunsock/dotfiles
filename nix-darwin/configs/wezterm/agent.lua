@@ -229,26 +229,29 @@ function M.setup()
       }
     end
 
-    -- state == "Idle"
+    -- state == "Idle": green background, with ・ dot only if unseen
+    local s = is_active and STYLE.Idle.active or STYLE.Idle.inactive
     if unseen_idle[tab_id] then
-      -- Reserve 2 chars for "・" prefix
+      -- Reserve 2 chars for "+ " prefix
       local available = max_width - 2
       if #title > available and available > 0 then
         title = title:sub(1, available)
       end
 
-      local s = is_active and STYLE.Idle.active or STYLE.Idle.inactive
       return {
         { Background = { Color = s.bg } },
         { Foreground = { Color = s.dot } },
-        { Text = "・" },
+        { Text = "+ " },
         { Foreground = { Color = s.text } },
         { Text = title },
       }
     end
 
-    -- Idle and already seen: no indicator
-    return title
+    return {
+      { Background = { Color = s.bg } },
+      { Foreground = { Color = s.text } },
+      { Text = title },
+    }
   end)
 end
 
