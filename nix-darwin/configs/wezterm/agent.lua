@@ -23,7 +23,8 @@ local STYLE = {
     inactive = { dot = "#3d59a1", bg = "#16161e", text = "#565f89" },
   },
   Idle = {
-    unseen = { dot = "#9ece6a", bg = "#1a2b1a", text = "#565f89" },
+    active = { dot = "#9ece6a", bg = "#1a2b1a", text = "#c0caf5" },
+    inactive = { dot = "#4e6b3c", bg = "#16161e", text = "#565f89" },
   },
 }
 
@@ -236,7 +237,7 @@ function M.setup()
         title = title:sub(1, available)
       end
 
-      local s = STYLE.Idle.unseen
+      local s = is_active and STYLE.Idle.active or STYLE.Idle.inactive
       return {
         { Background = { Color = s.bg } },
         { Foreground = { Color = s.dot } },
