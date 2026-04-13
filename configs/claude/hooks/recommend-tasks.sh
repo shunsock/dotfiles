@@ -1,7 +1,7 @@
 #!/bin/bash
 # recommend-tasks.sh - PreToolUse hook for Claude Code
 # Sends a notify message before every Write/Edit call,
-# recommending Claude to use TaskCreate for progress tracking.
+# requiring Claude to use TaskCreate for progress tracking.
 
 set -euo pipefail
 
@@ -14,5 +14,5 @@ fi
 
 jq -n '{
   "decision": "notify",
-  "message": "[TASK RECOMMENDATION] You are about to write or edit a file. If you have not created Tasks yet, use TaskCreate now to:\n1. Break down your work into trackable steps\n2. Mark tasks as in_progress before starting each step\n3. Mark tasks as completed when done\n\nThis helps the user understand your progress and ensures structured work."
+  "message": "[MANDATORY ACTION REQUIRED] You MUST use TaskCreate before writing or editing files. If you have not created Tasks yet, stop and create them NOW.\n\n1. Break down your work into trackable steps with TaskCreate\n2. Mark tasks as in_progress before starting each step\n3. Mark tasks as completed when done\n\nDo NOT proceed with Write/Edit without Tasks."
 }'
