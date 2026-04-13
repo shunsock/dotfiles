@@ -1,6 +1,9 @@
 { config, pkgs, ... }:
 
 {
+  # Deploy agent monitoring module to WezTerm config directory
+  home.file.".config/wezterm/agent.lua".source = ../configs/wezterm/agent.lua;
+
   # WezTerm configuration
   programs.wezterm = {
     enable = true;
@@ -103,6 +106,10 @@
           action = wezterm.action.ActivatePaneDirection 'Right',
         },
       }
+
+      -- Agent monitoring (Claude Code status + completion notification)
+      local agent = require("agent")
+      agent.setup()
 
       -- Return the final configuration
       return config
