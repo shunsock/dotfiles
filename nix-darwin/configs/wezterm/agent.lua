@@ -175,7 +175,14 @@ function M.setup()
       local active_tab_id = active_tab and active_tab:tab_id()
       for _, tab in ipairs(mux_win:tabs()) do
         local tab_id = tab:tab_id()
-        local current_state = resolve_tab_state(tab:panes())
+        -- tab:panes() returns Pane objects (method :pane_id()),
+        -- but resolve_tab_state expects PaneInformation (field .pane_id).
+        -- Convert to compatible format.
+        local panes_info = {}
+        for _, pane in ipairs(tab:panes()) do
+          table.insert(panes_info, { pane_id = pane:pane_id() })
+        end
+        local current_state = resolve_tab_state(panes_info)
         local prev_state = prev_tab_states[tab_id]
 
         if current_state == "Idle" and prev_state == "Running" and tab_id ~= active_tab_id then
@@ -229,7 +236,7 @@ function M.setup()
       }
     end
 
-    -- state == "Idle": green background, with ・ dot only if unseen
+    -- state == "Idle": green background, with + indicator only if unseen
     local s = is_active and STYLE.Idle.active or STYLE.Idle.inactive
     if unseen_idle[tab_id] then
       -- Reserve 2 chars for "+ " prefix
