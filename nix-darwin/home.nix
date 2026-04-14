@@ -44,7 +44,6 @@
       hadolint
       hurl
       hyperfine
-      mise
       nerd-fonts.jetbrains-mono
       nixfmt-rfc-style
       npins
