@@ -1,5 +1,5 @@
 ---
-name: flow__tech_research
+name: flow__oss_feature_rationale
 description: >-
   Trigger when the user wants to investigate a software feature, library update,
   or OSS change. Researches official sources (documentation, GitHub PRs, Issues,
