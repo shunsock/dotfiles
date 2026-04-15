@@ -129,6 +129,27 @@ Write a Markdown report with the following three-section structure.
 - Never fabricate information to fill gaps — explicitly mark gaps as "not found
   in official sources"
 
+## Source URL Requirements
+
+- Every piece of referenced information in the report MUST include a valid URL
+  (official documentation, GitHub PR/Issue/release note, or specification document)
+- Do NOT include any source that lacks a URL — if a URL cannot be provided, omit
+  the source entirely
+- URLs must point directly to the relevant page, not to a generic top-level domain
+
+## Pre-Submission URL Verification
+
+Before delivering the report to the user, verify ALL URLs in the report:
+
+1. Confirm that every piece of information is correctly paired with its URL
+2. Use WebFetch to visit each URL and verify that the cited information actually
+   appears on the destination page
+3. Confirm that no URL returns a 404 or is otherwise broken
+4. If any verification fails, fix or remove the affected entry before submission
+
+Do NOT skip this verification step. A report with broken or mismatched URLs must
+not be delivered to the user.
+
 ## Prohibited Actions
 
 - Do NOT cite unofficial sources (blog posts, Stack Overflow, tutorials, Medium articles)
