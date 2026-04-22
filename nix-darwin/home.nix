@@ -45,6 +45,7 @@
       hurl
       hyperfine
       nerd-fonts.jetbrains-mono
+      nitter
       nixfmt-rfc-style
       npins
       presenterm
