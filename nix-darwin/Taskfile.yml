@@ -41,3 +41,8 @@ tasks:
     desc: Format Nix Settings
     cmds:
       - nix fmt
+
+  gc:
+    desc: Garbage collect old Nix store paths (keep last 30 days)
+    cmds:
+      - nix-collect-garbage --delete-older-than 30d
