@@ -100,5 +100,11 @@
   "skipDangerousModePermissionPrompt": true,
   "enabledPlugins": {
     "document-skills@anthropic-agent-skills": true
+  },
+  "editorMode": "vim",
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh",
+    "refreshInterval": 10
   }
 }

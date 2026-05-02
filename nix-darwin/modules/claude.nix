@@ -24,6 +24,11 @@
     run install -Dm644 ${../../configs/claude/settings.json} $HOME/.claude/settings.json
   '';
 
+  # statusline スクリプトをコピーとして配置（実行権限が必要）
+  home.activation.claudeStatusline = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    run install -Dm755 ${../../configs/claude/statusline.sh} $HOME/.claude/statusline.sh
+  '';
+
   # hook スクリプトをコピーとして配置（実行権限が必要）
   home.activation.claudeHooks = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run mkdir -p $HOME/.claude/hooks
