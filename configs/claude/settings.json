@@ -2,7 +2,8 @@
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "BASH_DEFAULT_TIMEOUT_MS": "180000",
-    "MAX_THINKING_TOKENS": "10000"
+    "MAX_THINKING_TOKENS": "10000",
+    "CLAUDE_CODE_NO_FLICKER": "1"
   },
   "permissions": {
     "allow": [
