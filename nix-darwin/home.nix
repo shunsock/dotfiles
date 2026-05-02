@@ -51,6 +51,7 @@
       presenterm
       rustup
       tree
+      typos
       wthrr
       yazi
       zoxide

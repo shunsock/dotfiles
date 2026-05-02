@@ -36,6 +36,7 @@
       go-task
       ssm-session-manager-plugin
       tree
+      typos
       yazi
     ]
     ++ [
