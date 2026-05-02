@@ -90,7 +90,7 @@
                 "aquaskk"
                 "arc"
                 "docker-desktop"
-                "pycharm"
+                "jetbrains-toolbox"
                 "sf-symbols"
                 "steam"
                 "wezterm"
