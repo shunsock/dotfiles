@@ -51,4 +51,4 @@ else
   GIT_PART=""
 fi
 
-printf "%b" "${MODEL} | ${CTX_COLOR}${BAR} ${PCT}%%${RESET} | ${COST_FMT} | ${MINS}m${SECS}s${GIT_PART}\n"
+printf "%b" "${MODEL} | ${CTX_COLOR}${BAR} ${PCT}%${RESET} | ${COST_FMT} | ${MINS}m${SECS}s${GIT_PART}\n"
