@@ -4,6 +4,7 @@
   pkgsUnstable,
   pkgsLlmAgents,
   complexity,
+  samoyedPkg,
   lib,
   ...
 }:
@@ -39,6 +40,7 @@
       gh
       ghq
       git
+      gitleaks
       go-task
       hackgen-nf-font
       hadolint
@@ -51,6 +53,7 @@
       presenterm
       rustup
       tree
+      trufflehog
       typos
       wthrr
       yazi
@@ -62,5 +65,6 @@
       pkgsUnstable.google-cloud-sdk
       pkgsUnstable.gws
       pkgsLlmAgents.gemini-cli
+      samoyedPkg
     ];
 }
