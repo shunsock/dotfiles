@@ -68,7 +68,22 @@ git diff --name-only --diff-filter=ACMR --cached
 | code_inspect__testability | テスト容易性・副作用・純粋性 |
 | code_inspect__error_handling | エラー伝播・握り潰し |
 
-各サブスキルへの Task プロンプトは以下のテンプレートで統一する。
+### Task 起動パラメータ
+
+各 Task 呼び出しでは以下を指定する。
+
+- `subagent_type`: `general-purpose` (汎用エージェントを使用。各 leaf SKILL.md
+  の `tools` 制約は subagent 側でロードされるため、ここでは general を選択)
+- `description`: `inspect:<観点>` のように観点名を含める
+- `prompt`: 下記テンプレート
+
+### 評価範囲
+
+各 leaf は **対象ファイル全体を Read して評価する** (差分行のみではなく)。
+そのため差分外の既存コードへの指摘も含まれうる。集約時はその前提で読む。
+これは file 単位の認知的複雑度・命名・設計判断を見るために必要な選択。
+
+### プロンプトテンプレート
 
 ```
 .claude/skills/code_inspect__<観点>/SKILL.md の指示に従って評価を実施してください。
@@ -90,7 +105,17 @@ git diff --name-only --diff-filter=ACMR --cached
 
 ## Step 2: 集約レポートの作成
 
-全サブスキルの結果が揃ったら、以下の形式で集約レポートを返す。
+全サブスキルの結果が揃ったら、各 leaf 出力から重要度ラベルをカウントする。
+カウントは以下のパターンで行う。
+
+- `[must]` で始まる箇条書き行 → must 件数に加算
+- `[should]` で始まる箇条書き行 → should 件数に加算
+- `[nit]` で始まる箇条書き行 → nit 件数に加算
+
+各 leaf の `### 指摘` セクション内のみを対象とし、所見セクションや
+出力例として埋め込まれた例文は対象外とする (Markdown コードブロック内も除外)。
+
+集計後、以下の形式で集約レポートを返す。
 
 ```markdown
 # 技術レビュー結果
