@@ -5,7 +5,7 @@ description: >-
   7 観点 (complexity / readability / consistency / design / security /
   testability / error_handling) のサブスキルを並列に起動し、指摘を集約する。
   親スキル code_review から呼び出されるか、評価のみが欲しい場合は単独でも起動できる。
-tools: Read, Bash, Task
+tools: Read, Bash, AskUserQuestion, Task
 ---
 
 ## 概要
@@ -33,6 +33,15 @@ tools: Read, Bash, Task
 
 ```bash
 DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD --short 2>/dev/null)
+```
+
+`DEFAULT_BRANCH` が空 (`origin/HEAD` 未設定) の場合は `git remote set-head origin --auto` を
+試し、再度 `git symbolic-ref` を実行する。それでも空なら AskUserQuestion で
+比較対象ブランチを尋ねる (`origin/main` / `origin/master` / Other を選択肢に提示)。
+
+`DEFAULT_BRANCH` が取得できたら差分を取得する。
+
+```bash
 git diff --name-only --diff-filter=ACMR ${DEFAULT_BRANCH}...HEAD
 ```
 
@@ -42,7 +51,7 @@ git diff --name-only --diff-filter=ACMR ${DEFAULT_BRANCH}...HEAD
 git diff --name-only --diff-filter=ACMR --cached
 ```
 
-両方とも空なら AskUserQuestion で対象を尋ねる。
+両方とも空なら AskUserQuestion で対象ファイルを尋ねる。
 
 ## Step 1: サブスキルの並列起動
 
