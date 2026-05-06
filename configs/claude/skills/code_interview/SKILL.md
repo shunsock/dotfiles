@@ -3,7 +3,7 @@ name: code_interview
 description: >-
   コードレビューの Phase 1 (意図確認) を担当するサブスキル。git diff を要約し、
   人間レビュアーのように変更の意図・背景を質問してユーザーの回答を収集する。
-  親スキル code_review から呼び出される。直接呼び出さないこと。
+  親スキル code_review から呼び出されるか、意図確認のみが欲しい場合は単独でも起動できる。
 tools: Read, Bash, AskUserQuestion
 ---
 
@@ -17,9 +17,31 @@ tools: Read, Bash, AskUserQuestion
 
 ## 入力契約
 
-親スキル code_review から以下を受け取る。
+以下の入力を受け取る。
 
 - レビュー対象ファイル一覧
+
+単独起動された場合、レビュー対象ファイル一覧を Step 0 の手順で取得する。
+
+## Step 0: レビュー対象ファイルの特定 (単独起動時のみ)
+
+親スキル code_review から呼ばれた場合は、レビュー対象ファイル一覧が
+入力として渡されるので、この Step はスキップする。
+
+単独起動の場合は以下の順で取得する。
+
+```bash
+DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD --short 2>/dev/null)
+git diff --name-only --diff-filter=ACMR ${DEFAULT_BRANCH}...HEAD
+```
+
+差分が空なら staged を確認する。
+
+```bash
+git diff --name-only --diff-filter=ACMR --cached
+```
+
+両方とも空なら AskUserQuestion で対象を尋ねる。
 
 ## Step 1: 変更内容の取得と要約
 
@@ -34,16 +56,17 @@ git diff --diff-filter=ACMR ${DEFAULT_BRANCH}...HEAD -- <対象ファイル>
 
 ## Step 2: 質問の生成
 
-最大 5 個の質問を以下のルールで構成する。
+AskUserQuestion ツールは 1 回の呼び出しで最大 4 個の質問しか扱えないため、
+質問数は **必ず 4 個以下** に収める。以下のルールで構成する。
 
 ### 固定質問 (1 個、必ず含める)
 
 - 「この変更の目的を一言で説明してください」
 
-### 動的質問 (最大 4 個、差分から生成)
+### 動的質問 (最大 3 個、差分から生成)
 
 差分の特徴に応じて、以下のような質問を生成する。
-固定質問と合わせて 5 個を超えないよう、優先度の高いものから選ぶ。
+固定質問と合わせて 4 個を超えないよう、優先度の高いものから選ぶ。
 
 - 削除されたコードがあれば「なぜ <該当コード> を消したのか」
 - 新規ファイルがあれば「なぜこの場所/構造を選んだか」
@@ -81,5 +104,4 @@ AskUserQuestion ツールを使い、Step 2 で構成した質問を一度に提
 ## 禁止事項
 
 - Edit / Write を使わない (Read + Bash + AskUserQuestion のみ)
-- 質問を 5 個以上投げない
-- 親スキル経由でのみ起動される
+- 質問を 5 個以上投げない (AskUserQuestion の上限は 4 個)
