@@ -9,6 +9,10 @@
     home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     llm-agents.url = "github:numtide/llm-agents.nix";
+    samoyed = {
+      url = "github:espiria/samoyed";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -19,6 +23,7 @@
       nix-darwin,
       home-manager,
       llm-agents,
+      samoyed,
       ...
     }:
     let
@@ -36,6 +41,7 @@
         };
       };
       pkgsLlmAgents = llm-agents.packages.${system};
+      samoyedPkg = samoyed.packages.${system}.default;
 
       # thoughtbot/complexity: cognitive complexity measurement tool
       complexity = pkgs.rustPlatform.buildRustPackage rec {
@@ -109,6 +115,7 @@
                 inherit pkgsUnstable;
                 inherit pkgsLlmAgents;
                 inherit complexity;
+                inherit samoyedPkg;
               };
 
               users.shunsock = import ./home.nix;

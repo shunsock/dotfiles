@@ -4,6 +4,7 @@
   pkgsUnstable,
   pkgsLlmAgents,
   complexity,
+  samoyedPkg,
   lib,
   ...
 }:
@@ -33,14 +34,17 @@
     [
       fastfetch
       gh
+      gitleaks
       go-task
       ssm-session-manager-plugin
       tree
+      trufflehog
       typos
       yazi
     ]
     ++ [
       complexity
       pkgsLlmAgents.claude-code
+      samoyedPkg
     ];
 }

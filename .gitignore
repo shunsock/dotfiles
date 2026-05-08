@@ -19,3 +19,6 @@ result
 
 # Tailscale
 /etc/tailscale/authkey
+
+# samoyed (git hooks manager) — wrappers are generated, not tracked
+.samoyed/_/
