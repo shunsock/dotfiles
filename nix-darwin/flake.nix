@@ -114,7 +114,6 @@
               casks = [
                 "aquaskk"
                 "arc"
-                "davinci-resolve"
                 "docker-desktop"
                 "jetbrains-toolbox"
                 "sf-symbols"
