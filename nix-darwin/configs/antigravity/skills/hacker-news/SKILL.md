@@ -5,7 +5,7 @@ description: Fetches and summarizes the top stories from Hacker News. Use this s
 
 # Hacker News
 
-This skill allows Gemini CLI to fetch the latest top stories from Hacker News and provide a concise summary.
+This skill allows Antigravity CLI to fetch the latest top stories from Hacker News and provide a concise summary.
 
 ## Workflow
 

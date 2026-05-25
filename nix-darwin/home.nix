@@ -13,7 +13,7 @@
   imports = [
     ./modules/bash.nix
     ./modules/claude.nix
-    ./modules/gemini.nix
+    ./modules/antigravity.nix
     ./modules/skk.nix
     ./modules/starship.nix
     ./modules/wezterm.nix
@@ -21,8 +21,8 @@
   ];
 
   # ユーザー情報
-  home.username = "shunsock";
-  home.homeDirectory = lib.mkForce "/Users/shunsock";
+  home.username = "shunsuke.tsuchiya";
+  home.homeDirectory = lib.mkForce "/Users/shunsuke.tsuchiya";
   home.stateVersion = "23.11";
 
   # フォント設定
@@ -64,7 +64,7 @@
       pkgsLlmAgents.claude-code
       pkgsUnstable.google-cloud-sdk
       pkgsUnstable.gws
-      pkgsLlmAgents.gemini-cli
+      pkgsLlmAgents.antigravity
       samoyedPkg
     ];
 }
