@@ -78,13 +78,13 @@
     {
       formatter.${system} = pkgs.nixfmt-rfc-style;
 
-      darwinConfigurations."shunsock-darwin" = nix-darwin.lib.darwinSystem {
+      darwinConfigurations."shunsuke-darwin" = nix-darwin.lib.darwinSystem {
         inherit system;
         modules = [
           # System configuration
           {
             system.stateVersion = 4;
-            system.primaryUser = "shunsock";
+            system.primaryUser = "shunsuke.tsuchiya";
             nixpkgs.config.allowUnfree = true;
             ids.gids.nixbld = 350;
 
@@ -137,7 +137,7 @@
                 inherit samoyedPkg;
               };
 
-              users.shunsock = import ./home.nix;
+              users."shunsuke.tsuchiya" = import ./home.nix;
 
               backupFileExtension = "hm-backup";
             };

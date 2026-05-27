@@ -88,10 +88,10 @@ task validate
 
 ```bash
 # Apply configuration changes
-sudo darwin-rebuild switch --flake .#shunsock-darwin
+sudo darwin-rebuild switch --flake .#shunsuke-darwin
 
 # Build configuration (test without applying)
-nix build .#darwinConfigurations.shunsock-darwin.system
+nix build .#darwinConfigurations.shunsuke-darwin.system
 
 # Update all flake inputs
 nix flake update

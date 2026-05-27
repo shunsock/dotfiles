@@ -13,16 +13,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Comprehensive validation**: `task validate`
 
 ### Direct Commands (if needed)
-- **Install nix-darwin system-wide**: `nix run nix-darwin -- switch --flake .#shunsock-darwin`
-- **Apply configuration**: `darwin-rebuild switch --flake .#shunsock-darwin`
-- **Build configuration**: `nix build .#darwinConfigurations.shunsock-darwin.system`
+- **Install nix-darwin system-wide**: `nix run nix-darwin -- switch --flake .#shunsuke-darwin`
+- **Apply configuration**: `darwin-rebuild switch --flake .#shunsuke-darwin`
+- **Build configuration**: `nix build .#darwinConfigurations.shunsuke-darwin.system`
 - **Check flake**: `nix flake check`
 - **Update flake inputs**: `nix flake update`
 
 ### Installation Notes
 - **First time setup**: Run `task init` to install nix-darwin system-wide
 - **After init**: The `darwin-rebuild` command will be available in your PATH
-- **Subsequent updates**: Use `task apply` or `sudo darwin-rebuild switch --flake .#shunsock-darwin`
+- **Subsequent updates**: Use `task apply` or `sudo darwin-rebuild switch --flake .#shunsuke-darwin`
 - **Claude Code Limitation**: Commands requiring sudo cannot be executed by Claude Code and must be run manually in terminal
 
 ## Architecture
@@ -43,7 +43,7 @@ This is a Nix Home Manager configuration for macOS (aarch64-darwin) that manages
 - **Package Management**: Uses nixpkgs unstable channel with unfree packages allowed
 - **Shell Configuration**: Zsh with Oh My Zsh (kennethreitz theme) and modular config loading
 - **Recursive Loading**: All `.zsh` files under `~/.config/zsh/` are automatically sourced
-- **User**: Configured for user `shunsock` with home directory `/Users/shunsock`
+- **User**: Configured for user `shunsuke.tsuchiya` with home directory `/Users/shunsuke.tsuchiya`
 
 ### Installed Packages
 Core development tools include: claude-code, dotnetCorePackages.dotnet_9.sdk, git, go-task, hyperfine, rustup, tree, zsh-autosuggestions, zsh-syntax-highlighting
