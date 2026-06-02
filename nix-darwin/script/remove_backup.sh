@@ -1,4 +1,4 @@
-JISYO="/Users/shunsuke.tsuchiya/Library/Application Support/AquaSKK/skk-jisyo.utf8.hm-backup"
+JISYO="/Users/shunsock/Library/Application Support/AquaSKK/skk-jisyo.utf8.hm-backup"
 
 if [ -e "$JISYO" ]; then
   rm "$JISYO"
@@ -7,7 +7,7 @@ else
   echo "ファイルが存在しません: $JISYO"
 fi
 
-JISYOL="/Users/shunsuke.tsuchiya/Library/Application Support/AquaSKK/SKK-JISYO.L.hm-backup"
+JISYOL="/Users/shunsock/Library/Application Support/AquaSKK/SKK-JISYO.L.hm-backup"
 if [ -e "$JISYOL" ]; then
   rm "$JISYOL"
   echo "削除しました: $JISYOL"
@@ -15,7 +15,7 @@ else
   echo "ファイルが存在しません: $JISYOL"
 fi
 
-FIREFOX_CONF="/Users/shunsuke.tsuchiya/Library/Application Support/Firefox/profiles.ini.hm-backup"
+FIREFOX_CONF="/Users/shunsock/Library/Application Support/Firefox/profiles.ini.hm-backup"
 if [ -e "$FIREFOX_CONF" ]; then
   rm "$FIREFOX_CONF"
   echo "削除しました: $FIREFOX_CONF"
@@ -23,7 +23,7 @@ else
   echo "ファイルが存在しません: $FIREFOX_CONF"
 fi
 
-ANTIGRAVITY_CONF="/Users/shunsuke.tsuchiya/.gemini/antigravity-cli/settings.json.hm-backup"
+ANTIGRAVITY_CONF="/Users/shunsock/.gemini/antigravity-cli/settings.json.hm-backup"
 if [ -e "$ANTIGRAVITY_CONF" ]; then
   rm "$ANTIGRAVITY_CONF"
   echo "削除しました: $ANTIGRAVITY_CONF"

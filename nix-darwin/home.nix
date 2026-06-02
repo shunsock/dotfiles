@@ -1,6 +1,5 @@
 {
-  config,
-  pkgs,
+  config, pkgs,
   pkgsUnstable,
   pkgsLlmAgents,
   complexity,
@@ -18,8 +17,8 @@
   ];
 
   # ユーザー情報
-  home.username = "shunsuke.tsuchiya";
-  home.homeDirectory = lib.mkForce "/Users/shunsuke.tsuchiya";
+  home.username = "shunsock";
+  home.homeDirectory = lib.mkForce "/Users/shunsock";
   home.stateVersion = "23.11";
 
   # フォント設定
