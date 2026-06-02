@@ -43,7 +43,7 @@ This is a Nix Home Manager configuration for macOS (aarch64-darwin) that manages
 - **Package Management**: Uses nixpkgs unstable channel with unfree packages allowed
 - **Shell Configuration**: Zsh with Oh My Zsh (kennethreitz theme) and modular config loading
 - **Recursive Loading**: All `.zsh` files under `~/.config/zsh/` are automatically sourced
-- **User**: Configured for user `shunsuke.tsuchiya` with home directory `/Users/shunsuke.tsuchiya`
+- **User**: Configured for user `shunsock` with home directory `/Users/shunsock`
 
 ### Installed Packages
 Core development tools include: claude-code, dotnetCorePackages.dotnet_9.sdk, git, go-task, hyperfine, rustup, tree, zsh-autosuggestions, zsh-syntax-highlighting

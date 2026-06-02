@@ -84,7 +84,7 @@
           # System configuration
           {
             system.stateVersion = 4;
-            system.primaryUser = "shunsuke.tsuchiya";
+            system.primaryUser = "shunsock";
             nixpkgs.config.allowUnfree = true;
             ids.gids.nixbld = 350;
 
@@ -137,7 +137,7 @@
                 inherit samoyedPkg;
               };
 
-              users."shunsuke.tsuchiya" = import ./home.nix;
+              users."shunsock" = import ./home.nix;
 
               backupFileExtension = "hm-backup";
             };
