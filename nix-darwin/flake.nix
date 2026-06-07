@@ -99,6 +99,11 @@
               };
               brews = [
                 "colima"
+                # colima はデーモン (VM) を提供するのみ。docker CLI クライアントと
+                # compose プラグインは Docker Desktop が同梱していたが zap で削除されたため
+                # 明示的に Nix 管理下へ追加する。
+                "docker"
+                "docker-compose"
                 "curl"
               ];
               casks = [
