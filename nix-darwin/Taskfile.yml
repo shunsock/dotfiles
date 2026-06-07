@@ -5,49 +5,54 @@ tasks:
     desc: Initialize the project by installing nix-darwin system-wide
     cmds:
       - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-      - bash script/entry_point/init.sh
+      - bash script/entry_point/nix/init.sh
     status:
       - which darwin-rebuild
 
   apply:
     desc: Apply the configuration with darwin-rebuild
     cmds:
-      - bash script/remove_backup.sh
-      - bash script/entry_point/build.sh
-      - bash script/entry_point/apply.sh
+      - bash script/entry_point/remove_backup.sh
+      - bash script/entry_point/nix/build.sh
+      - bash script/entry_point/nix/apply.sh
 
   build:
     desc: Build and validate configuration without applying
     cmds:
-      - bash script/entry_point/build.sh
+      - bash script/entry_point/nix/build.sh
 
   check:
     desc: Validate flake configuration
     cmds:
-      - bash script/entry_point/check.sh
+      - bash script/entry_point/nix/check.sh
 
   update:
     desc: Update flake dependencies
     cmds:
-      - bash script/entry_point/update.sh
+      - bash script/entry_point/nix/update.sh
 
   validate:
     desc: Run comprehensive validation (build + check)
     cmds:
-      - bash script/entry_point/build.sh
-      - bash script/entry_point/check.sh
+      - bash script/entry_point/nix/build.sh
+      - bash script/entry_point/nix/check.sh
 
   format:
     desc: Format Nix Settings
     cmds:
-      - bash script/entry_point/format.sh
+      - bash script/entry_point/nix/format.sh
 
   lint:naming:
     desc: Validate file and directory naming conventions with ls-lint
     cmds:
-      - bash script/entry_point/lint_naming.sh
+      - bash script/entry_point/ls_lint/lint.sh
+
+  lint:shell:
+    desc: Statically analyze shell scripts with shellcheck
+    cmds:
+      - bash script/entry_point/shellcheck/lint.sh
 
   gc:
     desc: Garbage collect old Nix store paths (keep last 30 days)
     cmds:
-      - bash script/entry_point/gc.sh
+      - bash script/entry_point/nix/garbage_collector.sh
