@@ -21,7 +21,7 @@ remove_if_exists() {
   fi
 }
 
-readonly HOME_DIR="/Users/shunsuke.tsuchiya"
+readonly HOME_DIR="/Users/shunsock"
 readonly BACKUP_FILES=(
   "$HOME_DIR/Library/Application Support/AquaSKK/skk-jisyo.utf8.hm-backup"
   "$HOME_DIR/Library/Application Support/AquaSKK/SKK-JISYO.L.hm-backup"
