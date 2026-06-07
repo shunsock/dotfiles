@@ -62,6 +62,14 @@
             nixpkgs.config.allowUnfree = true;
             ids.gids.nixbld = 350;
 
+            # flake / nix-command を恒久的に有効化し、apply 後に
+            # --extra-experimental-features フラグなしで nix コマンドを使えるようにする。
+            # (init 時のブートストラップは Taskfile の inline フラグが担う)
+            nix.settings.experimental-features = [
+              "nix-command"
+              "flakes"
+            ];
+
             # macOS system defaults
             system.defaults.NSGlobalDomain._HIHideMenuBar = true;
           }
