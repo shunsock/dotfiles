@@ -92,6 +92,10 @@
                 # インストール済みパッケージは固定して再現性を優先する。
                 autoUpdate = true;
                 upgrade = false;
+                # Homebrew 5.1 以降、破壊的な `brew bundle --cleanup` は
+                # --force-cleanup / --force / $HOMEBREW_ASK のいずれかを要求する。
+                # nix-darwin は --force 系を生成しないため、cleanup を明示承認する。
+                extraFlags = [ "--force-cleanup" ];
               };
               taps = [
                 "steipete/tap"
