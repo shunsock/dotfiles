@@ -42,6 +42,11 @@ tasks:
     cmds:
       - nix fmt
 
+  lint:naming:
+    desc: Validate file and directory naming conventions with ls-lint
+    cmds:
+      - nix run nixpkgs#ls-lint
+
   gc:
     desc: Garbage collect old Nix store paths (keep last 30 days)
     cmds:
