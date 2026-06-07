@@ -9,8 +9,9 @@ Nix を中心とした個人 dotfiles リポジトリ。全体像と完全なコ
 ## Claude 設定のソース管理 (メタ構造)
 
 `configs/claude/` は、この環境の **グローバル Claude Code 設定 (`~/.claude/`) の
-single source of truth**。`nix-darwin/module/claude.nix` が home-manager の
-`home.file` でシンボリンクし、`~/.claude/` 配下へ配布する。
+single source of truth**。`nix-darwin/module/claude.nix` または
+`nix-os/modules/claude.nix` が home-manager の `home.file` で `~/.claude/` 配下へ
+配布する (どちらの環境で構築するかによる)。
 
 | ソース (`configs/claude/`) | 配布先 (`~/.claude/`) |
 |---|---|
@@ -24,7 +25,8 @@ single source of truth**。`nix-darwin/module/claude.nix` が home-manager の
 
 ### 注意
 
-- `configs/claude/` を編集しても **即座には反映されない**。`nix-darwin/` で `task apply`
-  (sudo, Claude 実行不可) を行い、シンボリンク先のストアを再生成する必要がある。
+- `configs/claude/` を編集しても **即座には反映されない**。構築している環境に応じて
+  `nix-darwin/` または `nix-os/` で `task apply` (sudo, Claude 実行不可) を行い、
+  配布先のストアを再生成する必要がある。
 - `configs/claude/CLAUDE.md` や `settings.json` の変更は **全プロジェクトの挙動** に影響する。慎重に。
 - これ (本リポジトリ専用の `.claude/`) とグローバル設定ソース (`configs/claude/`) は別物。混同しない。
