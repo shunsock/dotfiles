@@ -5,58 +5,49 @@ tasks:
     desc: Initialize the project by installing nix-darwin system-wide
     cmds:
       - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-      # Build as the current user (uses the user's nix config/cache/auth), then
-      # apply with sudo using the prebuilt binary so root never re-evaluates the flake.
-      - nix run --extra-experimental-features "nix-command flakes" github:LnL7/nix-darwin -- build --flake .#shunsock-darwin
-      - sudo ./result/sw/bin/darwin-rebuild switch --flake .#shunsock-darwin
-      - echo "nix-darwin has been installed system-wide. darwin-rebuild command is now available."
+      - bash script/entry_point/init.sh
     status:
       - which darwin-rebuild
 
   apply:
     desc: Apply the configuration with darwin-rebuild
-    deps:
-      - build
     cmds:
       - bash script/remove_backup.sh
-      # `build` (dep) produces ./result as the current user; switch with sudo via the
-      # prebuilt darwin-rebuild so root never re-evaluates the flake.
-      - sudo ./result/sw/bin/darwin-rebuild switch --flake .#shunsock-darwin
+      - bash script/entry_point/build.sh
+      - bash script/entry_point/apply.sh
 
   build:
     desc: Build and validate configuration without applying
     cmds:
-      # Build the system closure as the current user. ./result contains the prebuilt
-      # darwin-rebuild, which `apply` reuses to switch under sudo without re-evaluating.
-      - nix run github:LnL7/nix-darwin -- build --flake .#shunsock-darwin
+      - bash script/entry_point/build.sh
 
   check:
     desc: Validate flake configuration
     cmds:
-      - nix flake check
+      - bash script/entry_point/check.sh
 
   update:
     desc: Update flake dependencies
     cmds:
-      - nix flake update
+      - bash script/entry_point/update.sh
 
   validate:
     desc: Run comprehensive validation (build + check)
-    deps:
-      - build
-      - check
+    cmds:
+      - bash script/entry_point/build.sh
+      - bash script/entry_point/check.sh
 
   format:
     desc: Format Nix Settings
     cmds:
-      - nix fmt
+      - bash script/entry_point/format.sh
 
   lint:naming:
     desc: Validate file and directory naming conventions with ls-lint
     cmds:
-      - nix run nixpkgs#ls-lint
+      - bash script/entry_point/lint_naming.sh
 
   gc:
     desc: Garbage collect old Nix store paths (keep last 30 days)
     cmds:
-      - nix-collect-garbage --delete-older-than 30d
+      - bash script/entry_point/gc.sh
