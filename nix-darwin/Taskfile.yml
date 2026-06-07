@@ -15,17 +15,20 @@ tasks:
 
   apply:
     desc: Apply the configuration with darwin-rebuild
+    deps:
+      - build
     cmds:
       - bash script/remove_backup.sh
-      # Build as the current user, then switch with sudo via the prebuilt darwin-rebuild.
-      # This avoids running Nix evaluation under sudo (lost user config/auth, root-owned cache).
-      - nix run github:LnL7/nix-darwin -- build --flake .#shunsock-darwin
+      # `build` (dep) produces ./result as the current user; switch with sudo via the
+      # prebuilt darwin-rebuild so root never re-evaluates the flake.
       - sudo ./result/sw/bin/darwin-rebuild switch --flake .#shunsock-darwin
 
   build:
     desc: Build and validate configuration without applying
     cmds:
-      - nix build .#darwinConfigurations.shunsock-darwin.system
+      # Build the system closure as the current user. ./result contains the prebuilt
+      # darwin-rebuild, which `apply` reuses to switch under sudo without re-evaluating.
+      - nix run github:LnL7/nix-darwin -- build --flake .#shunsock-darwin
 
   check:
     desc: Validate flake configuration
