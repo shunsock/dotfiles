@@ -57,4 +57,12 @@
       pkgsUnstable.gws
       pkgsLlmAgents.antigravity-cli
     ];
+
+  # docker compose (v2 サブコマンド) の CLI プラグイン登録。
+  # Homebrew の docker-compose は単体バイナリを置くのみで `docker compose` から
+  # 認識されないため、~/.docker/cli-plugins/ に brew の opt パスを symlink する。
+  # 手動で張ると Docker Desktop 削除時の zap で ~/.docker ごと消えるため、
+  # home-manager 管理にして再現性を担保する (opt パスはバージョン非依存)。
+  home.file.".docker/cli-plugins/docker-compose".source =
+    config.lib.file.mkOutOfStoreSymlink "/opt/homebrew/opt/docker-compose/bin/docker-compose";
 }
