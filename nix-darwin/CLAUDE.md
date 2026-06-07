@@ -32,7 +32,7 @@ This is a Nix Home Manager configuration for macOS (aarch64-darwin) that manages
 ### Structure
 - `flake.nix`: Main Nix Darwin configuration defining packages, user settings, and zsh configuration
 - `home.nix`: Home Manager configuration
-- `modules/`: Nix configuration modules (host.nix, wezterm.nix)
+- `module/`: Nix configuration modules (host.nix, wezterm.nix)
 - `zsh/`: Modular zsh configuration files organized by purpose
   - `basic/`: Core shell configurations (aliases, editor settings, options, PATH)
   - `command/`: Command-specific configurations (docker, git aliases)
@@ -67,7 +67,7 @@ The Tailscale configuration requires a manually managed authentication key file 
   3. Save the key: `sudo sh -c 'echo "YOUR_AUTH_KEY" > /etc/tailscale/authkey'`
   4. Set permissions: `sudo chmod 600 /etc/tailscale/authkey`
 - **Security**: This file is added to `.gitignore` to prevent accidental commits
-- **Auto-connection**: The launchd daemon in `modules/host.nix` reads this file to automatically connect Tailscale on system startup
+- **Auto-connection**: The launchd daemon in `module/host.nix` reads this file to automatically connect Tailscale on system startup
 
 **Note**: This is a departure from the declarative Nix approach, but is necessary for securely managing authentication keys outside of the Nix store.
 

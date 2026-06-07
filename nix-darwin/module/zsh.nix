@@ -6,7 +6,7 @@
   home.file.".config/zsh/common".recursive = true;
 
   # Platform-specific configs
-  home.file.".config/zsh/platform".source = ../configs/zsh;
+  home.file.".config/zsh/platform".source = ../config/zsh;
   home.file.".config/zsh/platform".recursive = true;
 
   home.packages = with pkgs; [

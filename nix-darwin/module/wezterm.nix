@@ -2,7 +2,7 @@
 
 {
   # Deploy agent monitoring module to WezTerm config directory
-  home.file.".config/wezterm/agent.lua".source = ../configs/wezterm/agent.lua;
+  home.file.".config/wezterm/agent.lua".source = ../config/wezterm/agent.lua;
 
   # WezTerm configuration
   programs.wezterm = {

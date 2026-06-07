@@ -42,7 +42,7 @@ A comprehensive dotfiles configuration using Nix Darwin for macOS development en
 ├── flake.nix                   # Main Nix Darwin configuration
 ├── flake.lock                  # Locked dependency versions
 ├── home.nix                    # Home Manager configuration
-├── modules/                    # Nix configuration modules
+├── module/                     # Nix configuration modules
 │   └── wezterm.nix            # WezTerm terminal configuration
 ├── README.md                   # This file
 ├── Taskfile.yml               # Task automation commands
