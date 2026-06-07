@@ -47,6 +47,11 @@ tasks:
     cmds:
       - bash script/entry_point/ls_lint/naming_linter.sh
 
+  lint:shell:
+    desc: Statically analyze shell scripts with shellcheck
+    cmds:
+      - bash script/entry_point/shellcheck/lint.sh
+
   gc:
     desc: Garbage collect old Nix store paths (keep last 30 days)
     cmds:
