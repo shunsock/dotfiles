@@ -62,6 +62,6 @@
       pkgsLlmAgents.claude-code
       pkgsUnstable.google-cloud-sdk
       pkgsUnstable.gws
-      pkgsLlmAgents.antigravity
+      pkgsLlmAgents.antigravity-cli
     ];
 }
