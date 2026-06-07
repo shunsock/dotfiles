@@ -93,18 +93,13 @@
                 autoUpdate = true;
                 upgrade = false;
               };
-              taps = [
-                "steipete/tap"
-              ];
               brews = [
                 "colima"
                 "curl"
-                "steipete/tap/gogcli"
               ];
               casks = [
                 "aquaskk"
                 "arc"
-                "docker-desktop"
                 "jetbrains-toolbox"
                 "sf-symbols"
                 "steam"

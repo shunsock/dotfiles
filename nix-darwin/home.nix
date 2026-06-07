@@ -39,23 +39,16 @@
       gh
       ghq
       git
-      gitleaks
       go-task
       hackgen-nf-font
-      hadolint
       hurl
       hyperfine
       nerd-fonts.jetbrains-mono
       nixfmt-rfc-style
-      npins
-      presenterm
       rustup
       tree
-      trufflehog
-      typos
       wthrr
       yazi
-      zoxide
     ]
     ++ [
       complexity
