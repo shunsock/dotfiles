@@ -97,18 +97,13 @@
                 # nix-darwin は --force 系を生成しないため、cleanup を明示承認する。
                 extraFlags = [ "--force-cleanup" ];
               };
-              taps = [
-                "steipete/tap"
-              ];
               brews = [
                 "colima"
                 "curl"
-                "steipete/tap/gogcli"
               ];
               casks = [
                 "aquaskk"
                 "arc"
-                "docker-desktop"
                 "jetbrains-toolbox"
                 "sf-symbols"
                 "steam"
