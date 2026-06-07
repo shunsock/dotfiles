@@ -87,7 +87,6 @@
               };
               taps = [
                 "steipete/tap"
-                "Warashi/tap"
               ];
               brews = [
                 "colima"
