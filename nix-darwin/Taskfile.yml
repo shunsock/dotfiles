@@ -50,4 +50,4 @@ tasks:
   gc:
     desc: Garbage collect old Nix store paths (keep last 30 days)
     cmds:
-      - bash script/entry_point/nix/gc.sh
+      - bash script/entry_point/nix/garbage_collector.sh
