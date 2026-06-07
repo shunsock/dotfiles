@@ -99,6 +99,8 @@
               };
               brews = [
                 "colima"
+                "docker"
+                "docker-compose"
                 "curl"
               ];
               casks = [
