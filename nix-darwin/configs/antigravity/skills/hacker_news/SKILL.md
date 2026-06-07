@@ -1,5 +1,5 @@
 ---
-name: hacker-news
+name: hacker_news
 description: Fetches and summarizes the top stories from Hacker News. Use this skill when the user asks for the latest tech news, Hacker News updates, or what's trending on HN.
 ---
 

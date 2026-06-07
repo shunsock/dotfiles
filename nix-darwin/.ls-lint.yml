@@ -1,7 +1,7 @@
 # NixDarwin ファイル・ディレクトリ命名ルール
 #
 # 設計方針:
-#   - ディレクトリ        : kebab-case  (小文字・数字・ハイフン)
+#   - ディレクトリ        : snake_case  (小文字・数字・アンダースコア)
 #   - 一般ファイル        : snake_case  (小文字・数字・アンダースコア)
 #   - Markdown           : UPPERCASE (README/CLAUDE 等の慣習ドキュメント) または snake_case
 #   - 固定名の特殊ファイル : 拡張子ごとに固定 (Taskfile.yml=PascalCase, flake.lock=lowercase)
@@ -11,7 +11,7 @@
 # 注意: 拡張子結合キー (".nix | .sh: snake_case") は ls-lint v2.3.1 では
 #       サイレントに素通りするため使用しない。拡張子は必ず個別キーで定義する。
 ls:
-  .dir: kebab-case
+  .dir: snake_case
 
   # コンテンツ系ファイルは snake_case に統一する
   .nix: snake_case
