@@ -2,7 +2,6 @@
 set -euo pipefail
 
 SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-source "$SCRIPT_ROOT/library/logger.sh"
+source "$SCRIPT_ROOT/library/runner.sh"
 
-info "flake の構成を検証します"
-nix flake check
+run "flake の検証" nix flake check

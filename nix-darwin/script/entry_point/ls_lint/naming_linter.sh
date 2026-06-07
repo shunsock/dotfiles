@@ -2,7 +2,6 @@
 set -euo pipefail
 
 SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-source "$SCRIPT_ROOT/library/logger.sh"
+source "$SCRIPT_ROOT/library/runner.sh"
 
-info "ファイル・ディレクトリ命名規則を検証します"
-nix run nixpkgs#ls-lint
+run "ファイル・ディレクトリ命名規則の検証" nix run nixpkgs#ls-lint
