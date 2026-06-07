@@ -50,7 +50,22 @@
       };
     in
     {
-      formatter.${system} = pkgs.nixfmt-rfc-style;
+      # nixfmt 単体だと `nix fmt` が引数なしで呼ばれた際に空 stdin を読んで
+      # パースエラーになるため、対象パス (既定はカレント) 配下の .nix を
+      # 探索して nixfmt に渡すラッパーを formatter にする。
+      formatter.${system} = pkgs.writeShellApplication {
+        name = "nixfmt-tree";
+        runtimeInputs = [
+          pkgs.nixfmt-rfc-style
+          pkgs.findutils
+        ];
+        text = ''
+          if [ "$#" -eq 0 ]; then
+            set -- .
+          fi
+          find "$@" -type f -name '*.nix' -print0 | xargs -0 -r nixfmt
+        '';
+      };
 
       darwinConfigurations."shunsock-darwin" = nix-darwin.lib.darwinSystem {
         inherit system;
