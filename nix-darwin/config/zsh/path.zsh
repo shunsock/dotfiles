@@ -7,6 +7,6 @@ export PATH="/opt/homebrew/bin:$PATH"
 export PATH="$HOME/.bun/bin:$PATH"
 
 # Antigravity CLI
-export PATH="/etc/profiles/per-user/shunsuke.tsuchiya/bin:$PATH"
+export PATH="/etc/profiles/per-user/shunsock/bin:$PATH"
 
 export WEZTERM_CONFIG_FILE=~/.config/wezterm/wezterm.lua
