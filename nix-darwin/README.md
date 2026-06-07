@@ -88,7 +88,10 @@ task validate
 
 ```bash
 # Apply configuration changes
-sudo darwin-rebuild switch --flake .#shunsock-darwin
+# Build as the current user, then switch with sudo via the prebuilt binary
+# (avoids running Nix evaluation under sudo).
+nix run github:LnL7/nix-darwin -- build --flake .#shunsock-darwin
+sudo ./result/sw/bin/darwin-rebuild switch --flake .#shunsock-darwin
 
 # Build configuration (test without applying)
 nix build .#darwinConfigurations.shunsock-darwin.system

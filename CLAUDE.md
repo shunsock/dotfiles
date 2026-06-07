@@ -25,7 +25,10 @@ task update    # Update flake dependencies
 task validate  # Comprehensive validation (build + check)
 
 # Direct commands (if task fails)
-sudo darwin-rebuild switch --flake .#shunsock-darwin
+# Build as the current user, then switch with sudo via the prebuilt binary
+# (avoids running Nix evaluation under sudo).
+nix run github:LnL7/nix-darwin -- build --flake .#shunsock-darwin
+sudo ./result/sw/bin/darwin-rebuild switch --flake .#shunsock-darwin
 nix build .#darwinConfigurations.shunsock-darwin.system
 nix flake check
 nix flake update

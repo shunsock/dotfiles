@@ -13,16 +13,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Comprehensive validation**: `task validate`
 
 ### Direct Commands (if needed)
-- **Install nix-darwin system-wide**: `nix run nix-darwin -- switch --flake .#shunsock-darwin`
-- **Apply configuration**: `darwin-rebuild switch --flake .#shunsock-darwin`
-- **Build configuration**: `nix build .#darwinConfigurations.shunsock-darwin.system`
+Build as the current user, then switch with sudo via the prebuilt binary. This
+avoids running Nix evaluation under sudo (which loses the user's nix config/auth
+and produces root-owned cache):
+- **Build configuration (apply step 1)**: `nix run github:LnL7/nix-darwin -- build --flake .#shunsock-darwin`
+- **Apply configuration (apply step 2)**: `sudo ./result/sw/bin/darwin-rebuild switch --flake .#shunsock-darwin`
+- **Build for validation only**: `nix build .#darwinConfigurations.shunsock-darwin.system`
 - **Check flake**: `nix flake check`
 - **Update flake inputs**: `nix flake update`
 
 ### Installation Notes
 - **First time setup**: Run `task init` to install nix-darwin system-wide
 - **After init**: The `darwin-rebuild` command will be available in your PATH
-- **Subsequent updates**: Use `task apply` or `sudo darwin-rebuild switch --flake .#shunsock-darwin`
+- **Subsequent updates**: Use `task apply` (builds as user, then `sudo ./result/sw/bin/darwin-rebuild switch`)
 - **Claude Code Limitation**: Commands requiring sudo cannot be executed by Claude Code and must be run manually in terminal
 
 ## Architecture

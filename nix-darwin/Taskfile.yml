@@ -5,7 +5,10 @@ tasks:
     desc: Initialize the project by installing nix-darwin system-wide
     cmds:
       - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-      - sudo nix run --extra-experimental-features nix-command --extra-experimental-features flakes nix-darwin -- switch --flake .#shunsock-darwin
+      # Build as the current user (uses the user's nix config/cache/auth), then
+      # apply with sudo using the prebuilt binary so root never re-evaluates the flake.
+      - nix run --extra-experimental-features "nix-command flakes" github:LnL7/nix-darwin -- build --flake .#shunsock-darwin
+      - sudo ./result/sw/bin/darwin-rebuild switch --flake .#shunsock-darwin
       - echo "nix-darwin has been installed system-wide. darwin-rebuild command is now available."
     status:
       - which darwin-rebuild
@@ -14,7 +17,10 @@ tasks:
     desc: Apply the configuration with darwin-rebuild
     cmds:
       - bash script/remove_backup.sh
-      - sudo darwin-rebuild switch --flake .#shunsock-darwin
+      # Build as the current user, then switch with sudo via the prebuilt darwin-rebuild.
+      # This avoids running Nix evaluation under sudo (lost user config/auth, root-owned cache).
+      - nix run github:LnL7/nix-darwin -- build --flake .#shunsock-darwin
+      - sudo ./result/sw/bin/darwin-rebuild switch --flake .#shunsock-darwin
 
   build:
     desc: Build and validate configuration without applying
