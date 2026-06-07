@@ -76,6 +76,15 @@
           {
             homebrew = {
               enable = true;
+              # Nix から削除したパッケージは activation 時に自動アンインストールする。
+              # casks は関連ファイルまで削除する zap を採用 (brew は完全に Nix で一元管理)。
+              onActivation = {
+                cleanup = "zap";
+                # カタログ (formula/cask 定義) は最新化するが、
+                # インストール済みパッケージは固定して再現性を優先する。
+                autoUpdate = true;
+                upgrade = false;
+              };
               taps = [
                 "steipete/tap"
                 "Warashi/tap"
