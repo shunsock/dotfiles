@@ -9,10 +9,6 @@
     home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     llm-agents.url = "github:numtide/llm-agents.nix";
-    samoyed = {
-      url = "github:espiria/samoyed";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
@@ -23,7 +19,6 @@
       nix-darwin,
       home-manager,
       llm-agents,
-      samoyed,
       ...
     }:
     let
@@ -41,28 +36,7 @@
         };
       };
       pkgsLlmAgents = llm-agents.packages.${system};
-      # samoyed の上流 flake は古い rust-overlay と darwin.apple_sdk.frameworks.* に依存しており、
-      # nixpkgs 25.11 では (a) legacy stub 削除で評価エラー、(b) rust-overlay 経由の rust-src が
-      # 拡張子を持たないソースとして fetch され unpackPhase に失敗する。
-      # よって上流の packages.default は使わず、ソースだけ拝借して nixpkgs の rustPlatform で
-      # 自前ビルドする (Apple framework は現行 Darwin stdenv が自動供給するため省略可)。
-      samoyedPkg = pkgs.rustPlatform.buildRustPackage {
-        pname = "samoyed";
-        version = "0.2.0";
-        src = samoyed;
-        cargoLock = {
-          lockFile = "${samoyed}/Cargo.lock";
-        };
-        nativeBuildInputs = [ pkgs.pkg-config ];
-        buildInputs = [ pkgs.openssl ];
-        OPENSSL_DIR = "${pkgs.openssl.dev}";
-        OPENSSL_LIB_DIR = "${pkgs.openssl.out}/lib";
-        OPENSSL_INCLUDE_DIR = "${pkgs.openssl.dev}/include";
-        # 内部テストは git init を sandbox 内で実行し失敗するため、ビルド時はスキップする。
-        doCheck = false;
-      };
 
-      # thoughtbot/complexity: cognitive complexity measurement tool
       complexity = pkgs.rustPlatform.buildRustPackage rec {
         pname = "complexity";
         version = "0.4.2";
@@ -134,7 +108,6 @@
                 inherit pkgsUnstable;
                 inherit pkgsLlmAgents;
                 inherit complexity;
-                inherit samoyedPkg;
               };
 
               users.shunsock = import ./home.nix;
