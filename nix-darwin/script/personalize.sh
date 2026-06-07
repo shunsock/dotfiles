@@ -54,17 +54,17 @@ sed -i '' \
   -e "s/#${OLD_DARWIN_CONFIG}/#${NEW_DARWIN_CONFIG}/g" \
   "$NIX_DARWIN_DIR/Taskfile.yml"
 
-# --- configs/bash/path.bash ---
-echo "[4/7] configs/bash/path.bash を更新..."
+# --- config/bash/path.bash ---
+echo "[4/7] config/bash/path.bash を更新..."
 sed -i '' \
   -e "s|per-user/${OLD_USER}/|per-user/${NEW_USER}/|g" \
-  "$NIX_DARWIN_DIR/configs/bash/path.bash"
+  "$NIX_DARWIN_DIR/config/bash/path.bash"
 
-# --- configs/zsh/path.zsh ---
-echo "[5/7] configs/zsh/path.zsh を更新..."
+# --- config/zsh/path.zsh ---
+echo "[5/7] config/zsh/path.zsh を更新..."
 sed -i '' \
   -e "s|per-user/${OLD_USER}/|per-user/${NEW_USER}/|g" \
-  "$NIX_DARWIN_DIR/configs/zsh/path.zsh"
+  "$NIX_DARWIN_DIR/config/zsh/path.zsh"
 
 # --- script/remove_backup.sh ---
 echo "[6/7] script/remove_backup.sh を更新..."

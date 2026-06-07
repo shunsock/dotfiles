@@ -67,10 +67,10 @@
           }
 
           # Keyboard remapping configuration
-          ./modules/keymap.nix
+          ./module/keymap.nix
 
           # Host configuration (Tailscale)
-          ./modules/host.nix
+          ./module/host.nix
 
           # Homebrew configuration
           {

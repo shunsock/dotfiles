@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 
 {
-  home.file.".config/bash".source = ../configs/bash;
+  home.file.".config/bash".source = ../config/bash;
   home.file.".config/bash".recursive = true;
 
   programs.bash = {

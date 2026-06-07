@@ -2,7 +2,7 @@
 
 {
   home.file.".gemini/antigravity-cli" = {
-    source = ../configs/antigravity;
+    source = ../config/antigravity;
     recursive = true;
   };
 }

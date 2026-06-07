@@ -10,13 +10,13 @@
 
 {
   imports = [
-    ./modules/bash.nix
-    ./modules/claude.nix
-    ./modules/antigravity.nix
-    ./modules/skk.nix
-    ./modules/starship.nix
-    ./modules/wezterm.nix
-    ./modules/zsh.nix
+    ./module/bash.nix
+    ./module/claude.nix
+    ./module/antigravity.nix
+    ./module/skk.nix
+    ./module/starship.nix
+    ./module/wezterm.nix
+    ./module/zsh.nix
   ];
 
   # ユーザー情報

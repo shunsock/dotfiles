@@ -105,6 +105,6 @@ echo "ファイアウォール状態:"
 /usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate
 echo ""
 echo "注意:"
-echo "  - Tailscale の設定は modules/host.nix で管理されています"
+echo "  - Tailscale の設定は module/host.nix で管理されています"
 echo "  - SSH 接続は Tailscale ネットワーク経由を推奨します"
 echo "  - 設定を元に戻すには各コマンドの値を変更してください"
