@@ -1,0 +1,32 @@
+# NixDarwin ファイル・ディレクトリ命名ルール
+#
+# 設計方針:
+#   - ディレクトリ        : kebab-case  (小文字・数字・ハイフン)
+#   - 一般ファイル        : snake_case  (小文字・数字・アンダースコア)
+#   - Markdown           : UPPERCASE (README/CLAUDE 等の慣習ドキュメント) または snake_case
+#   - 固定名の特殊ファイル : 拡張子ごとに固定 (Taskfile.yml=PascalCase, flake.lock=lowercase)
+#
+# 検証コマンド: nix run nixpkgs#ls-lint
+#
+# 注意: 拡張子結合キー (".nix | .sh: snake_case") は ls-lint v2.3.1 では
+#       サイレントに素通りするため使用しない。拡張子は必ず個別キーで定義する。
+ls:
+  .dir: kebab-case
+
+  # コンテンツ系ファイルは snake_case に統一する
+  .nix: snake_case
+  .sh: snake_case
+  .bash: snake_case
+  .zsh: snake_case
+  .toml: snake_case
+  .lua: snake_case
+  .json: snake_case
+  .conf: snake_case
+  .jpg: snake_case
+  .lock: snake_case
+
+  # 慣習ドキュメントは大文字 (README, CLAUDE, SKILL), 通常ドキュメントは snake_case
+  .md: regex:^[A-Z0-9_]+$ | snake_case
+
+  # go-task の設定ファイルは PascalCase 固定名 (Taskfile.yml)
+  .yml: PascalCase
