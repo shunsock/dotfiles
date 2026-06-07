@@ -5,8 +5,7 @@ tasks:
     desc: Initialize the project by installing nix-darwin system-wide
     cmds:
       - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-      - sudo nix run --extra-experimental-features nix-command --extra-experimental-features flakes nix-darwin -- switch --flake .#shunsock-darwin
-      - echo "nix-darwin has been installed system-wide. darwin-rebuild command is now available."
+      - bash script/entry_point/init.sh
     status:
       - which darwin-rebuild
 
@@ -14,40 +13,41 @@ tasks:
     desc: Apply the configuration with darwin-rebuild
     cmds:
       - bash script/remove_backup.sh
-      - sudo darwin-rebuild switch --flake .#shunsock-darwin
+      - bash script/entry_point/build.sh
+      - bash script/entry_point/apply.sh
 
   build:
     desc: Build and validate configuration without applying
     cmds:
-      - nix build .#darwinConfigurations.shunsock-darwin.system
+      - bash script/entry_point/build.sh
 
   check:
     desc: Validate flake configuration
     cmds:
-      - nix flake check
+      - bash script/entry_point/check.sh
 
   update:
     desc: Update flake dependencies
     cmds:
-      - nix flake update
+      - bash script/entry_point/update.sh
 
   validate:
     desc: Run comprehensive validation (build + check)
-    deps:
-      - build
-      - check
+    cmds:
+      - bash script/entry_point/build.sh
+      - bash script/entry_point/check.sh
 
   format:
     desc: Format Nix Settings
     cmds:
-      - nix fmt
+      - bash script/entry_point/format.sh
 
   lint:naming:
     desc: Validate file and directory naming conventions with ls-lint
     cmds:
-      - nix run nixpkgs#ls-lint
+      - bash script/entry_point/lint_naming.sh
 
   gc:
     desc: Garbage collect old Nix store paths (keep last 30 days)
     cmds:
-      - nix-collect-garbage --delete-older-than 30d
+      - bash script/entry_point/gc.sh
