@@ -12,7 +12,7 @@
 #   5. スクリーンセーバー無効化
 #
 # 使い方:
-#   sudo bash nix-darwin/script/setup_server.sh
+#   sudo bash nix-darwin/script/entry_point/setup_server.sh
 #
 # 注意: このスクリプトは sudo で実行する必要があります。
 

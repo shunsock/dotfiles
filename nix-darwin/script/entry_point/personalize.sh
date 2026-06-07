@@ -5,14 +5,15 @@
 # 現在のmacOSユーザーに合わせて書き換えるスクリプト。
 #
 # 使い方:
-#   bash nix-darwin/script/personalize.sh [ユーザー名]
+#   bash nix-darwin/script/entry_point/personalize.sh [ユーザー名]
 #
 # ユーザー名を省略した場合は現在のログインユーザー名を使用する。
 
 set -euo pipefail
 
+# entry_point/ から nix-darwin/ へは 2 階層上る (entry_point -> script -> nix-darwin)。
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-NIX_DARWIN_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+NIX_DARWIN_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 # 元のユーザー名（mainブランチの値）
 OLD_USER="shunsock"
@@ -66,11 +67,11 @@ sed -i '' \
   -e "s|per-user/${OLD_USER}/|per-user/${NEW_USER}/|g" \
   "$NIX_DARWIN_DIR/config/zsh/path.zsh"
 
-# --- script/remove_backup.sh ---
-echo "[6/7] script/remove_backup.sh を更新..."
+# --- script/entry_point/remove_backup.sh ---
+echo "[6/7] script/entry_point/remove_backup.sh を更新..."
 sed -i '' \
   -e "s|/Users/${OLD_USER}/|/Users/${NEW_USER}/|g" \
-  "$NIX_DARWIN_DIR/script/remove_backup.sh"
+  "$NIX_DARWIN_DIR/script/entry_point/remove_backup.sh"
 
 # --- CLAUDE.md, README.md ---
 echo "[7/7] ドキュメントを更新..."
