@@ -18,4 +18,4 @@ paths:
 - 直接実行する場合は build (現在ユーザー) → `sudo darwin-rebuild switch`
   (prebuilt な result バイナリ経由) の 2 段。Nix 評価を sudo 下で走らせない。
 
-構造の詳細は `nix-darwin/README.md` を参照。
+構造の詳細はリポジトリ直下の `README.md` を参照。
