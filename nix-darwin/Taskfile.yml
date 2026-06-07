@@ -45,7 +45,7 @@ tasks:
   lint:naming:
     desc: Validate file and directory naming conventions with ls-lint
     cmds:
-      - bash script/entry_point/ls_lint/naming_linter.sh
+      - bash script/entry_point/ls_lint/lint.sh
 
   lint:shell:
     desc: Statically analyze shell scripts with shellcheck
