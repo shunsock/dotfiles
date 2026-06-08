@@ -1,8 +1,13 @@
 { config, pkgs, ... }:
 
 {
-  home.file.".config/bash".source = ../config/bash;
-  home.file.".config/bash".recursive = true;
+  # Common configs shared between nix-darwin and nix-os
+  home.file.".config/bash/common".source = ../../configs/bash;
+  home.file.".config/bash/common".recursive = true;
+
+  # Platform-specific configs
+  home.file.".config/bash/platform".source = ../config/bash;
+  home.file.".config/bash/platform".recursive = true;
 
   programs.bash = {
     enable = true;
