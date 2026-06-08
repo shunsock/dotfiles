@@ -4,6 +4,8 @@
   pkgsUnstable,
   pkgsLlmAgents,
   complexity,
+  username,
+  homeDirectory,
   lib,
   ...
 }:
@@ -20,8 +22,8 @@
   ];
 
   # ユーザー情報
-  home.username = "shunsock";
-  home.homeDirectory = lib.mkForce "/Users/shunsock";
+  home.username = username;
+  home.homeDirectory = lib.mkForce homeDirectory;
   home.stateVersion = "23.11";
 
   # フォント設定

@@ -23,6 +23,12 @@
     }:
     let
       system = "aarch64-darwin";
+
+      # ユーザー固有の値は単一の定義に集約し、flake.nix と home.nix で共有する。
+      # home.nix はモジュールとして import されるため let スコープを共有できない。
+      # extraSpecialArgs 経由で注入する (pkgsUnstable / complexity と同じ機構)。
+      username = "shunsock";
+      homeDirectory = "/Users/${username}";
       pkgs = import nixpkgs {
         inherit system;
         config = {
@@ -67,13 +73,13 @@
         '';
       };
 
-      darwinConfigurations."shunsock-darwin" = nix-darwin.lib.darwinSystem {
+      darwinConfigurations."${username}-darwin" = nix-darwin.lib.darwinSystem {
         inherit system;
         modules = [
           # System configuration
           {
             system.stateVersion = 4;
-            system.primaryUser = "shunsock";
+            system.primaryUser = username;
             nixpkgs.config.allowUnfree = true;
             ids.gids.nixbld = 350;
 
@@ -140,9 +146,11 @@
                 inherit pkgsUnstable;
                 inherit pkgsLlmAgents;
                 inherit complexity;
+                inherit username;
+                inherit homeDirectory;
               };
 
-              users.shunsock = import ./home.nix;
+              users.${username} = import ./home.nix;
 
               backupFileExtension = "hm-backup";
             };
