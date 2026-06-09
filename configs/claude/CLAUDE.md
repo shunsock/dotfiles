@@ -34,7 +34,7 @@
 ### PostToolUse hook からの指示への遵守
 
 - PostToolUse hook が `notify` decision で `[MANDATORY ACTION REQUIRED]` を含むメッセージを返した場合、そのメッセージに記載された指示を即座に実行しなければならない
-- 特に `git push` / `gh pr create` 後の CI 監視・修正フロー（flow__ci_fix スキル）は必ず実行すること
+- 特に `git push` / `gh pr create` 後の CI 監視・修正フロー（monitor__ci_status スキル。失敗時は rescue__ci_failure を自律起動）は必ず実行すること
 - hook の指示に対してユーザーへの確認は不要 — 指示内容をそのまま自律的に実行する
 - CI 監視・修正フローが完了するまで、他のタスクに移ってはならない
 

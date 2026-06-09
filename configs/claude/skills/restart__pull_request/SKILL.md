@@ -210,7 +210,7 @@ git push -u origin "$NEW_BRANCH"
 #### 5.1 説明文の構成
 
 議論の構造化結果 (Phase 1.4) と現在の差分を統合した、ナラティブ型の説明文を生成する。
-`flow__pr_narrative` と同等のセクション構造を踏襲しつつ、**議論履歴の引き継ぎ** を
+`write__narrative_pull_request` と同等のセクション構造を踏襲しつつ、**議論履歴の引き継ぎ** を
 強調する。
 
 ```markdown
@@ -262,7 +262,7 @@ Supersedes ${OLD_URL}
 
 #### 5.2 PR 作成
 
-`flow__submit_pr` と同じバイパスマーカーを付与する (narrative-PR hook 用):
+`submit__pull_request` と同じバイパスマーカーを付与する (narrative-PR hook 用):
 
 ```bash
 gh pr create \
@@ -330,7 +330,7 @@ gh pr close "$PR_NUMBER"
 
 ### Next steps
 - レビュー再依頼: gh pr ready ${NEW_PR_NUMBER} など
-- CI 監視は flow__ci_fix が自動起動する
+- CI 監視は monitor__ci_status が自動起動する（失敗時は rescue__ci_failure に委譲）
 ```
 
 ---
