@@ -1,5 +1,5 @@
 ---
-name: executre__devshell_via_nix
+name: execute__devshell_via_nix
 description: >-
   Trigger when the user wants to run a command inside a Nix devShell.
   Detects flake.nix with devShell definitions and executes commands via

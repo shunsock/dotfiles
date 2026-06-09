@@ -1,5 +1,5 @@
 ---
-name: rescue_untracked_worktree
+name: rescue__untracked_worktree
 description: >-
   Trigger when a command execution or tool fails in a git worktree, possibly due
   to missing files (e.g., .env, config files). Investigates the original repository

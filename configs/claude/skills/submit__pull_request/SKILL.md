@@ -15,22 +15,29 @@ PR作成後はCIを監視して失敗があれば自動修正します。
 
 全フェーズでユーザーへの確認は不要です。自律的に実行してください。
 
-> **派生元スキル**: flow__pr_narrative (Phase 1-2), flow__ci_fix (Phase 4-6)
+> **構成**: PR説明文の生成は `write__narrative_pull_request` 相当 (Phase 1-2)。
+> PR作成後の監視・修復は専用スキルに委譲する — コンフリクト検知は
+> `monitor__pull_request_conflict`、CI監視は `monitor__ci_status` が担い、
+> それぞれ検知時に `rescue__pull_request_conflict` / `rescue__ci_failure` を
+> 自律起動する。本スキルはそれらを kick するオーケストレーターである。
 
-## 重要: PR作成後のCI監視は必須
+## 重要: PR作成後の監視は必須
 
 **PR作成（Phase 3）で処理を終了してはならない。**
-Phase 4（CI監視）〜 Phase 6（修正・再監視）は省略不可の必須ステップである。
+Phase 4（コンフリクト監視）と Phase 5（CI監視）は省略不可の必須ステップである。
 
 PR作成後、必ず以下を実行すること:
 
-1. `gh pr checks` でCIチェックの開始を待機する
-2. ポーリングループで全チェックの完了を監視する（`--watch` は使用禁止）
-3. 失敗があれば `gh run view <run_id> --log-failed` でログを取得し、修正・コミット・プッシュする
-4. 再度CIを監視し、全チェックがパスするまで繰り返す（最大5回）
-5. 最終的なCI結果をサマリーとして出力する
+1. `monitor__pull_request_conflict` スキルを kick し、ベースとの merge conflict を
+   検知・解決する（CIがクリーンな状態で走るよう、CI監視より先に行う）
+2. `monitor__ci_status` スキルを kick し、CIを監視する。失敗があれば
+   `monitor__ci_status` が `rescue__ci_failure` を自律起動して修正・再監視する
+3. 両監視の結果を統合してサマリーを出力する
 
-PR作成だけで完了を報告することは禁止する。CIが全てパスした（または5回の修正サイクルを使い切った）ことを確認してから、Phase 7のサマリーを出力して終了すること。
+PR作成だけで完了を報告することは禁止する。両 monitor が完了（CI全パス／コンフリクト解消、
+または各 monitor の反復上限到達）したことを確認してから、Phase 6のサマリーを出力して
+終了すること。監視・修復のロジックを本スキルに inline で再実装してはならない —
+必ず monitor スキルを kick して委譲する。
 
 ## 処理フロー
 
@@ -174,113 +181,40 @@ PR_NUMBER=$(gh pr view --json number --jq '.number')
 
 ---
 
-### Phase 4: CI開始待機とステータス監視
+### Phase 4: コンフリクト監視を kick
 
-PR作成後、CIチェックの開始を待ち、完了まで監視する。
+`monitor__pull_request_conflict` スキルを起動する（Skill ツール経由）。
+このスキルがベースブランチとの merge conflict をポーリングで検知し、
+`CONFLICTING` であれば `rescue__pull_request_conflict` を自律起動して解決・push する。
 
-#### 4.1 CI開始待機
+CI監視より先に行う理由: コンフリクトを解決して push すると CI が再走するため、
+クリーンな状態で CI を評価できる。
 
-```bash
-# チェックが登録されるまで待機（最大60秒）
-for i in $(seq 1 12); do
-  STATUS=$(gh pr checks "$PR_NUMBER" 2>&1 || true)
-  if echo "$STATUS" | grep -qE '(pass|fail|pending)'; then
-    break
-  fi
-  sleep 5
-done
-```
+- コンフリクトなし（MERGEABLE） → Phase 5 へ
+- コンフリクト解消 → Phase 5 へ
+- 反復上限まで未解消 → その旨を Phase 6 のサマリーに含める
 
-#### 4.2 ステータス監視
-
-**`gh pr checks --watch` は使用禁止** — 長時間CIでツールタイムアウトが発生する。
-代わりにポーリングループを使用する:
-
-```bash
-# 30秒間隔でポーリング、最大30分（60回）でタイムアウト
-MAX_POLLS=60
-POLL_INTERVAL=30
-
-for i in $(seq 1 $MAX_POLLS); do
-  CHECKS=$(gh pr checks "$PR_NUMBER" 2>&1)
-  if ! echo "$CHECKS" | grep -q "pending"; then
-    break
-  fi
-  if [ "$i" -eq "$MAX_POLLS" ]; then
-    echo "TIMEOUT: CI checks still pending after 30 minutes"
-    break
-  fi
-  sleep $POLL_INTERVAL
-done
-```
-
-- 全チェックがパスした場合 → Phase 7（サマリー出力）へスキップ
-- 失敗がある場合 → Phase 5 へ進む
-- タイムアウトした場合 → ユーザーに報告して終了
+監視・解決ロジックを本スキルに inline で再実装しないこと。必ず monitor を kick する。
 
 ---
 
-### Phase 5: CI失敗の診断
+### Phase 5: CI監視を kick
 
-失敗したチェックごとに:
+`monitor__ci_status` スキルを起動する（Skill ツール経由）。
+このスキルが CI をポーリングで監視し、失敗があれば `rescue__ci_failure` を
+自律起動して修正・push・再監視する（最大5回）。
 
-1. 失敗したジョブ名と run ID を特定する:
-   ```bash
-   gh pr checks "$PR_NUMBER"
-   ```
+- 全チェックがパス → Phase 6 へ
+- 反復上限まで未解決 → 残りの失敗を Phase 6 のサマリーに含める
 
-2. 失敗ジョブのログを取得する:
-   ```bash
-   gh run view <run_id> --log-failed
-   ```
-
-3. ログ出力を分析して以下を特定する:
-   - 影響を受けるファイル
-   - エラーの種類（lint, test, type, build, format）
-   - 具体的なエラーメッセージと行番号
+監視・修正ロジックを本スキルに inline で再実装しないこと。必ず monitor を kick する。
+（`monitor__ci_status` のポーリング詳細・`--watch` 禁止・反復上限は当該スキルが所有する。）
 
 ---
 
-### Phase 6: 修正・コミット・プッシュ・再監視
+### Phase 6: サマリー出力
 
-#### 6.1 修正の適用
-
-診断結果に基づいて修正する:
-
-- **Lint エラー**: 対象ファイルを読み、報告された問題を修正
-- **テスト失敗**: 失敗テストとソースコードを読み、バグ修正またはテスト更新
-- **型エラー**: 型アノテーションや型不整合を修正
-- **フォーマット**: プロジェクトのフォーマッタを実行、または手動修正
-- **ビルドエラー**: コンパイルや依存関係の問題を修正
-
-修正後、ローカルで検証可能であれば検証する。
-
-#### 6.2 コミットとプッシュ
-
-```bash
-git add <修正ファイル>
-git commit -m "fix: resolve CI failures
-
-- <適用した修正の要約>
-
-Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>"
-
-git push
-```
-
-#### 6.3 再監視
-
-Phase 4 に戻り、CIを再監視する。
-
-- 全チェックがパス → Phase 7 へ
-- まだ失敗がある → Phase 5-6 を繰り返す
-- **最大5回**の修正・プッシュサイクルで打ち切り
-
-5回に達しても失敗が残る場合は、Phase 7 で残りの失敗を報告する。
-
----
-
-### Phase 7: サマリー出力
+両 monitor の結果を統合して出力する。
 
 ```
 ## PR Submission Summary
@@ -290,18 +224,16 @@ Phase 4 に戻り、CIを再監視する。
 - Title: <title>
 - URL: <url>
 
-### CI Status
-- Result: ALL_PASSED / NEEDS_ATTENTION
+### Conflict Monitor
+- Result: MERGEABLE / STILL_CONFLICTING
+- Resolved files: (list if any)
+
+### CI Monitor
+- Result: ALL_PASSED / NEEDS_ATTENTION / TIMEOUT
 - Fix iterations: N/5
 
-### Fix History (if any)
-| Iteration | Failed Check        | Root Cause             | Fix Applied                |
-|-----------|---------------------|------------------------|----------------------------|
-| 1         | lint                | unused import          | removed unused import      |
-| 2         | test-unit           | assertion mismatch     | updated expected value     |
-
-### Remaining Failures (if iteration limit reached)
-- <check name>: <error summary>
+### Remaining Issues (if any limit reached)
+- <check / file>: <summary>
 - Suggested: <manual action>
 ```
 
@@ -311,13 +243,10 @@ Phase 4 に戻り、CIを再監視する。
 
 - `git push --force` / `git push -f` を使用しない
 - ユーザーに確認を求めない（全フェーズ自動実行）
-- CI失敗に無関係なファイルを変更しない
-- ログ分析をスキップして修正を試みない
-- CIチェック/テストを削除・無効化してパスさせない
+- 監視・修復ロジックを本スキルに inline 再実装しない（必ず monitor を kick する）
 - git diff を読まずに推測でPR説明を書かない
 - 選択肢の比較で採用案だけを持ち上げる偏った記述をしない
 - 変更のないコードについて言及しない
-- 実質的な修正なしにリトライしない
 
 ## 推奨事項
 

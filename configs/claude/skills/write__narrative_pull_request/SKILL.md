@@ -1,5 +1,5 @@
 ---
-name: flow__pr_narrative
+name: write__narrative_pull_request
 description: >-
   Trigger when creating a pull request. Analyzes git diff and commit history
   to generate narrative-style PR descriptions that emphasize background,

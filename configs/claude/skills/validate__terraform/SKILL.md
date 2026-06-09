@@ -1,5 +1,5 @@
 ---
-name: flow__validation__terraform
+name: validate__terraform
 description: >-
   Trigger after editing HCL (.tf) files. Runs terraform fmt, terraform validate,
   and tflint to verify formatting, syntax, and best practices. Use this whenever

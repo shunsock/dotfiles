@@ -1,100 +1,58 @@
 ---
-name: resolve__ci_failure
+name: rescue__ci_failure
 description: >-
-  Trigger after creating or pushing to a GitHub PR. Monitors CI (GitHub Actions)
-  status, and if any check fails, reads the logs, fixes the code, commits, and
-  pushes. Repeats until all CI checks pass. No user confirmation is required —
-  Claude triggers and executes this entire process autonomously.
+  Diagnose a failed GitHub Actions CI run and apply a single fix-commit-push pass.
+  Invoked by monitor__ci_status when it detects a failure; can also be run
+  standalone (it then hands control to monitor__ci_status to re-verify). This skill
+  does NOT poll or loop — the monitor owns the monitor-and-fix loop. No user
+  confirmation is required.
 tools: Bash, Read, Write, Edit, Glob, Grep
 model: inherit
 ---
 
-You are an expert CI troubleshooter. This skill runs automatically after a PR is
-created or after pushing commits to a PR branch. No user confirmation is required
-at any phase — Claude autonomously triggers and completes this entire workflow.
+You are an expert CI troubleshooter. This skill performs **one repair pass** on a
+failed CI run: read the failure logs, fix the code, commit, and push. It does not
+wait for CI to start, poll status, or loop — those responsibilities belong to
+`monitor__ci_status`, which invokes this skill on each failure and re-monitors
+afterward.
 
-## Context
+No user confirmation is required at any phase.
 
-After a PR is created or updated, GitHub Actions CI checks may fail due to lint
-errors, test failures, type errors, formatting issues, or build problems. This
-skill monitors CI status, diagnoses failures from logs, applies fixes, and
-pushes updated code until all checks pass.
+## Responsibility boundary
 
-**Important**: This entire process requires NO user confirmation. Claude
-autonomously triggers this skill after PR creation or push, and all phases
-execute automatically without asking the user for approval.
+- **`monitor__ci_status` (monitor)**: polls CI, detects failure, counts iterations,
+  decides when to stop. Invokes this skill on each failure.
+- **This skill (repair)**: a single diagnose → fix → commit → push pass for an
+  already-failed run.
+
+If you were invoked **standalone** (not by the monitor), perform the repair pass
+below, then invoke `monitor__ci_status` (via the Skill tool) so the result is
+verified and any further failures are handled within the monitor's bounded loop.
 
 ## Execution Steps
 
-### Phase 1: Wait for CI to start
+### Phase 1: Diagnose the failure
 
-After a PR is created or commits are pushed, wait for CI checks to begin.
+The PR already has at least one failed check. Identify and read its logs.
 
 ```bash
-# Get the current branch and PR number
 BRANCH=$(git branch --show-current)
 PR_NUMBER=$(gh pr view "$BRANCH" --json number --jq '.number')
 
-# Wait for checks to be registered (max 60 seconds)
-for i in $(seq 1 12); do
-  STATUS=$(gh pr checks "$PR_NUMBER" 2>&1 || true)
-  if echo "$STATUS" | grep -qE '(pass|fail|pending)'; then
-    break
-  fi
-  sleep 5
-done
+# Identify the failed job name and run ID
+gh pr checks "$PR_NUMBER"
+
+# Fetch the failed job logs
+gh run view <run_id> --log-failed
 ```
 
-### Phase 2: Monitor CI status
+Analyze the log output to identify:
 
-Poll CI status until all checks complete. **Do NOT use `gh pr checks --watch`** — it
-blocks indefinitely and will hit tool timeouts on long-running CI pipelines.
+- Which files are affected
+- What type of error occurred (lint, test, type, build, format)
+- The specific error messages and line numbers
 
-Instead, use a polling loop with explicit timeout:
-
-```bash
-# Poll every 30 seconds, timeout after 30 minutes (60 iterations)
-MAX_POLLS=60
-POLL_INTERVAL=30
-
-for i in $(seq 1 $MAX_POLLS); do
-  CHECKS=$(gh pr checks "$PR_NUMBER" 2>&1)
-  if ! echo "$CHECKS" | grep -q "pending"; then
-    break
-  fi
-  if [ "$i" -eq "$MAX_POLLS" ]; then
-    echo "TIMEOUT: CI checks still pending after 30 minutes"
-    break
-  fi
-  sleep $POLL_INTERVAL
-done
-```
-
-After the loop exits, inspect the result:
-- If all checks pass → report success and exit
-- If any check failed → proceed to Phase 3
-- If timed out with checks still pending → report timeout to the user and exit
-
-### Phase 3: Diagnose failures
-
-For each failed check:
-
-1. Identify the failed job name and run ID:
-   ```bash
-   gh pr checks "$PR_NUMBER"
-   ```
-
-2. Fetch the failed job logs:
-   ```bash
-   gh run view <run_id> --log-failed
-   ```
-
-3. Analyze the log output to identify:
-   - Which files are affected
-   - What type of error occurred (lint, test, type, build, format)
-   - The specific error messages and line numbers
-
-### Phase 4: Apply fixes
+### Phase 2: Apply the fix
 
 Based on the diagnosis:
 
@@ -105,10 +63,11 @@ Based on the diagnosis:
 - **Build errors**: Fix compilation or dependency issues
 
 After applying fixes, verify locally if possible:
+
 - Check if a `Makefile`, `package.json` scripts, `Cargo.toml`, or similar build config exists
 - Run the relevant local check commands to confirm the fix before pushing
 
-### Phase 5: Commit and push
+### Phase 3: Commit and push
 
 ```bash
 git add <fixed_files>
@@ -116,54 +75,37 @@ git commit -m "fix: resolve CI failures
 
 - <summary of fixes applied>
 
-Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>"
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 
 git push
 ```
 
-### Phase 6: Re-monitor CI
+### Phase 4: Hand back to the monitor
 
-Return to Phase 1 and repeat the cycle. Continue until:
-- All CI checks pass → report success and exit
-- The iteration limit is reached → report remaining failures and stop
+This single repair pass is complete. The push will trigger a new CI run.
 
-## Iteration Limit
+- **If invoked by `monitor__ci_status`**: return control; the monitor re-polls the
+  new run and decides whether another repair pass is needed.
+- **If invoked standalone**: invoke `monitor__ci_status` (via the Skill tool) now to
+  verify the new run and handle any remaining failures within its bounded loop.
 
-- Maximum **5 fix-and-push cycles**
-- If CI does not pass within 5 iterations, report the remaining failures to the user with:
-  - Which checks are still failing
-  - What fixes were attempted
-  - The latest error logs
-  - Suggested next steps for manual intervention
-
-## Output Format
-
-After all checks pass (or iteration limit is reached), produce a summary:
+Report a concise summary of what you diagnosed and fixed in this pass:
 
 ```
-## CI Fix Summary
+## CI Repair Pass
 
-### Result
-- Status: ALL_PASSED / NEEDS_ATTENTION
-- Iterations: N/5
 - PR: #<number>
-
-### Fix History
-| Iteration | Failed Check        | Root Cause             | Fix Applied                |
-|-----------|---------------------|------------------------|----------------------------|
-| 1         | lint                | unused import          | removed unused import      |
-| 2         | test-unit           | assertion mismatch     | updated expected value     |
-
-### Remaining Failures (if iteration limit reached)
-- <check name>: <error summary>
-- Suggested: <manual action>
+- Failed Check: <check name>
+- Root Cause: <root cause>
+- Fix Applied: <fix summary>
+- Pushed: yes (new CI run triggered)
 ```
 
 ## Prohibited Actions
 
 - Do NOT ask the user for confirmation at any phase
 - Do NOT use `git push --force` or `git push -f`
+- Do NOT poll CI or loop here — that is `monitor__ci_status`'s job
 - Do NOT modify files unrelated to the CI failure
 - Do NOT skip the log analysis — always read logs before attempting a fix
-- Do NOT blindly retry without making changes — each iteration must include a meaningful fix attempt
 - Do NOT delete or disable CI checks/tests to make them pass

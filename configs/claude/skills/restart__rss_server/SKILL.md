@@ -1,5 +1,5 @@
 ---
-name: restart_rss
+name: restart__rss_server
 description: >-
   Trigger when the user asks to restart the RSS service (Okskolten). Performs a
   Docker Compose down/up cycle in /Users/shunsock/server/rss and verifies that

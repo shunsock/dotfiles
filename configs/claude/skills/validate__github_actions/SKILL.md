@@ -1,5 +1,5 @@
 ---
-name: flow__validation__github_actions
+name: validate__github_actions
 description: >-
   Trigger after editing GitHub Actions workflow YAML files (.github/workflows/*.yml).
   Runs formatter, yamllint, actionlint, and checks cognitive complexity of embedded

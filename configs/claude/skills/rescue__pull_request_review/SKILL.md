@@ -1,5 +1,5 @@
 ---
-name: flow__pr_review_fix
+name: rescue__pull_request_review
 description: >-
   Trigger after reviewers (human or AI) leave comments on a GitHub PR.
   Reads review comments, applies requested code changes, commits, and pushes.
@@ -142,7 +142,7 @@ for i in $(seq 1 $MAX_POLLS); do
 done
 ```
 
-If CI fails after the review fixes, diagnose and fix (follow the same approach as flow__ci_fix).
+If CI fails after the review fixes, hand off to the monitor__ci_status skill (it monitors CI and delegates each repair pass to rescue__ci_failure).
 
 ## Iteration Limit
 

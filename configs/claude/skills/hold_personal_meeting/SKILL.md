@@ -1,5 +1,5 @@
 ---
-name: personal_meeting
+name: hold_personal_meeting
 description: >-
   Trigger when the user asks to check today's schedule, review tasks, hold a
   personal meeting, or do a daily standup. Fetches events from all selected
