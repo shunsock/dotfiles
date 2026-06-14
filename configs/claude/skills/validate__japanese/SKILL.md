@@ -21,6 +21,11 @@ rule presets. These presets already cover sentence length (`sentence-length`),
 excessive commas (`max-ten`), mixed だ・である / です・ます (`no-mix-dearu-desumasu`),
 and half/full-width spacing — do NOT write a custom long-sentence checker.
 
+The bundled config is tuned for strict technical writing: sentences are capped at
+50 characters, weak phrasing (`ja-no-weak-phrase`) and redundant expressions
+(`ja-no-redundant-expression`) are flagged. Most of these are report-only; only
+spacing issues are auto-fixable with `--fix`.
+
 ## Config injection
 
 The rules live in this skill's bundled `.textlintrc.json`

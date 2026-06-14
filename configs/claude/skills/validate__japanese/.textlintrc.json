@@ -2,13 +2,27 @@
   "rules": {
     "preset-ja-technical-writing": {
       "sentence-length": {
-        "max": 100
+        "max": 50
+      },
+      "max-comma": {
+        "max": 4
       },
       "max-ten": {
         "max": 3
       },
-      "no-mix-dearu-desumasu": true,
-      "ja-no-weak-phrase": false
+      "max-kanji-continuous-len": {
+        "max": 6
+      },
+      "no-mix-dearu-desumasu": {
+        "strict": true
+      },
+      "ja-no-weak-phrase": true,
+      "ja-no-redundant-expression": true,
+      "ja-no-abusage": true,
+      "no-double-negative-ja": true,
+      "no-doubled-joshi": {
+        "min_interval": 1
+      }
     },
     "preset-ja-spacing": {
       "ja-space-between-half-and-full-width": {
