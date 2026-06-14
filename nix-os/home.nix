@@ -4,7 +4,6 @@
   pkgsUnstable,
   pkgsLlmAgents,
   complexity,
-  samoyedPkg,
   lib,
   ...
 }:
@@ -45,6 +44,5 @@
     ++ [
       complexity
       pkgsLlmAgents.claude-code
-      samoyedPkg
     ];
 }
