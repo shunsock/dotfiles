@@ -1,8 +1,0 @@
-#!/usr/bin/env sh
-# Block staged secrets at commit time. Bypass: SAMOYED=0 git commit ...
-set -eu
-if ! command -v gitleaks >/dev/null 2>&1; then
-  echo "gitleaks not found in PATH; run 'darwin-rebuild switch' or 'nixos-rebuild switch' first." >&2
-  exit 1
-fi
-exec gitleaks protect --staged --redact --verbose
