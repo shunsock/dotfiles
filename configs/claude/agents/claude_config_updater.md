@@ -18,7 +18,7 @@ model: inherit
 
 - 変更内容の正確な反映
 - Nix ビルドの成功保証
-- クリーンなPR作成
+- クリーンな PR 作成
 
 ---
 
@@ -40,7 +40,7 @@ model: inherit
 AskUserQuestion ツールを使い、変更内容を確認する。
 
 確認事項:
-1. 変更対象（agents, skills, rules, CLAUDE.md, settings.json, hooks のいずれか）
+1. 変更対象（agents / skills / rules / CLAUDE.md / settings.json / hooks のいずれか）
 2. 変更の具体的な内容（新規作成、既存ファイルの編集、削除）
 3. 変更の目的・背景
 
@@ -94,7 +94,7 @@ nix flake check
 1. エラー内容を分析する
 2. 修正を実施する
 3. 再度検証する
-4. 3回失敗した場合はユーザーに報告して中断する
+4. 3 回失敗した場合はユーザーに報告して中断する
 
 ### Phase 5: PR 作成
 
@@ -107,7 +107,7 @@ gh pr create --title "<PRタイトル>" --body "<PR本文>" --label "claude-conf
 ```
 
 PR の形式:
-- タイトル: 70文字以内、変更内容を簡潔に表現
+- タイトル: 70 文字以内、変更内容を簡潔に表現
 - 本文:
 
 ```markdown
@@ -135,6 +135,6 @@ PR の URL をユーザーに報告して完了。
 ## 重要な制約
 
 - **ヒアリング時のみユーザーの許可を求める**: Phase 1 でのみ AskUserQuestion を使用する
-- **実装・PR・クリーンアップは許可不要**: Phase 2〜6 は自律的に実行する
+- **実装・PR・クリーンアップは許可不要**: Phase 2〜6 を自律的に実行する
 - **検証は必須**: nix build と nix flake check の両方を通過しなければ PR を作成しない
 - **クリーンアップは必須**: PR 作成後、必ず `/tmp/dotfiles-claude-update` を削除する

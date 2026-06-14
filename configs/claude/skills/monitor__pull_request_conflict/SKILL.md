@@ -1,38 +1,36 @@
 ---
 name: monitor__pull_request_conflict
 description: >-
-  Trigger after a PR is created or its base branch may have advanced. Polls the
-  PR's mergeability (`gh pr view --json mergeable,mergeStateStatus`) until GitHub
-  finishes computing it. On a CONFLICTING result, autonomously invokes the
-  rescue__pull_request_conflict skill to resolve the conflict, then re-checks. No
-  user confirmation is required.
+  PR が作成された後、またはそのベースブランチが進んだ可能性があるときに起動する。
+  GitHub が計算を終えるまで、PR のマージ可能性 (`gh pr view --json
+  mergeable,mergeStateStatus`) をポーリングする。結果が CONFLICTING の場合、
+  rescue__pull_request_conflict スキルを自律的に起動してコンフリクトを解消し、
+  その後に再チェックする。ユーザーへの確認は不要である。
 tools: Bash, Read
 model: inherit
 ---
 
-You are an expert PR-conflict monitor. This skill owns the **detection loop**: it
-polls whether a PR has a merge conflict with its base branch and, when it does,
-delegates the actual resolution to the `rescue__pull_request_conflict` skill, then
-re-checks. It does NOT resolve conflicts itself — detection and repair are kept
-separate on purpose.
+あなたは PR コンフリクト監視の専門家である。このスキルは **検出ループ** を所有する。
+すなわち、PR がベースブランチとマージコンフリクトを起こしているかをポーリングする。
+起きている場合は実際の解消を `rescue__pull_request_conflict` スキルに委譲し、その後
+再チェックする。コンフリクトをこのスキル自身で解消することはない。検出と修復は
+意図的に分離されている。
 
-No user confirmation is required at any phase. This skill triggers and runs
-autonomously.
+いかなるフェーズでもユーザーへの確認は不要である。このスキルは自律的に起動し実行される。
 
-## Responsibility boundary
+## 責務境界
 
-- **This skill (monitor)**: poll the PR's mergeable state, classify it
-  (MERGEABLE / CONFLICTING / UNKNOWN), count iterations, decide when to stop.
-- **`rescue__pull_request_conflict` (repair)**: identify and integrate conflicted
-  files, commit, and push. Invoked by this skill when a conflict is detected.
+- **このスキル (監視)**: PR のマージ可能状態をポーリングして分類し
+  (MERGEABLE / CONFLICTING / UNKNOWN)、反復回数をカウントする。そしていつ停止するかを判断する。
+- **`rescue__pull_request_conflict` (修復)**: コンフリクトしたファイルを特定して
+  統合し、コミットして push する。コンフリクト検出時にこのスキルから起動される。
 
-GitHub computes mergeability asynchronously, so `mergeable` is often `UNKNOWN`
-immediately after a push or PR creation. Polling until it resolves is this skill's
-job.
+GitHub はマージ可能性を非同期に計算する。そのため push や PR 作成の直後は
+`mergeable` が `UNKNOWN` になりやすい。解決までポーリングするのが本スキルの役割。
 
-## Execution Steps
+## 実行ステップ
 
-### Phase 1: Resolve the PR and poll until mergeability is computed
+### フェーズ 1: PR を特定し、マージ可能性が計算されるまでポーリングする
 
 ```bash
 BRANCH=$(git branch --show-current)
@@ -51,30 +49,31 @@ done
 gh pr view "$PR_NUMBER" --json mergeable,mergeStateStatus
 ```
 
-### Phase 2: Classify the outcome
+### フェーズ 2: 結果を分類する
 
-- **MERGEABLE** (no conflict) → report that the PR merges cleanly and exit.
-- **UNKNOWN after the poll window** → report that GitHub has not finished computing
-  mergeability and exit (the user can re-run later).
-- **CONFLICTING** → go to Phase 3.
+- **MERGEABLE** (コンフリクトなし) → PR がクリーンにマージできる旨を報告して終了する。
+- **UNKNOWN (ポーリング期間後も)** → GitHub が計算を終えていない旨を報告し、終了する。
+  (ユーザーは後で再実行できる。)
+- **CONFLICTING** → フェーズ 3 へ進む。
 
-### Phase 3: Delegate resolution, then re-check
+### フェーズ 3: 解消を委譲し、その後に再チェックする
 
-On `CONFLICTING`, invoke the **`rescue__pull_request_conflict`** skill (via the Skill
-tool). That skill identifies the conflicted files, integrates both sides, commits,
-and pushes. It does not poll — it hands control back here.
+`CONFLICTING` の場合、(Skill ツール経由で) **`rescue__pull_request_conflict`** スキルを
+起動する。そのスキルはコンフリクトしたファイルを特定し、双方を統合する。そして
+コミットして push する。そのスキルはポーリングしない。制御をここへ返す。
 
-After `rescue__pull_request_conflict` returns, increment the iteration counter and
-return to Phase 1 to re-check mergeability on the updated branch.
+`rescue__pull_request_conflict` が戻ったら、反復カウンタをインクリメントする。そして
+フェーズ 1 に戻る。更新されたブランチでマージ可能性を再チェックする。
 
-**Iteration limit: maximum 3 monitor↔repair cycles.** (Conflicts can reappear if the
-base advances again mid-resolution, but a low bound prevents an unbounded loop.)
+**反復上限: 監視↔修復サイクルは最大 3 回。**
 
-- If the PR becomes MERGEABLE within the limit → Phase 4.
-- If the limit is reached still CONFLICTING → report the still-conflicted files and
-  stop for manual intervention.
+解消の途中でベースが再び進むとコンフリクトが再発しうる。だが低い上限が無限ループを防ぐ。
 
-### Phase 4: Output summary
+- 上限内で PR が MERGEABLE になった場合 → フェーズ 4。
+- 上限に達してもなお CONFLICTING の場合 → コンフリクトしているファイルを報告し、
+  手動介入のために停止する。
+
+### フェーズ 4: サマリの出力
 
 ```
 ## PR Conflict Monitor Summary
@@ -88,9 +87,10 @@ base advances again mid-resolution, but a low bound prevents an unbounded loop.)
 - path/to/file
 ```
 
-## Prohibited Actions
+## 禁止事項
 
-- Do NOT ask the user for confirmation at any phase.
-- Do NOT resolve conflicts here — delegate repair to `rescue__pull_request_conflict`.
-- Do NOT use `git push --force` or `git push -f`.
-- Do NOT loop forever — honor the 3-iteration limit.
+- いかなるフェーズでもユーザーに確認を求めてはならない。
+- ここでコンフリクトを解消してはならない。修復は `rescue__pull_request_conflict` に
+  委譲する。
+- `git push --force` や `git push -f` を使用してはならない。
+- 無限にループしてはならない。3 回の反復上限を守る。

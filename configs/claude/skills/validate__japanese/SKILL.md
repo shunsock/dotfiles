@@ -1,56 +1,56 @@
 ---
 name: validate__japanese
 description: >-
-  Trigger after editing Japanese Markdown prose (README, docs, blog drafts,
-  *.md). Lints the text with textlint using the ja-technical-writing and
-  ja-spacing presets to catch over-long sentences, excessive commas, mixed
-  styles, and half/full-width spacing, then adds reference links to code
-  snippets that name real symbols. Use whenever Japanese .md files have changed.
+  日本語の Markdown 文書 (README・ドキュメント・ブログ下書き・*.md) を編集した
+  後に起動する。textlint の ja-technical-writing / ja-spacing プリセットで、
+  長すぎる一文・読点過多・文体の混在・全角半角スペースを検出する。さらに実在の
+  シンボルを指すコードスニペットへ参照リンクを付与する。日本語の .md を変更した
+  ときに使用する。
 tools: Bash, Read, Edit
 model: inherit
 ---
 
-You are an expert in Japanese technical-writing review. After Japanese Markdown
-prose changes, the text must pass textlint's Japanese presets, and code snippets
-mentioned in the prose should link to the source they refer to.
+あなたは日本語テクニカルライティングのレビューの専門家である。日本語 Markdown を
+変更したら、textlint の日本語プリセットを通す。また、文章中で言及するコード
+スニペットは、その参照元へリンクするとよい。
 
-Linting is done with [textlint](https://textlint.github.io/) and the
-[`preset-ja-technical-writing`](https://github.com/textlint-ja/textlint-rule-preset-ja-technical-writing)
-and [`preset-ja-spacing`](https://github.com/textlint-ja/textlint-rule-preset-ja-spacing)
-rule presets. These presets already cover sentence length (`sentence-length`),
-excessive commas (`max-ten`), mixed だ・である / です・ます (`no-mix-dearu-desumasu`),
-and half/full-width spacing — do NOT write a custom long-sentence checker.
+リントには [textlint](https://textlint.github.io/) と
+[`preset-ja-technical-writing`](https://github.com/textlint-ja/textlint-rule-preset-ja-technical-writing)・
+[`preset-ja-spacing`](https://github.com/textlint-ja/textlint-rule-preset-ja-spacing)
+プリセットを使う。これらは一文の長さ (`sentence-length`) や読点過多 (`max-ten`) を
+検出する。常体と敬体の混在 (`no-mix-dearu-desumasu`) や全角半角スペースも網羅する。
+長文チェックを自作してはならない。
 
-The bundled config is tuned for strict technical writing: sentences are capped at
-50 characters, weak phrasing (`ja-no-weak-phrase`) and redundant expressions
-(`ja-no-redundant-expression`) are flagged. Most of these are report-only; only
-spacing issues are auto-fixable with `--fix`.
+同梱の設定は技術文書向けに厳格化してある。一文は 50 文字までに制限する。弱い表現
+(`ja-no-weak-phrase`) や冗長表現 (`ja-no-redundant-expression`) も検出する。ただし
+`sentence-length` は 12 文字以上の連続 ASCII (コマンドやパス) を長さから除外する。
+そのため、コマンドを含む箇条書きを過検出しない。多くは報告のみで、自動修正できるのは
+スペース系だけである。
 
-## Config injection
+## 設定の注入
 
-The rules live in this skill's bundled `.textlintrc.json`
-(`~/.claude/skills/validate__japanese/.textlintrc.json`). If the target repository
-has its own `.textlintrc.json` / `.textlintrc` at its root, that project config
-takes precedence — pass it instead so per-project overrides win.
+ルールはこのスキルが同梱する `.textlintrc.json`
+(`~/.claude/skills/validate__japanese/.textlintrc.json`) に置く。対象リポジトリの
+ルートに独自の `.textlintrc.json` / `.textlintrc` があれば、そちらを優先する。
+プロジェクト固有の上書きを効かせるため、その設定を渡す。
 
-## Execution Steps
+## 実行手順
 
-### Phase 1: Identify the target Markdown files
+### Phase 1: 対象 Markdown の特定
 
-Lint only what changed, unless the user named a specific path.
+ユーザーがパスを指定しない限り、変更分だけをリントする。
 
 ```bash
 BASE=$(git merge-base HEAD @{u} 2>/dev/null || git rev-parse HEAD)
 { git diff --name-only --diff-filter=ACMR "$BASE" -- '*.md'; git diff --name-only --diff-filter=ACMR -- '*.md'; } | sort -u
 ```
 
-- If the set is empty and the user gave no path, ask which file(s) to lint.
+- 対象が空でパスの指定も無ければ、どのファイルをリントするかユーザーに尋ねる。
 
-### Phase 2: Run textlint
+### Phase 2: textlint の実行
 
-textlint and the rule presets live in separate Nix store paths, so the rule
-modules must be put on `NODE_PATH` for textlint to resolve them. Resolve the
-store paths, then run:
+textlint とルールプリセットは別々の Nix ストアパスに入る。textlint が解決できるよう、
+ルールモジュールを `NODE_PATH` に通す必要がある。ストアパスを解決してから実行する:
 
 ```bash
 TW=$(nix eval --raw nixpkgs#textlint-rule-preset-ja-technical-writing)
@@ -67,52 +67,52 @@ nix shell nixpkgs#textlint \
   textlint --config "$CONFIG" <files...>
 ```
 
-- A non-zero exit means problems were found; the output lists `file:line:col`,
-  the message, and the rule id (e.g. `ja-technical-writing/sentence-length`).
-- `ja-spacing` issues are mostly auto-fixable; you may re-run the same command
-  with `--fix` to apply them, then re-lint to confirm.
+- 非ゼロ終了は問題ありを意味する。出力は `file:line:col`・メッセージ・ルール ID
+  (例 `ja-technical-writing/sentence-length`) を並べる。
+- `ja-spacing` の指摘はほぼ自動修正できる。同じコマンドに `--fix` を付けて再実行し、
+  再リントで確認するとよい。
 
-### Phase 3: Fix the reported problems
+### Phase 3: 指摘の修正
 
-- For each reported line, read the file and revise the prose to satisfy the rule.
-  - `sentence-length` / `max-ten`: split the sentence at a natural clause break.
-  - `no-mix-dearu-desumasu`: unify the sentence ending with the surrounding style.
-  - `ja-space-*`: insert/remove spacing (or apply `--fix`).
-- Re-run Phase 2 until textlint exits 0.
+- 指摘行ごとにファイルを読み、ルールを満たすよう文章を直す。
+  - `sentence-length` / `max-ten`: 自然な切れ目で一文を分割する。
+  - `no-mix-dearu-desumasu`: 文末を周囲の文体に統一する。
+  - `ja-space-*`: スペースを挿入・削除する (または `--fix` を適用する)。
+- textlint が 0 件で終わるまで Phase 2 を繰り返す。
 
-### Phase 4: Add references to code snippets
+### Phase 4: コードスニペットへの参照付与
 
-Inline code or code blocks that name a real symbol (function, variable, type,
-file) read better when linked to their source. For each such snippet:
+実在のシンボル (関数・変数・型・ファイル) を指すインラインコードやコードブロックがある。
+これらは参照元へリンクすると読みやすい。該当するスニペットごとに次を行う:
 
-- Locate the symbol's definition in the repository (Grep/Glob).
-- Link the inline code to that location.
+- リポジトリ内でそのシンボルの定義を探す (Grep/Glob)。
+- インラインコードをその箇所へリンクする。
 
   - before: `` `$code_review = true` はコードレビューが有効という意味です ``
   - after: `` [`$code_review = true`](./path/to/file#L12) はコードレビューが有効という意味です ``
 
-- Only link snippets that point to a real, locatable symbol; leave illustrative
-  or pseudo-code untouched. Skip this phase entirely if the user opts out.
+- 実在し位置を特定できるシンボルを指すものだけリンクする。説明用や擬似コードはそのまま
+  にする。ユーザーが望まなければ、このフェーズは丸ごと省略する。
 
-### Phase 5: Report results
+### Phase 5: 結果の報告
 
 ```
-## Japanese Lint Report
+## 日本語リントレポート
 
 ### textlint
-- Status: passed / fixed / remaining
-- Files: (list)
+- 状態: passed / fixed / remaining
+- ファイル: (一覧)
 | file:line:col | rule | message |
 |---------------|------|---------|
 
-### References added
-- path/to/doc.md: linked `symbol` -> ./src/foo.rs#L12
-- (none, if skipped)
+### 付与した参照
+- path/to/doc.md: `symbol` を ./src/foo.rs#L12 へリンク
+- (省略した場合は none)
 ```
 
-## Important Notes
+## 重要な注意
 
-- Run textlint via `nix shell` as shown; do NOT `npm install` textlint or its rules.
-- Do NOT implement a custom sentence-length checker — `preset-ja-technical-writing`
-  already enforces it.
-- Do NOT proceed to the reference phase while textlint still reports errors.
+- textlint は上記のとおり `nix shell` 経由で実行する。textlint やルールを
+  `npm install` してはならない。
+- 長文チェックを自作してはならない。`preset-ja-technical-writing` がすでに強制する。
+- textlint がエラーを報告する間は、参照フェーズに進んではならない。

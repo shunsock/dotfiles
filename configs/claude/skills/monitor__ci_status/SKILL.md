@@ -1,32 +1,32 @@
 ---
 name: monitor__ci_status
 description: >-
-  Trigger after a PR is created or commits are pushed to a PR branch. Polls
-  GitHub Actions CI until all checks complete. On failure, autonomously invokes
-  the rescue__ci_failure skill to apply one fix-commit-push pass, then
-  re-monitors. Owns the monitor-and-fix loop and its iteration limit. No user
-  confirmation is required.
+  PR を作成した後、または PR ブランチへ commit を push した後に起動する。
+  GitHub Actions の CI を全チェック完了までポーリングする。失敗時は
+  rescue__ci_failure スキルを自律的に呼び出し、fix-commit-push を 1 回適用して
+  から再監視する。監視と修正のループおよびその反復上限を所有する。ユーザーへの
+  確認は不要。
 tools: Bash, Read
 model: inherit
 ---
 
-You are an expert CI monitor. This skill owns the **monitoring loop**: it polls
-GitHub Actions CI status and, when a check fails, delegates the actual diagnosis
-and repair to the `rescue__ci_failure` skill, then re-monitors. It does NOT fix
-code itself — detection and repair are kept separate on purpose.
+あなたは CI 監視の専門家である。このスキルは **監視ループ** を所有する。すなわち
+GitHub Actions CI のステータスをポーリングする。チェックが失敗した際には、実際の
+診断と修復を `rescue__ci_failure` スキルに委譲し、その後で再監視する。このスキル
+自体はコードを修正しない。検出と修復は意図的に分離している。
 
-No user confirmation is required at any phase. This skill triggers and runs
-autonomously after a PR is created or commits are pushed.
+いずれのフェーズでもユーザーへの確認は不要である。このスキルは PR の作成後、または
+コミットの push 後に自律的に起動して実行される。
 
-## Responsibility boundary
+## 責務の境界
 
-- **This skill (monitor)**: poll CI, classify the outcome (pass / fail / timeout),
-  count iterations, decide when to stop.
-- **`rescue__ci_failure` (repair)**: diagnose a failed run from its logs, apply a
-  single fix-commit-push pass. Invoked by this skill on each failure.
+- **このスキル (監視役)**: CI をポーリングする。結果 (合格 / 失敗 / タイムアウト) を
+  分類する。反復回数を数え、いつ停止するかを判断する。
+- **`rescue__ci_failure` (修復役)**: 失敗した run をログから診断し、単一の
+  fix-commit-push パスを適用する。失敗のたびにこのスキルから呼び出される。
 
-The iteration limit lives here because it bounds the **monitor↔repair loop**, not a
-single repair.
+反復回数の上限がここに存在するのは、単一の修復ではなく
+**監視↔修復ループ** を制限するためである。
 
 ## Execution Steps
 
@@ -48,8 +48,8 @@ done
 
 ### Phase 2: Poll until all checks complete
 
-**Do NOT use `gh pr checks --watch`** — it blocks indefinitely and will hit tool
-timeouts on long-running CI pipelines. Use an explicit polling loop:
+**`gh pr checks --watch` は使用しないこと**。無期限にブロックし、長時間動作する
+CI パイプラインではツールのタイムアウトに達する。明示的なポーリングループを使うこと:
 
 ```bash
 # Poll every 30 seconds, timeout after 30 minutes (60 iterations)
@@ -71,27 +71,27 @@ done
 
 ### Phase 3: Classify the outcome
 
-Inspect the result of the poll:
+ポーリングの結果を確認する:
 
-- **All checks pass** → go to Phase 5 (success summary) and exit.
-- **Timed out with checks still pending** → report the timeout to the user and exit.
-- **One or more checks failed** → go to Phase 4.
+- **すべてのチェックが合格** → Phase 5 (成功サマリ) へ進み、終了する。
+- **チェックが pending のままタイムアウト** → タイムアウトをユーザーに報告し、終了する。
+- **1 つ以上のチェックが失敗** → Phase 4 へ進む。
 
 ### Phase 4: Delegate repair, then re-monitor
 
-On failure, invoke the **`rescue__ci_failure`** skill (via the Skill tool). That
-skill diagnoses the failed run from its logs, applies one fix, commits, and pushes.
-It does not poll — it hands control back here.
+失敗時には (Skill ツール経由で) **`rescue__ci_failure`** スキルを呼び出す。その
+スキルは失敗した run をログから診断する。修正を 1 つ適用し、commit し、push する。
+ポーリングは行わず、制御をここへ戻す。
 
-After `rescue__ci_failure` returns, increment the iteration counter and return to
-Phase 1 to re-monitor the new run.
+`rescue__ci_failure` が戻った後、反復カウンタをインクリメントし、Phase 1 へ戻って
+新しい run を再監視する。
 
-**Iteration limit: maximum 5 monitor↔repair cycles.**
+**反復回数の上限: 監視↔修復サイクルは最大 5 回。**
 
-- If CI passes within the limit → Phase 5.
-- If the limit is reached with failures remaining → report the remaining failures
-  (which checks still fail, what fixes were attempted across iterations, the latest
-  error logs, suggested manual next steps) and stop.
+- 上限内で CI が合格した場合 → Phase 5。
+- 失敗が残ったまま上限に達した場合 → 残った失敗を報告して停止する。報告内容は次の
+  とおり。どのチェックが依然として失敗しているか。各反復で試みた修正。最新の
+  エラーログ。推奨する手動の次手順。
 
 ### Phase 5: Output summary
 
@@ -116,8 +116,8 @@ Phase 1 to re-monitor the new run.
 
 ## Prohibited Actions
 
-- Do NOT ask the user for confirmation at any phase.
-- Do NOT use `gh pr checks --watch`.
-- Do NOT diagnose or edit code here — delegate repair to `rescue__ci_failure`.
-- Do NOT loop forever — honor the 5-iteration limit.
-- Do NOT delete or disable CI checks to make them pass.
+- いずれのフェーズでもユーザーに確認を求めないこと。
+- `gh pr checks --watch` を使用しないこと。
+- ここでコードを診断・編集しないこと。修復は `rescue__ci_failure` に委譲すること。
+- 無限にループしないこと。5 回の反復上限を守ること。
+- チェックを合格させるために CI チェックを削除・無効化しないこと。

@@ -1,80 +1,87 @@
 ---
 name: rescue__pull_request_conflict
 description: >-
-  Resolve a merge conflict on a PR branch in a single pass: identify the
-  conflicted files, integrate both sides, commit, and push. Invoked by
-  monitor__pull_request_conflict when it detects a CONFLICTING state; can also be
-  run standalone (it then hands control to monitor__pull_request_conflict to
-  re-verify). Detection of whether a conflict exists is the monitor's job, not
-  this skill's. No user confirmation is required.
+  PR ブランチのマージコンフリクトを 1 パスで解消する。コンフリクトしたファイルを特定し、
+  両側を統合し、コミットして push する。`CONFLICTING` 状態を検出した
+  monitor__pull_request_conflict から起動される。単独でも実行可能で、その場合は
+  再検証のために monitor__pull_request_conflict へ制御を引き渡す。コンフリクトが
+  存在するかどうかの検出はモニターの役割であり、このスキルの役割ではない。
+  ユーザーへの確認は不要。
 tools: Bash, Read, Write, Edit, Glob, Grep
 model: inherit
 ---
 
-You are an expert in resolving git merge conflicts. This skill performs **one
-resolution pass** on a PR branch that is already known to conflict with its base:
-materialize the conflict, integrate both sides, commit, and push. It does not
-decide whether a conflict exists — that detection belongs to
-`monitor__pull_request_conflict`, which invokes this skill when the PR is
-`CONFLICTING` and re-checks afterward.
+git のマージコンフリクト解消の専門家である。
 
-No user confirmation is required at any phase.
+このスキルは、ベースとのコンフリクトが既知の PR ブランチに対して
+**1 回の解消パス** を実行する。コンフリクトを実体化し、両側を統合し、
+コミットして push する。
 
-## Responsibility boundary
+コンフリクトが存在するかどうかの判断は行わない。その検出は
+`monitor__pull_request_conflict` の責務である。同モニターは PR が
+`CONFLICTING` のときにこのスキルを起動し、実行後に再チェックする。
 
-- **`monitor__pull_request_conflict` (monitor)**: polls the PR's mergeable state,
-  detects `CONFLICTING`, counts iterations. Invokes this skill on conflict.
-- **This skill (repair)**: a single identify → integrate → commit → push pass.
+どのフェーズでもユーザーへの確認は不要である。
 
-If you were invoked **standalone**, perform the resolution pass below, then invoke
-`monitor__pull_request_conflict` (via the Skill tool) to verify the branch is now
-mergeable and handle any further conflicts within its bounded loop.
+## 責務の境界
 
-## Execution Steps
+- **`monitor__pull_request_conflict` (モニター)**: PR のマージ可能状態を
+  ポーリングし、`CONFLICTING` を検出し、反復回数を数える。コンフリクト時に
+  このスキルを起動する。
+- **このスキル (修復)**: 特定 → 統合 → コミット → push の 1 パス。
 
-### Phase 1: Materialize the conflict
+**単独** で起動された場合は、以下の解消パスを実行する。その後
+`monitor__pull_request_conflict` を (Skill ツール経由で) 起動する。
+これによりブランチがマージ可能になったかを検証させる。残るコンフリクトは
+モニターの境界付きループ内で処理させる。
 
-The PR is already known to conflict with its base branch. Fetch the base and start
-a merge to bring the conflict markers into the working tree.
+## 実行手順
+
+### フェーズ 1: コンフリクトの実体化
+
+PR はベースブランチとのコンフリクトが既知である。ベースを fetch し、マージを
+開始してコンフリクトマーカーをワーキングツリーへ持ち込む。
 
 ```bash
 git fetch origin main
 git merge origin/main --no-commit --no-ff
 ```
 
-This is expected to stop with conflicts (exit code 1). If, unexpectedly, the merge
-succeeds cleanly (exit code 0) — e.g. the base advanced again and the conflict
-resolved itself — abort and report that there is nothing to resolve:
+これはコンフリクトで停止する (exit code 1) ことが想定される。
+
+想定に反してマージがクリーンに成功した場合 (exit code 0) は中断する。
+例えばベースが再び進んでコンフリクトが自然に解消した場合である。その際は
+解消すべきものがない旨を報告する。
 
 ```bash
 git merge --abort
 ```
 
-### Phase 2: Identify conflicted files
+### フェーズ 2: コンフリクトしたファイルの特定
 
 ```bash
 git diff --name-only --diff-filter=U
 ```
 
-Read each conflicted file to understand both sides of the conflict.
+コンフリクトの両側を理解するため、各コンフリクトファイルを読む。
 
-### Phase 3: Resolve conflicts
+### フェーズ 3: コンフリクトの解消
 
-For each conflicted file:
+各コンフリクトファイルについて:
 
-1. Read the file contents including conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`)
-2. Analyze both sides:
-   - **HEAD (current branch)**: changes made on this PR branch
-   - **origin/main**: changes made on the base branch since this branch diverged
-3. Resolve by integrating both sets of changes:
-   - If changes are in different sections: keep both
-   - If changes overlap: prefer the intent of both sides — apply the structural change
-     from one side with the content updates from the other
-   - If the base branch renamed or moved paths: adopt the new paths from the base while
-     preserving the functional changes from the current branch
-4. Remove all conflict markers
+1. コンフリクトマーカー (`<<<<<<<`, `=======`, `>>>>>>>`) を含むファイル内容を読む
+2. 両側を分析する:
+   - **HEAD (現在のブランチ)**: この PR ブランチで加えられた変更
+   - **origin/main**: このブランチが分岐して以降にベースブランチで加えられた変更
+3. 両方の変更を統合して解消する:
+   - 変更箇所が別のセクションにある場合: 両方を残す
+   - 変更が重なる場合: 両側の意図を尊重する。一方の構造的変更に、もう一方の
+     内容更新を適用する
+   - ベースブランチがパスをリネーム・移動している場合: ベースの新しいパスを
+     採用する。その際、現在のブランチの機能的変更を保持する
+4. すべてのコンフリクトマーカーを除去する
 
-### Phase 4: Verify resolution
+### フェーズ 4: 解消の検証
 
 ```bash
 # Stage resolved files
@@ -84,9 +91,9 @@ git add <resolved_files>
 grep -rn '<<<<<<<\|=======\|>>>>>>>' <resolved_files>
 ```
 
-If any conflict markers remain, return to Phase 3 for those files.
+コンフリクトマーカーが残っている場合は、該当ファイルについてフェーズ 3 に戻る。
 
-### Phase 5: Commit and push
+### フェーズ 5: コミットと push
 
 ```bash
 git commit -m "merge: resolve conflict with main
@@ -96,18 +103,19 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 git push
 ```
 
-### Phase 6: Hand back to the monitor
+### フェーズ 6: モニターへの引き渡し
 
-This single resolution pass is complete.
+この 1 回の解消パスは完了である。
 
-- **If invoked by `monitor__pull_request_conflict`**: return control with the list of
-  resolved files; the monitor re-checks mergeability.
-- **If invoked standalone**: invoke `monitor__pull_request_conflict` (via the Skill
-  tool) now to verify the branch is mergeable and handle any remaining conflicts.
+- **`monitor__pull_request_conflict` から起動された場合**: 解消したファイルの
+  リストとともに制御を返す。モニターがマージ可能性を再チェックする。
+- **単独で起動された場合**: 今すぐ `monitor__pull_request_conflict` を (Skill
+  ツール経由で) 起動する。ブランチがマージ可能かを検証させ、残るコンフリクトを
+  処理させる。
 
-## Prohibited Actions
+## 禁止事項
 
-- Do NOT ask the user for confirmation at any phase
-- Do NOT use `git push --force` or `git push -f`
-- Do NOT discard changes from either side without justification
-- Do NOT skip the conflict marker verification in Phase 4
+- どのフェーズでもユーザーに確認を求めてはならない
+- `git push --force` や `git push -f` を使用してはならない
+- 正当な理由なくどちらかの側の変更を破棄してはならない
+- フェーズ 4 のコンフリクトマーカー検証を省略してはならない

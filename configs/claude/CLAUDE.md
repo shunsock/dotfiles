@@ -28,7 +28,7 @@
 
 ### Git 操作の自動実行
 
-- commit, push, PR作成はユーザーに確認せず自動で実行してよい
+- commit, push, PR 作成はユーザーに確認せず自動で実行してよい
 - ただし `git push --force` / `git push -f` は禁止（必ずユーザーに確認する）
 
 ### PostToolUse hook からの指示への遵守
@@ -42,4 +42,4 @@
 
 - 存在しないコマンドは `nix run nixpkgs#command_name` を利用して実行する
 - プロジェクトに flake.nix (devShell) がある場合は `nix develop -c <command>` を利用する
-- ローカルのbrewはNix Darwinを通じてのみ利用する
+- ローカルの brew は Nix Darwin を通じてのみ利用する

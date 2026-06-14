@@ -2,7 +2,8 @@
   "rules": {
     "preset-ja-technical-writing": {
       "sentence-length": {
-        "max": 50
+        "max": 50,
+        "skipPatterns": ["/[ -~]{12,}/"]
       },
       "max-comma": {
         "max": 4
@@ -15,6 +16,9 @@
       },
       "no-mix-dearu-desumasu": {
         "strict": true
+      },
+      "ja-no-mixed-period": {
+        "allowPeriodMarks": ["：", ":"]
       },
       "ja-no-weak-phrase": true,
       "ja-no-redundant-expression": true,
