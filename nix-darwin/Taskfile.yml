@@ -52,6 +52,11 @@ tasks:
     cmds:
       - bash script/entry_point/shellcheck/lint.sh
 
+  lint:natural_language:
+    desc: Proofread and auto-fix Japanese prose in configs/claude with textlint
+    cmds:
+      - bash script/entry_point/textlint/lint.sh
+
   gc:
     desc: Garbage collect old Nix store paths (keep last 30 days)
     cmds:
