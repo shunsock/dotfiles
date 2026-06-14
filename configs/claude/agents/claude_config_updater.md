@@ -40,7 +40,7 @@ model: inherit
 AskUserQuestion ツールを使い、変更内容を確認する。
 
 確認事項:
-1. 変更対象（agents, skills, rules, CLAUDE.md, settings.json, hooks のいずれか）
+1. 変更対象（agents / skills / rules / CLAUDE.md / settings.json / hooks のいずれか）
 2. 変更の具体的な内容（新規作成、既存ファイルの編集、削除）
 3. 変更の目的・背景
 
@@ -135,6 +135,6 @@ PR の URL をユーザーに報告して完了。
 ## 重要な制約
 
 - **ヒアリング時のみユーザーの許可を求める**: Phase 1 でのみ AskUserQuestion を使用する
-- **実装・PR・クリーンアップは許可不要**: Phase 2〜6 は自律的に実行する
+- **実装・PR・クリーンアップは許可不要**: Phase 2〜6 を自律的に実行する
 - **検証は必須**: nix build と nix flake check の両方を通過しなければ PR を作成しない
 - **クリーンアップは必須**: PR 作成後、必ず `/tmp/dotfiles-claude-update` を削除する
