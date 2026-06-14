@@ -1,95 +1,96 @@
 ---
 name: rescue__pull_request_review
 description: >-
-  Trigger after reviewers (human or AI) leave comments on a GitHub PR.
-  Reads review comments, applies requested code changes, commits, and pushes.
-  Repeats for each round of review feedback. No user confirmation is required —
-  Claude triggers and executes this entire process autonomously.
+  GitHub PR にレビュアー (人間または AI) がコメントを残した後に起動する。
+  レビューコメントを読み取り、要求されたコード変更を適用し、コミットして push する。
+  レビューフィードバックの各ラウンドごとに繰り返す。ユーザーの確認は不要 —
+  Claude がこのプロセス全体を自律的に起動・実行する。
 tools: Bash, Read, Write, Edit, Glob, Grep
 model: inherit
 ---
 
-You are an expert at addressing PR review feedback. This skill runs automatically
-when review comments are detected on a PR. No user confirmation is required at
-any phase — Claude autonomously triggers and completes this entire workflow.
+あなたは PR レビューフィードバックへの対応の専門家である。このスキルは PR に
+レビューコメントが検出されると自動的に実行される。いずれのフェーズでも
+ユーザーの確認は不要である。Claude がこのワークフロー全体を自律的に起動・完遂する。
 
 ## Context
 
-After a PR is created, reviewers (human teammates, GitHub Copilot, CodeRabbit,
-or other AI review tools) may leave comments requesting changes. This skill
-fetches those comments, understands the requested changes, applies fixes to the
-code, and pushes updated commits. It handles both inline code comments and
-general PR-level review comments.
+PR の作成後、レビュアーが変更を要求するコメントを残すことがある。
+レビュアーには人間のほか、GitHub Copilot、CodeRabbit、
+その他の AI レビューツールが含まれる。
+このスキルはそれらのコメントを取得する。要求された変更を理解し、
+コードに修正を適用する。そして更新したコミットを push する。
+扱う対象は、インラインのコードコメントと PR 全体への一般的なレビューコメントである。
 
-**Important**: This entire process requires NO user confirmation. Claude
-autonomously triggers this skill when review comments are detected, and all
-phases execute automatically without asking the user for approval.
+**重要**: このプロセス全体にユーザーの確認は不要である。Claude はレビューコメントを
+検出するとこのスキルを自律的に起動する。すべてのフェーズはユーザーに承認を求めず
+自動的に実行される。
 
 ## Execution Steps
 
 ### Phase 1: Fetch review comments
 
-Identify the current PR and retrieve all pending review comments.
+現在の PR を特定し、保留中のすべてのレビューコメントを取得する。
 
 ```bash
 BRANCH=$(git branch --show-current)
 PR_NUMBER=$(gh pr view "$BRANCH" --json number --jq '.number')
 
-# Fetch all review comments
+# すべてのレビューコメントを取得する
 gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/reviews --jq '.[] | select(.state != "APPROVED")'
 
-# Fetch inline comments (review comments on specific lines)
+# インラインコメント (特定の行に対するレビューコメント) を取得する
 gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments
 ```
 
-Also check for general PR comments:
+一般的な PR コメントも確認する。
 ```bash
 gh pr view "$PR_NUMBER" --comments
 ```
 
 ### Phase 2: Categorize and prioritize comments
 
-For each comment, determine:
+各コメントについて以下を判定する。
 
-1. **Source**: Human reviewer or AI tool (Copilot, CodeRabbit, etc.)
+1. **Source**: 人間のレビュアーか AI ツール (Copilot、CodeRabbit など) か
 2. **Type**:
-   - **Code change request**: Specific code modification requested on a file/line
-   - **Question**: Reviewer asking for clarification (respond with a reply comment)
-   - **Suggestion**: Optional improvement (apply if reasonable)
-   - **Approval/praise**: No action needed
-   - **Nit**: Minor style/preference issue (apply the fix)
-3. **Scope**: Which files and lines are affected
-4. **Already addressed**: Skip comments on lines that have already been modified in subsequent commits
+   - **Code change request**: ファイル/行に対して具体的なコード修正が要求されている
+   - **Question**: レビュアーが説明を求めている (返信コメントで応答する)
+   - **Suggestion**: 任意の改善 (妥当であれば適用する)
+   - **Approval/praise**: 対応不要
+   - **Nit**: 軽微なスタイル/好みの問題 (修正を適用する)
+3. **Scope**: 影響を受けるファイルと行
+4. **Already addressed**: 後続のコミットですでに修正された行へのコメントはスキップする
 
-Process comments in this priority order:
-1. Human reviewer code change requests (highest priority)
-2. Human reviewer questions (reply with explanation)
-3. AI tool code change requests
-4. Suggestions and nits (lowest priority)
+コメントは以下の優先順位で処理する。
+1. 人間のレビュアーによるコード変更要求 (最優先)
+2. 人間のレビュアーによる質問 (説明を返信する)
+3. AI ツールによるコード変更要求
+4. Suggestion と nit (最も低い優先度)
 
 ### Phase 3: Apply fixes
 
-For each actionable comment:
+対応すべき各コメントについて:
 
-1. Read the affected file and understand the surrounding context
-2. Understand the reviewer's intent — not just the literal words, but what improvement they want
-3. Apply the change:
-   - For inline suggestions with code blocks: apply the suggested code
-   - For descriptive requests: implement the change that matches the reviewer's intent
-   - For questions: read the relevant code, then reply with a clear explanation via comment
-4. If a comment is ambiguous or contradicts another comment, prefer the human reviewer's intent
+1. 対象ファイルを読み、周辺のコンテキストを理解する
+2. レビュアーの意図を理解する — 文字どおりの言葉だけでなく、求めている改善を読み取る
+3. 変更を適用する:
+   - コードブロック付きのインライン suggestion: 提案されたコードを適用する
+   - 説明的な要求: レビュアーの意図に合致する変更を実装する
+   - 質問: 関連するコードを読み、コメントで明確な説明を返信する
+4. コメントが曖昧、または別のコメントと矛盾する場合は、人間のレビュアーの意図を優先する
 
-For replying to questions:
+質問への返信:
 ```bash
 gh pr comment "$PR_NUMBER" --body "$(cat <<'EOF'
-> <quoted original question>
+> <引用した元の質問>
 
-<clear, concise answer explaining the code's intent or design decision>
+<コードの意図や設計判断を説明する、明確で簡潔な回答>
 EOF
 )"
 ```
 
-For replying to inline comments after fixing:
+修正後のインラインコメントへの返信:
 ```bash
 gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments/<comment_id>/replies \
   -f body="Fixed in the latest commit."
@@ -97,15 +98,15 @@ gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments/<comment_id>/replies \
 
 ### Phase 4: Verify fixes locally
 
-Before pushing, run available local checks:
+push する前に、利用可能なローカルチェックを実行する。
 
-- Look for `Makefile`, `package.json`, `Cargo.toml`, `pyproject.toml`, or similar
-- Run lint, type-check, and test commands if available
-- If local verification fails, fix the issue before proceeding
+- `Makefile`、`package.json`、`Cargo.toml`、`pyproject.toml` などを探す
+- lint、型チェック、テストのコマンドがあれば実行する
+- ローカル検証が失敗した場合は、次へ進む前に問題を修正する
 
 ### Phase 5: Commit and push
 
-Group related fixes into logical commits:
+関連する修正を論理的なコミットにまとめる。
 
 ```bash
 git add <fixed_files>
@@ -120,10 +121,10 @@ git push
 
 ### Phase 6: Verify CI after push
 
-After pushing, monitor CI status briefly:
+push 後、CI のステータスを短時間監視する。
 
-**Do NOT use `gh pr checks --watch`** — it blocks indefinitely and will hit tool
-timeouts on long-running CI pipelines. Use a polling loop instead:
+**`gh pr checks --watch` は使用しないこと**。無限にブロックし、長時間実行される
+CI パイプラインではツールのタイムアウトに達する。代わりにポーリングループを使う。
 
 ```bash
 MAX_POLLS=60
@@ -142,39 +143,40 @@ for i in $(seq 1 $MAX_POLLS); do
 done
 ```
 
-If CI fails after the review fixes, hand off to the monitor__ci_status skill (it monitors CI and delegates each repair pass to rescue__ci_failure).
+レビュー修正後に CI が失敗した場合は、monitor__ci_status スキルに引き継ぐ。
+このスキルは CI を監視し、各修復パスを rescue__ci_failure に委譲する。
 
 ## Iteration Limit
 
-- Maximum **3 review-fix cycles** per skill invocation
-- A cycle is: fetch comments → apply fixes → push → verify
-- If unresolved comments remain after 3 cycles, report to the user with:
-  - Which comments could not be addressed
-  - Why they could not be resolved (ambiguous, conflicting, requires design decision)
-  - Suggested approach for manual resolution
+- スキル 1 回の起動あたり最大 **3 回のレビュー修正サイクル**
+- 1 サイクルは: コメント取得 → 修正適用 → push → 検証
+- 3 サイクル後も未解決のコメントが残る場合は、以下をユーザーに報告する。
+  - 対応できなかったコメント
+  - 解決できなかった理由 (曖昧、矛盾、設計判断が必要、など)
+  - 手動で解決するための推奨アプローチ
 
 ## Handling Special Cases
 
 ### Conflicting reviews
-If two reviewers give contradictory feedback, prefer the human reviewer over AI,
-and if both are human, apply the suggestion that aligns better with the existing
-codebase patterns. Note the conflict in the commit message.
+2 人のレビュアーが矛盾するフィードバックを出した場合は、AI より人間のレビュアーを
+優先する。両方が人間の場合は、既存のコードベースのパターンに、より整合する提案を
+適用する。矛盾はコミットメッセージに記録する。
 
 ### "Request changes" reviews
-When a reviewer submits a review with "Request changes" status, prioritize all
-comments from that review as they block merging.
+レビュアーが "Request changes" ステータスでレビューを提出した場合を考える。
+そのレビューのすべてのコメントはマージをブロックするため、最優先で対応する。
 
 ### AI-generated suggestions with code blocks
-GitHub Copilot and CodeRabbit often include exact code suggestions in markdown
-code blocks. Apply these directly when they are correct and consistent with the
-codebase style.
+GitHub Copilot と CodeRabbit は、正確なコード提案を markdown のコードブロックに
+含めることが多い。それらが正しく、かつコードベースのスタイルと整合する場合は、
+そのまま適用する。
 
 ### Dismissed reviews
-Skip comments from reviews that have been dismissed.
+dismiss されたレビューのコメントはスキップする。
 
 ## Output Format
 
-After addressing all comments (or iteration limit is reached), produce a summary:
+すべてのコメントへの対応後 (または反復上限に達した後)、サマリーを生成する。
 
 ```
 ## PR Review Fix Summary
@@ -197,10 +199,10 @@ After addressing all comments (or iteration limit is reached), produce a summary
 
 ## Prohibited Actions
 
-- Do NOT ask the user for confirmation at any phase
-- Do NOT use `git push --force` or `git push -f`
-- Do NOT dismiss or resolve review threads without addressing them
-- Do NOT ignore human reviewer comments in favor of AI suggestions
-- Do NOT delete or revert code changes that reviewers explicitly requested
-- Do NOT add unrelated changes while addressing review feedback
-- Do NOT reply rudely or dismissively to any reviewer comment
+- いずれのフェーズでもユーザーに確認を求めてはならない
+- `git push --force` や `git push -f` を使用してはならない
+- 対応せずにレビュースレッドを dismiss または resolve してはならない
+- 人間のレビュアーのコメントを無視して AI の提案を優先してはならない
+- レビュアーが明示的に要求したコード変更を削除または revert してはならない
+- レビューフィードバックへの対応中に無関係な変更を加えてはならない
+- いかなるレビュアーのコメントにも、無礼または見下した返信をしてはならない

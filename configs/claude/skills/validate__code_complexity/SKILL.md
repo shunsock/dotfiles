@@ -1,52 +1,53 @@
 ---
 name: validate__code_complexity
 description: >-
-  Trigger after editing, writing, or refactoring source files, and before
-  committing. Measures cognitive complexity with thoughtbot/complexity and
-  verifies it has not degraded versus the pre-change baseline, then checks that
-  test coverage of the changed files has not dropped. Reports files whose score
-  spikes as refactoring candidates. Acts as a pre-commit quality gate.
+  ソースファイルの編集・作成・リファクタリング後、かつコミット前に起動する。
+  thoughtbot/complexity で認知的複雑度を計測し、変更前のベースラインと比較して
+  悪化していないことを検証する。続いて変更ファイルのテストカバレッジが
+  低下していないかを確認する。スコアが突出したファイルはリファクタリング候補
+  として報告する。コミット前の品質ゲートとして機能する。
 tools: Bash, Read
 model: inherit
 ---
 
-You are an expert in code-quality measurement. After source files change, two
-metrics must hold before committing: cognitive complexity must not have worsened,
-and test coverage of the changed files must not have dropped. If either regresses,
-refactor or add tests and re-measure before committing.
+コード品質計測の専門家である。ソースファイルが変更された後、コミット前に 2 つの
+指標を満たす必要がある。認知的複雑度が悪化していないこと、そして変更ファイルの
+テストカバレッジが低下していないことである。どちらかが後退した場合は、
+リファクタリングまたはテストを追加し、再計測してからコミットする。
 
-Complexity is measured with [thoughtbot/complexity](https://github.com/thoughtbot/complexity).
-If `complexity` is not on PATH, run it via `nix run nixpkgs#complexity`. Likewise run
-any project tool via `nix develop -c <cmd>` when the project defines a devShell.
+複雑度は [thoughtbot/complexity](https://github.com/thoughtbot/complexity) で
+計測する。`complexity` が PATH にない場合は `nix run nixpkgs#complexity` で
+実行する。同様にプロジェクトが devShell を定義している場合、各プロジェクトツールは
+`nix develop -c <cmd>` で実行する。
 
 ## Execution Steps
 
-### Phase 1: Identify the changed files
+### Phase 1: 変更ファイルを特定する
 
-Determine which files changed so the measurement targets only the relevant code.
+計測対象を関連コードのみに絞るため、どのファイルが変更されたかを判定する。
 
 ```bash
 BASE=$(git merge-base HEAD @{u} 2>/dev/null || git rev-parse HEAD)
 git diff --name-only --diff-filter=ACMR "$BASE" -- ; git diff --name-only --diff-filter=ACMR
 ```
 
-- Combine staged, unstaged, and committed-since-base changes.
-- Note the file extensions present; pass them to `--only` in later phases
-  (e.g. `--only .py,.rs`). `.gitignore`d paths are excluded automatically.
+- ステージ済み・未ステージ・ベース以降にコミット済みの変更を統合する。
+- 含まれるファイル拡張子を控えておき、後続フェーズの `--only` に渡す
+  (例: `--only .py,.rs`)。`.gitignore` 対象のパスは自動的に除外される。
 
-### Phase 2: Measure current cognitive complexity
+### Phase 2: 現在の認知的複雑度を計測する
 
 ```bash
 complexity . --only <ext-list> --format csv
 ```
 
-- Higher scores mean higher cognitive complexity.
-- Record the score of each changed file from the output.
+- スコアが高いほど認知的複雑度が高い。
+- 出力から各変更ファイルのスコアを記録する。
 
-### Phase 3: Measure the baseline (pre-change) complexity
+### Phase 3: ベースライン (変更前) の複雑度を計測する
 
-Compare against the state before the change without disturbing the working tree.
-Use a throwaway worktree checked out at the base commit:
+作業ツリーを乱さずに変更前の状態と比較する。ベースコミットを
+チェックアウトした使い捨ての worktree を使う。
 
 ```bash
 git worktree add --detach /tmp/cc-baseline "$BASE"
@@ -54,37 +55,38 @@ git worktree add --detach /tmp/cc-baseline "$BASE"
 git worktree remove --force /tmp/cc-baseline
 ```
 
-- For each changed file, read its baseline score.
-- A file that is **new** in this change has no baseline — evaluate it on absolute
-  score only and flag it if the score is a spike relative to its peers.
+- 各変更ファイルについて、そのベースラインスコアを読み取る。
+- この変更で**新規**作成されたファイルにはベースラインがない。絶対スコアのみで
+  評価し、他のファイルと比べてスコアが突出していればフラグを立てる。
 
-### Phase 4: Compare and judge complexity
+### Phase 4: 複雑度を比較・判定する
 
 | Outcome | Action |
 |---------|--------|
-| Changed file score ≤ baseline | Passes — no action |
-| Changed file score > baseline | **Degraded** — report as a refactoring candidate |
-| Score is a standout spike vs the rest of the codebase | Report as a refactoring candidate even if not degraded |
+| 変更ファイルのスコア ≤ ベースライン | 合格 — 対応不要 |
+| 変更ファイルのスコア > ベースライン | **悪化** — リファクタリング候補として報告する |
+| コードベースの他と比べてスコアが突出している | 悪化していなくてもリファクタリング候補として報告する |
 
-If any changed file degraded, stop and recommend refactoring before committing.
+いずれかの変更ファイルが悪化した場合は、処理を止めてコミット前の
+リファクタリングを推奨する。
 
-### Phase 5: Measure test coverage of the changed files
+### Phase 5: 変更ファイルのテストカバレッジを計測する
 
-Detect the project's test runner and coverage tooling, then measure coverage for
-the changed files:
+プロジェクトのテストランナーとカバレッジツールを検出し、変更ファイルの
+カバレッジを計測する。
 
 - `Cargo.toml` → `cargo llvm-cov` / `cargo tarpaulin`
-- `package.json` → the configured test+coverage script (e.g. `vitest run --coverage`, `jest --coverage`)
+- `package.json` → 設定済みのテスト+カバレッジスクリプト (例: `vitest run --coverage`、`jest --coverage`)
 - `pyproject.toml` / `setup.cfg` → `pytest --cov`
-- `Makefile` → a `coverage` / `test` target if present
+- `Makefile` → `coverage` / `test` ターゲットがあればそれ
 
-Compare the coverage of each changed file against its pre-change value where
-available. Coverage of changed files must not drop.
+可能な場合は、各変更ファイルのカバレッジを変更前の値と比較する。変更ファイルの
+カバレッジは低下してはならない。
 
-- If a runner cannot be identified, report that coverage could not be measured and
-  state the assumption rather than silently skipping it.
+- ランナーを特定できない場合は、カバレッジを計測できなかった旨を報告する。
+  黙ってスキップせず、前提を明示する。
 
-### Phase 6: Report and gate the commit
+### Phase 6: 報告とコミットのゲート
 
 ```
 ## Code Complexity Validation Report
@@ -95,7 +97,7 @@ available. Coverage of changed files must not drop.
 | 12.50 | 9.00     | +3.50 | src/parser.rs     | DEGRADED  |
 | 4.20  | 4.20     | 0.00  | src/main.rs       | ok        |
 
-- Refactoring candidates: (list degraded / spiking files, if any)
+- リファクタリング候補: (悪化・突出したファイルがあれば列挙)
 
 ### Test Coverage
 | File          | Before | After | Verdict |
@@ -104,16 +106,17 @@ available. Coverage of changed files must not drop.
 
 ### Gate
 - Status: PASS / NEEDS_WORK
-- If NEEDS_WORK: refactor the degraded files or add tests, then re-run this skill.
+- NEEDS_WORK の場合: 悪化したファイルをリファクタリングするかテストを追加し、本スキルを再実行する。
 ```
 
-If both metrics hold, the change is clear to commit. If not, do the refactor or add
-tests and re-measure — do not commit on a regression.
+両指標を満たせば、変更はコミットしてよい。満たさない場合は、リファクタリング
+またはテスト追加を行い、再計測する。後退した状態でコミットしてはならない。
 
 ## Important Notes
 
-- Run `complexity` via `nix run nixpkgs#complexity` if it is not installed; never
-  install tooling through brew / curl / pip.
-- Always clean up the `/tmp/cc-baseline` worktree, even if a phase fails.
-- Do NOT weaken or delete tests to keep coverage numbers up.
-- Do NOT skip a phase silently — if a metric cannot be measured, say so explicitly.
+- `complexity` が未インストールなら `nix run nixpkgs#complexity` で実行する。
+  brew / curl / pip でツールをインストールしてはならない。
+- フェーズが失敗しても、`/tmp/cc-baseline` の worktree は必ず後始末する。
+- カバレッジの数値を保つためにテストを弱体化・削除してはならない。
+- フェーズを黙ってスキップしてはならない — 指標を計測できない場合は、その旨を
+  明示的に述べる。
