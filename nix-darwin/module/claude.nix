@@ -41,5 +41,6 @@
     run install -Dm755 ${../../configs/claude/hooks/enforce-narrative-pr.sh} $HOME/.claude/hooks/enforce-narrative-pr.sh
     run install -Dm755 ${../../configs/claude/hooks/trigger-ci-fix.sh} $HOME/.claude/hooks/trigger-ci-fix.sh
     run install -Dm755 ${../../configs/claude/hooks/recommend-tasks.sh} $HOME/.claude/hooks/recommend-tasks.sh
+    run install -Dm755 ${../../configs/claude/hooks/clean-comment-out.sh} $HOME/.claude/hooks/clean-comment-out.sh
   '';
 }
