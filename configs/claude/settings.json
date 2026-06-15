@@ -87,6 +87,15 @@
             "command": "$HOME/.claude/hooks/trigger-ci-fix.sh"
           }
         ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/clean-comment-out.sh"
+          }
+        ]
       }
     ]
   },
