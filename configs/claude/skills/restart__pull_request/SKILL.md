@@ -292,8 +292,6 @@ Supersedes ${OLD_URL}
 ## 参考文献
 
 - [タイトル](URL)
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
 ```
 
 #### 5.2 PR 作成

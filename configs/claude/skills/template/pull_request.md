@@ -81,5 +81,3 @@ flowchart LR
 ## 参考文献
 
 - [タイトル](URL)
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
