@@ -120,8 +120,6 @@ PR の形式:
 ## Verification
 - [x] nix build: passed
 - [x] nix flake check: passed
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
 ```
 
 ### Phase 6: クリーンアップ

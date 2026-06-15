@@ -64,7 +64,7 @@
           },
           {
             "type": "command",
-            "command": "$HOME/.claude/hooks/enforce-narrative-pr.sh"
+            "command": "$HOME/.claude/hooks/pr-submission-via-skill.sh"
           }
         ]
       },

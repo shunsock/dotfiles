@@ -209,22 +209,41 @@ git push -u origin "$NEW_BRANCH"
 #### 5.1 説明文の構成
 
 議論の構造化結果 (Phase 1.4) と現在の差分を統合した、ナラティブ型の説明文を生成する。
-`write__narrative_pull_request` と同等のセクション構造を踏襲しつつ、**議論履歴の引き継ぎ** を
-強調する。
+共有テンプレート `~/.claude/skills/template/pull_request.md` の構成を土台にする。
+これに restart 固有のセクションを追加する。具体的にはやり直した理由・取り込んだレビュー指摘・残課題を加える。
+こうして議論履歴の引き継ぎを強調する。
 
 ```markdown
-## Background
+## 概要
 
-[この PR が必要になった背景。元 Issue や元 PR で議論されていた問題を再掲する。]
+[何をしたか・何を解決するかを 1〜2 文で述べる。]
 
 Closes #<issue-number>
 Supersedes ${OLD_URL}
 
-## Why we restarted
+## 背景
+
+[この PR が必要になった背景。元 Issue や元 PR で議論されていた問題を再掲する。]
+
+## やり直した理由
 
 [なぜ旧 PR を作り直したかを正直に書く: 履歴が汚れた / 方針が変わった / 等]
 
-## Approach (議論で合意した最終形)
+## 課題
+
+[背景のもとで具体的に何が問題だったかを述べ、解決対象を明確にする。]
+
+## 目標
+
+### 必須項目
+
+- [この PR で必ず満たす条件]
+
+### 範囲外
+
+- [意図的にこの PR では扱わないこと]
+
+## 採用手法 (議論で合意した最終形)
 
 [Phase 1.4 で抽出した「設計判断の合意」をここに反映する。]
 
@@ -237,31 +256,47 @@ Supersedes ${OLD_URL}
 |----|---------|--------|
 | ... | ... | ${OLD_URL}#discussion_rxxxx |
 
-## What Changed
+### 採用理由
 
-[旧 PR の差分全体を1コミットにまとめた結果として、何が変わったかを意図単位で記述。]
+[合意に至った決定的な理由を述べる。]
 
-## Incorporated Review Feedback
+## 変更箇所
+
+[旧 PR の差分全体を 1 コミットにまとめた結果を、`パス: 内容` 形式で記す。内容は簡潔な 1 文。]
+
+- `path/to/file`: [変更内容を簡潔に 1 文で]
+
+## 取り込んだレビュー指摘
 
 [旧 PR で解決済みのレビュー指摘を箇条書きで明示する。
 レビュアーが「自分の指摘がどう反映されたか」を一目で追えるようにする。]
 
 - @reviewer: <指摘要約> → <反映内容> (${OLD_URL}#discussion_rxxxx)
 
-## Open Questions / Follow-up
+## 妥協と制限
 
-[旧 PR で「別 PR で対応」と合意した残課題、または新 PR でも未解決の指摘。]
+[意図的に受け入れたトレードオフや既知の制限を述べる。なければ「無し」と書く。]
 
-## Review Guide
+## 検証方法
 
-[新 PR は単一コミットなので、ファイル単位ではなく意図単位の読み順を示す。]
+[正しく動くことをどう確かめたかを簡潔に箇条書きで述べる。]
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+- [テスト追加 / 手動確認の手順 / 計測など]
+
+## 確認事項 / 残課題
+
+[旧 PR で「別 PR で対応」と合意した残課題や、新 PR でも未解決の指摘を ⚠️ 付きで挙げる。]
+
+- ⚠️ [確認したい意思決定事項・残課題]
+
+## 参考文献
+
+- [タイトル](URL)
 ```
 
 #### 5.2 PR 作成
 
-`submit__pull_request` と同じバイパスマーカーを付与する (narrative-PR hook 用):
+`submit__pull_request` と同じバイパスマーカーを付与する (pr-submission-via-skill hook 用):
 
 ```bash
 gh pr create \
@@ -271,7 +306,7 @@ gh pr create \
   --body "$(cat <<'EOF'
 <Phase 5.1 で生成した説明文>
 EOF
-)" # @narrative-pr-bypass
+)" # @pr-submission-via-skill-bypass
 ```
 
 新 PR 番号と URL を保存:
