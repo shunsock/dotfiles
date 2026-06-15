@@ -18,11 +18,13 @@ spacing="$(nix eval --raw nixpkgs#textlint-rule-preset-ja-spacing)"
 node_path="$technical_writing/lib/node_modules:$spacing/lib/node_modules"
 
 # 対象 Markdown を収集する。
+# skills/template 配下は Issue/PR 本文のスケルトンであり、散文ではなくプレースホルダの
+# 集合なので校正対象から除外する (一文の長さ・文末記号の規則が常に衝突するため)。
 # mapfile は macOS 標準の bash 3.2 に無いため while-read で配列に積む。
 md_files=()
 while IFS= read -r file; do
   md_files+=("$file")
-done < <(find "$TARGET_DIR" -name '*.md')
+done < <(find "$TARGET_DIR" -path '*/skills/template' -prune -o -name '*.md' -print)
 
 # textlint の起動をまとめる。第1引数以降がそのまま textlint の引数になる。
 textlint() {
