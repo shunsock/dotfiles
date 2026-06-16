@@ -28,7 +28,7 @@
   home.activation.claudeHooks = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run mkdir -p $HOME/.claude/hooks
     run install -Dm755 ${../../configs/claude/hooks/validate-bash.sh} $HOME/.claude/hooks/validate-bash.sh
-    run install -Dm755 ${../../configs/claude/hooks/enforce-narrative-pr.sh} $HOME/.claude/hooks/enforce-narrative-pr.sh
+    run install -Dm755 ${../../configs/claude/hooks/pr-submission-via-skill.sh} $HOME/.claude/hooks/pr-submission-via-skill.sh
     run install -Dm755 ${../../configs/claude/hooks/trigger-ci-fix.sh} $HOME/.claude/hooks/trigger-ci-fix.sh
     run install -Dm755 ${../../configs/claude/hooks/clean-comment-out.sh} $HOME/.claude/hooks/clean-comment-out.sh
   '';
