@@ -1,5 +1,5 @@
 #!/bin/bash
-# pr-submission-via-skill.sh - PreToolUse hook for Claude Code
+# pr_submission_via_skill.sh - PreToolUse hook for Claude Code
 # Rejects direct `gh pr create` calls and instructs Claude to use the
 # submit__pull_request skill instead, which generates a structured,
 # narrative-style PR description automatically.

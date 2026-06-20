@@ -37,10 +37,10 @@
   # hook スクリプトをコピーとして配置（実行権限が必要）
   home.activation.claudeHooks = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run mkdir -p $HOME/.claude/hooks
-    run install -Dm755 ${../../configs/claude/hooks/validate-bash.sh} $HOME/.claude/hooks/validate-bash.sh
-    run install -Dm755 ${../../configs/claude/hooks/pr-submission-via-skill.sh} $HOME/.claude/hooks/pr-submission-via-skill.sh
-    run install -Dm755 ${../../configs/claude/hooks/trigger-ci-fix.sh} $HOME/.claude/hooks/trigger-ci-fix.sh
-    run install -Dm755 ${../../configs/claude/hooks/recommend-tasks.sh} $HOME/.claude/hooks/recommend-tasks.sh
-    run install -Dm755 ${../../configs/claude/hooks/clean-comment-out.sh} $HOME/.claude/hooks/clean-comment-out.sh
+    run install -Dm755 ${../../configs/claude/hooks/validate_bash.sh} $HOME/.claude/hooks/validate_bash.sh
+    run install -Dm755 ${../../configs/claude/hooks/pr_submission_via_skill.sh} $HOME/.claude/hooks/pr_submission_via_skill.sh
+    run install -Dm755 ${../../configs/claude/hooks/trigger_ci_fix.sh} $HOME/.claude/hooks/trigger_ci_fix.sh
+    run install -Dm755 ${../../configs/claude/hooks/recommend_tasks.sh} $HOME/.claude/hooks/recommend_tasks.sh
+    run install -Dm755 ${../../configs/claude/hooks/clean_comment_out.sh} $HOME/.claude/hooks/clean_comment_out.sh
   '';
 }

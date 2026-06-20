@@ -1,5 +1,5 @@
 #!/bin/bash
-# trigger-ci-fix.sh - Claude Code 用 PostToolUse hook
+# trigger_ci_fix.sh - Claude Code 用 PostToolUse hook
 # `git push` または `gh pr create` の後に、monitor__ci_status スキルの実行を
 # 促す必須指示を注入する。これにより CI の失敗がユーザー介入なしに監視・修正
 # される。監視と修正のループは monitor__ci_status が所有し、各修復パスは

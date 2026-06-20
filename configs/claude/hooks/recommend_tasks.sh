@@ -1,5 +1,5 @@
 #!/bin/bash
-# recommend-tasks.sh - Claude Code 用 PreToolUse hook
+# recommend_tasks.sh - Claude Code 用 PreToolUse hook
 # Write/Edit の実行前に、TaskCreate での進捗管理を促すメッセージを注入する。
 #
 # 注入は hookSpecificOutput.additionalContext で行う。これは exit 0 時に
