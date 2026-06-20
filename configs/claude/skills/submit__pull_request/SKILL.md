@@ -124,7 +124,7 @@ Phase 1 の分析結果で埋める。各セクションは「読み物」とし
 ### Phase 3: PR作成
 
 コマンドの末尾にバイパスマーカーを付与する。これは PreToolUse hook
-（pr-submission-via-skill.sh）がこのスキル経由の `gh pr create` を許可するための識別子です。
+（pr_submission_via_skill.sh）がこのスキル経由の `gh pr create` を許可するための識別子です。
 マーカーがないと hook がコマンドを拒否する。
 
 ```bash

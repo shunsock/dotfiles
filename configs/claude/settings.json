@@ -60,11 +60,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.claude/hooks/validate-bash.sh"
+            "command": "$HOME/.claude/hooks/validate_bash.sh"
           },
           {
             "type": "command",
-            "command": "$HOME/.claude/hooks/pr-submission-via-skill.sh"
+            "command": "$HOME/.claude/hooks/pr_submission_via_skill.sh"
           }
         ]
       },
@@ -73,7 +73,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.claude/hooks/recommend-tasks.sh"
+            "command": "$HOME/.claude/hooks/recommend_tasks.sh"
           }
         ]
       }
@@ -84,7 +84,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.claude/hooks/trigger-ci-fix.sh"
+            "command": "$HOME/.claude/hooks/trigger_ci_fix.sh"
           }
         ]
       },
@@ -93,7 +93,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.claude/hooks/clean-comment-out.sh"
+            "command": "$HOME/.claude/hooks/clean_comment_out.sh"
           }
         ]
       }

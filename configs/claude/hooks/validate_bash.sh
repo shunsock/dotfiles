@@ -1,5 +1,5 @@
 #!/bin/bash
-# validate-bash.sh - PreToolUse hook for Claude Code
+# validate_bash.sh - PreToolUse hook for Claude Code
 # Rejects prohibited commands with guidance on alternatives.
 #
 # Rules are declared as data arrays. To add a new rule, append one line

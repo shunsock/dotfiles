@@ -1,5 +1,5 @@
 #!/bin/bash
-# clean-comment-out.sh - Claude Code 用 PostToolUse hook
+# clean_comment_out.sh - Claude Code 用 PostToolUse hook
 # ソースファイルへの Write/Edit の後に、clean__comment_out スキルの実行を促す
 # 必須指示を注入する。これにより、意味のないコメントやコメントアウトされた
 # デッドコードが削除され、価値あるコメント (Why / 設計判断 /
