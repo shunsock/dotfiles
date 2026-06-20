@@ -104,7 +104,8 @@
             ];
 
             # macOS system defaults
-            system.defaults.NSGlobalDomain._HIHideMenuBar = true;
+            # メニューバーを常時表示する (自動的に隠さない)
+            system.defaults.NSGlobalDomain._HIHideMenuBar = false;
           }
 
           # Keyboard remapping configuration
