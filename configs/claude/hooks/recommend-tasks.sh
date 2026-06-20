@@ -1,5 +1,5 @@
 #!/bin/bash
-# recommend-tasks.sh - PreToolUse hook for Claude Code
+# recommend-tasks.sh - Claude Code 用 PreToolUse hook
 # Write/Edit の実行前に、TaskCreate での進捗管理を促すメッセージを注入する。
 #
 # 注入は hookSpecificOutput.additionalContext で行う。これは exit 0 時に
@@ -7,6 +7,7 @@
 # ツール実行を止めずに Claude へ文章を届ける。
 # 旧実装は存在しない "decision": "notify" を返しており、Claude Code から
 # 黙って無視されていた (notify という decision は仕様上どのイベントにも無い)。
+# see: https://code.claude.com/docs/en/hooks#pretooluse-decision-control
 
 set -euo pipefail
 
