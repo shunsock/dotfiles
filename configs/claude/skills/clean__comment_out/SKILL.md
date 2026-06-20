@@ -1,5 +1,5 @@
 ---
-name: clean_comment_out
+name: clean__comment_out
 description: >-
   ソースコードを編集・作成した後に起動する。変更したファイルから
   意味のないコメントとコメントアウトされたデッドコードを削除し、

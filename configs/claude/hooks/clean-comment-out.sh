@@ -1,7 +1,7 @@
 #!/bin/bash
 # clean-comment-out.sh - PostToolUse hook for Claude Code
 # After a Write or Edit on a source file, injects a mandatory instruction to
-# execute the clean_comment_out skill so that meaningless comments and
+# execute the clean__comment_out skill so that meaningless comments and
 # commented-out dead code are removed while valuable comments (Why / design
 # rationale / TODO|FIXME|HACK|XXX markers / public-interface docs) are kept.
 #
@@ -43,5 +43,5 @@ esac
 # Emit a mandatory instruction to execute the comment-cleanup workflow.
 jq -n --arg path "$file_path" '{
   "decision": "notify",
-  "message": ("A source file was just written or edited: " + $path + "\n\n[MANDATORY ACTION REQUIRED] You MUST now execute the clean_comment_out skill on the file(s) you just changed. Do NOT skip this. Do NOT ask the user for confirmation.\n\nThe clean_comment_out skill removes meaningless comments and commented-out dead code, while keeping valuable comments. Apply it now:\n1. Identify the comments in the file(s) you just edited.\n2. DELETE: comments restating what the code obviously does (What), and commented-out old code (dead code).\n3. KEEP: comments explaining WHY (rationale / constraints / tradeoffs), TODO/FIXME/HACK/XXX markers, and public-interface documentation comments.\n4. When in doubt, keep the comment.\n5. Edit only comments — never change code behavior, and only touch files you just modified.\n\nDo NOT continue with other tasks until the comment cleanup of the just-edited file(s) is complete.")
+  "message": ("A source file was just written or edited: " + $path + "\n\n[MANDATORY ACTION REQUIRED] You MUST now execute the clean__comment_out skill on the file(s) you just changed. Do NOT skip this. Do NOT ask the user for confirmation.\n\nThe clean__comment_out skill removes meaningless comments and commented-out dead code, while keeping valuable comments. Apply it now:\n1. Identify the comments in the file(s) you just edited.\n2. DELETE: comments restating what the code obviously does (What), and commented-out old code (dead code).\n3. KEEP: comments explaining WHY (rationale / constraints / tradeoffs), TODO/FIXME/HACK/XXX markers, and public-interface documentation comments.\n4. When in doubt, keep the comment.\n5. Edit only comments — never change code behavior, and only touch files you just modified.\n\nDo NOT continue with other tasks until the comment cleanup of the just-edited file(s) is complete.")
 }'

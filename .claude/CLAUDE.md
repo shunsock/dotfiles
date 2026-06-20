@@ -3,8 +3,9 @@
 Nix を中心とした個人 dotfiles リポジトリ。全体像と完全なコマンド一覧は `README.md` を参照。
 
 プロジェクト別の詳細ルールは `.claude/rules/` にトピック分割して配置している。
-`nix-darwin/` `nix-os/` `nvimc/` 配下のファイルを編集すると、対応するルールが
-パススコープで自動的にロードされる (`repo_map.md` と `constraints.md` は常時ロード)。
+`nix-darwin/` `nix-os/` `nvimc/` `configs/claude/skills/` 配下のファイルを編集すると、
+対応するルールがパススコープで自動的にロードされる
+(`repo_map.md` と `constraints.md` は常時ロード)。
 
 ## Claude 設定のソース管理 (メタ構造)
 
