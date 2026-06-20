@@ -4,6 +4,8 @@
   pkgsUnstable,
   pkgsLlmAgents,
   complexity,
+  lazynixPkg,
+  hisuiPkg,
   username,
   homeDirectory,
   lib,
@@ -54,6 +56,8 @@
     ]
     ++ [
       complexity
+      lazynixPkg
+      hisuiPkg
       pkgsLlmAgents.claude-code
       pkgsUnstable.google-cloud-sdk
       pkgsUnstable.gws

@@ -9,6 +9,14 @@
     home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     llm-agents.url = "github:numtide/llm-agents.nix";
+    # lazynix は nixpkgs を nixos-25.11 にピンしており当方と一致するため follows で一本化する。
+    lazynix.url = "github:shunsock/lazynix";
+    lazynix.inputs.nixpkgs.follows = "nixpkgs";
+    # hisui 上流は nixos-25.05 ピンだが、その dotnet SDK は aarch64-darwin で
+    # configureNuget フェーズがクラッシュする。当方の nixos-25.11 に follows させて
+    # 新しい dotnet SDK でビルドする。
+    hisui.url = "github:shunsock/hisui";
+    hisui.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -19,6 +27,8 @@
       nix-darwin,
       home-manager,
       llm-agents,
+      lazynix,
+      hisui,
       ...
     }:
     let
@@ -42,6 +52,8 @@
         };
       };
       pkgsLlmAgents = llm-agents.packages.${system};
+      lazynixPkg = lazynix.packages.${system}.default;
+      hisuiPkg = hisui.packages.${system}.default;
 
       complexity = pkgs.rustPlatform.buildRustPackage rec {
         pname = "complexity";
@@ -146,6 +158,8 @@
                 inherit pkgsUnstable;
                 inherit pkgsLlmAgents;
                 inherit complexity;
+                inherit lazynixPkg;
+                inherit hisuiPkg;
                 inherit username;
                 inherit homeDirectory;
               };
