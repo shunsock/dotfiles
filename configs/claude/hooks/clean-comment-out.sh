@@ -1,16 +1,19 @@
 #!/bin/bash
-# clean-comment-out.sh - PostToolUse hook for Claude Code
-# After a Write or Edit on a source file, injects a mandatory instruction to
-# execute the clean__comment_out skill so that meaningless comments and
-# commented-out dead code are removed while valuable comments (Why / design
-# rationale / TODO|FIXME|HACK|XXX markers / public-interface docs) are kept.
+# clean-comment-out.sh - Claude Code 用 PostToolUse hook
+# ソースファイルへの Write/Edit の後に、clean__comment_out スキルの実行を促す
+# 必須指示を注入する。これにより、意味のないコメントやコメントアウトされた
+# デッドコードが削除され、価値あるコメント (Why / 設計判断 /
+# TODO|FIXME|HACK|XXX マーカー / 公開インターフェースのドキュメント) は残る。
 #
-# The message uses explicit instructions because the "notify" decision only
-# injects text into the conversation — it does not force tool execution.
+# additionalContext による注入は会話へ文章を追加するだけで、ツール実行を
+# 強制しない。そのためメッセージは明示的な指示で書く。
 #
-# Non-source files (config / docs / data) are skipped: the cleanup concerns
-# code comments, and triggering on every Write/Edit (e.g. markdown, json)
-# would produce noise.
+# 注入は hookSpecificOutput.additionalContext で行う。
+# see: https://code.claude.com/docs/en/hooks#posttooluse-decision-control
+#
+# 非ソースファイル (設定 / ドキュメント / データ) はスキップする。コメント整理は
+# コードコメントが対象であり、すべての Write/Edit (例: markdown, json) で発火
+# させるとノイズになるため。
 
 set -euo pipefail
 
@@ -26,9 +29,9 @@ if [[ -z "$file_path" ]]; then
   exit 0
 fi
 
-# Only trigger on source-code files. Comment-cleanup judgment (Why vs What,
-# dead code, doc comments, markers) applies to programming languages, not to
-# config / docs / data files.
+# ソースコードファイルのみで発火する。コメント整理の判断 (Why か What か、
+# デッドコード、ドキュメントコメント、マーカー) はプログラミング言語に適用され、
+# 設定 / ドキュメント / データファイルには適用されないため。
 case "$file_path" in
   *.rs | *.go | *.py | *.ts | *.tsx | *.js | *.jsx | *.java | *.kt | *.kts \
     | *.c | *.h | *.cpp | *.cc | *.hpp | *.cs | *.rb | *.php | *.swift \
@@ -40,8 +43,10 @@ case "$file_path" in
     ;;
 esac
 
-# Emit a mandatory instruction to execute the comment-cleanup workflow.
+# コメント整理ワークフローの実行を促す必須指示を出力する。
 jq -n --arg path "$file_path" '{
-  "decision": "notify",
-  "message": ("A source file was just written or edited: " + $path + "\n\n[MANDATORY ACTION REQUIRED] You MUST now execute the clean__comment_out skill on the file(s) you just changed. Do NOT skip this. Do NOT ask the user for confirmation.\n\nThe clean__comment_out skill removes meaningless comments and commented-out dead code, while keeping valuable comments. Apply it now:\n1. Identify the comments in the file(s) you just edited.\n2. DELETE: comments restating what the code obviously does (What), and commented-out old code (dead code).\n3. KEEP: comments explaining WHY (rationale / constraints / tradeoffs), TODO/FIXME/HACK/XXX markers, and public-interface documentation comments.\n4. When in doubt, keep the comment.\n5. Edit only comments — never change code behavior, and only touch files you just modified.\n\nDo NOT continue with other tasks until the comment cleanup of the just-edited file(s) is complete.")
+  "hookSpecificOutput": {
+    "hookEventName": "PostToolUse",
+    "additionalContext": ("ソースファイルが Write/Edit されました: " + $path + "\n\n[必須アクション] いま変更したファイルに対して、ただちに clean__comment_out スキルを実行しなければならない。省略してはならない。ユーザーへの確認も不要である。\n\nclean__comment_out スキルは、意味のないコメントとコメントアウトされたデッドコードを削除し、価値あるコメントは残す。いま次を適用すること:\n1. いま編集したファイルのコメントを洗い出す。\n2. 削除する: コードを見れば自明な内容 (What) を述べただけのコメント、コメントアウトされた古いコード (デッドコード)。\n3. 残す: なぜ (Why) を説明するコメント (設計判断 / 制約 / トレードオフ)、TODO/FIXME/HACK/XXX マーカー、公開インターフェースのドキュメントコメント。\n4. 迷ったらコメントを残す。\n5. コメントのみを編集する — コードの挙動は変えず、いま変更したファイルだけを対象にする。\n\nいま編集したファイルのコメント整理が完了するまで、他のタスクへ進んではならない。")
+  }
 }'

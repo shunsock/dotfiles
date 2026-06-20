@@ -1,14 +1,16 @@
 #!/bin/bash
-# trigger-ci-fix.sh - PostToolUse hook for Claude Code
-# After `git push` or `gh pr create`, injects a mandatory instruction to
-# execute the monitor__ci_status skill so that CI failures are automatically
-# monitored and fixed without user intervention. That skill owns the
-# monitor-and-fix loop and delegates each repair pass to rescue__ci_failure.
+# trigger-ci-fix.sh - Claude Code 用 PostToolUse hook
+# `git push` または `gh pr create` の後に、monitor__ci_status スキルの実行を
+# 促す必須指示を注入する。これにより CI の失敗がユーザー介入なしに監視・修正
+# される。監視と修正のループは monitor__ci_status が所有し、各修復パスは
+# rescue__ci_failure へ委譲される。
 #
-# The message uses explicit, step-by-step instructions because the "notify"
-# decision only injects text into the conversation — it does not force tool
-# execution. Concrete instructions maximize the likelihood that Claude will
-# act on the message immediately.
+# additionalContext による注入は会話へ文章を追加するだけで、ツール実行を
+# 強制しない。そのため、Claude が即座に行動する確度を上げるよう、メッセージは
+# 明示的かつ段階的な手順で書く。
+#
+# 注入は hookSpecificOutput.additionalContext で行う。
+# see: https://code.claude.com/docs/en/hooks#posttooluse-decision-control
 
 set -euo pipefail
 
@@ -24,7 +26,7 @@ if [[ -z "$command" ]]; then
   exit 0
 fi
 
-# Check if the command is a git push or gh pr create
+# コマンドが git push か gh pr create かを判定する
 is_git_push=false
 is_gh_pr_create=false
 
@@ -40,21 +42,23 @@ if [[ "$is_git_push" == "false" && "$is_gh_pr_create" == "false" ]]; then
   exit 0
 fi
 
-# Check if the tool execution succeeded (exit code 0)
+# ツール実行が成功したか (exit code 0) を確認する
 exit_code="$(echo "$input" | jq -r '.tool_output.exit_code // .tool_output.exitCode // "0"')"
 if [[ "$exit_code" != "0" ]]; then
   exit 0
 fi
 
-# Build a contextual trigger description
+# 発火コンテキストの説明文を組み立てる
 if [[ "$is_gh_pr_create" == "true" ]]; then
-  trigger_context="A PR was just created."
+  trigger_context="PR が作成されました。"
 else
-  trigger_context="Commits were just pushed to the PR branch."
+  trigger_context="PR ブランチへ commit が push されました。"
 fi
 
-# Emit a mandatory instruction to execute the CI fix workflow.
+# CI 修正ワークフローの実行を促す必須指示を出力する。
 jq -n --arg ctx "$trigger_context" '{
-  "decision": "notify",
-  "message": ($ctx + "\n\n[MANDATORY ACTION REQUIRED] You MUST now execute the monitor__ci_status skill immediately. Do NOT skip this. Do NOT ask the user for confirmation. This is required by the project rules in CLAUDE.md.\n\nThe monitor__ci_status skill owns the monitor-and-fix loop; it polls CI and, on failure, invokes rescue__ci_failure for each repair pass. Execute these steps NOW:\n1. Get the current branch and PR number:\n   BRANCH=$(git branch --show-current)\n   PR_NUMBER=$(gh pr view \"$BRANCH\" --json number --jq \".number\")\n2. Wait for CI checks to be registered (poll for up to 60 seconds)\n3. Poll CI status every 30 seconds until all checks complete (timeout: 30 min)\n4. If all checks pass, report success\n5. If any check fails, invoke rescue__ci_failure (it reads logs with gh run view <run_id> --log-failed, fixes the code, commits, and pushes)\n6. Repeat from step 2 (max 5 iterations)\n\nDo NOT continue with any other task until this CI monitoring workflow is complete.")
+  "hookSpecificOutput": {
+    "hookEventName": "PostToolUse",
+    "additionalContext": ($ctx + "\n\n[必須アクション] ただちに monitor__ci_status スキルを実行しなければならない。省略してはならない。ユーザーへの確認も不要である。これは CLAUDE.md のプロジェクト規約で要求されている。\n\nmonitor__ci_status スキルは監視と修正のループを所有し、CI をポーリングして失敗時には各修復パスで rescue__ci_failure を起動する。いま次の手順を実行すること:\n1. 現在のブランチと PR 番号を取得する:\n   BRANCH=$(git branch --show-current)\n   PR_NUMBER=$(gh pr view \"$BRANCH\" --json number --jq \".number\")\n2. CI チェックが登録されるまで待つ (最大 60 秒ポーリング)\n3. 全チェック完了まで 30 秒ごとに CI 状態をポーリングする (タイムアウト: 30 分)\n4. 全チェックがパスしたら成功を報告する\n5. いずれかが失敗したら rescue__ci_failure を起動する (gh run view <run_id> --log-failed でログを読み、コードを修正し、commit して push する)\n6. 手順 2 から繰り返す (最大 5 回)\n\nこの CI 監視ワークフローが完了するまで、他のタスクへ進んではならない。")
+  }
 }'
