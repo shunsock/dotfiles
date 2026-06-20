@@ -1,5 +1,5 @@
 ---
-name: hold_personal_meeting
+name: hold__personal_meeting
 description: >-
   ユーザーが今日の予定確認、タスクの見直し、パーソナルミーティングの実施、
   デイリースタンドアップを依頼したときに起動する。gws 経由で選択済みの
