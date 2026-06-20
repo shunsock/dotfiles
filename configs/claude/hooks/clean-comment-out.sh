@@ -8,9 +8,7 @@
 # additionalContext による注入は会話へ文章を追加するだけで、ツール実行を
 # 強制しない。そのためメッセージは明示的な指示で書く。
 #
-# 注入は hookSpecificOutput.additionalContext で行う。旧実装は存在しない
-# "decision": "notify" を返しており、Claude Code から黙って無視されていた
-# (notify という decision は hook 仕様にそもそも存在しない)。
+# 注入は hookSpecificOutput.additionalContext で行う。
 # see: https://code.claude.com/docs/en/hooks#posttooluse-decision-control
 #
 # 非ソースファイル (設定 / ドキュメント / データ) はスキップする。コメント整理は

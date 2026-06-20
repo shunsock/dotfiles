@@ -9,9 +9,7 @@
 # 強制しない。そのため、Claude が即座に行動する確度を上げるよう、メッセージは
 # 明示的かつ段階的な手順で書く。
 #
-# 注入は hookSpecificOutput.additionalContext で行う。旧実装は存在しない
-# "decision": "notify" を返しており、Claude Code から黙って無視されていた
-# (notify という decision は hook 仕様にそもそも存在しない)。
+# 注入は hookSpecificOutput.additionalContext で行う。
 # see: https://code.claude.com/docs/en/hooks#posttooluse-decision-control
 
 set -euo pipefail

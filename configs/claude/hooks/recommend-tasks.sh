@@ -5,8 +5,6 @@
 # 注入は hookSpecificOutput.additionalContext で行う。これは exit 0 時に
 # PreToolUse が解釈する唯一の「非ブロッキングなコンテキスト注入」フィールドで、
 # ツール実行を止めずに Claude へ文章を届ける。
-# 旧実装は存在しない "decision": "notify" を返しており、Claude Code から
-# 黙って無視されていた (notify という decision は仕様上どのイベントにも無い)。
 # see: https://code.claude.com/docs/en/hooks#pretooluse-decision-control
 
 set -euo pipefail
