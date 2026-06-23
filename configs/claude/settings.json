@@ -73,7 +73,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.claude/hooks/recommend_tasks.sh"
+            "command": "$HOME/.claude/hooks/require_tasks.sh"
           }
         ]
       }
