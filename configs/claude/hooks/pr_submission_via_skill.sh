@@ -37,6 +37,6 @@ jq -n '{
   "hookSpecificOutput": {
     "hookEventName": "PreToolUse",
     "permissionDecision": "deny",
-    "permissionDecisionReason": "Direct `gh pr create` is not allowed. Use the submit__pull_request skill instead, which generates a narrative-style PR description (概要, 背景, 課題, 目標, 採用手法, 変更箇所, 妥協と制限, 検証方法, 確認事項, 参考文献) and then monitors CI automatically.\n\nExecute the submit__pull_request skill now to create this PR with a proper narrative description."
+    "permissionDecisionReason": "`gh pr create` の直接実行は禁止されています。代わりに submit__pull_request スキルを使用してください。このスキルはナラティブ型の PR 説明文（概要・背景・課題・目標・採用手法・変更箇所・妥協と制限・検証方法・確認事項・参考文献）を生成し、その後 CI を自動で監視します。\n\nいま submit__pull_request スキルを実行し、適切なナラティブ説明文付きでこの PR を作成してください。"
   }
 }'
