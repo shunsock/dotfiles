@@ -6,11 +6,16 @@
 # ハードゲート。以前は additionalContext による推奨だったが、非ブロッキング
 # ゆえに無視できてしまうため、permissionDecision: deny へ切り替えた。
 #
-# Task 有無の判定は $HOME/.claude/tasks/<session_id>/.highwatermark を見る。
-# この環境では Task は per-session の JSON ファイルとしてではなく、ロックと
-# 採番ハイウォーターマーク (.highwatermark) のみがこのディレクトリに置かれる。
-# .highwatermark は割り当て済み Task ID の最大値で、1 つでも TaskCreate すると
-# 1 以上になり、Task 未作成のセッションではディレクトリ自体が作られない。
+# Task 有無の判定は $HOME/.claude/tasks/<session_id> ディレクトリの存在で行う。
+# このディレクトリは最初の TaskCreate と同時刻 (秒単位一致) に生成され、Task を
+# 一度も作っていないセッションでは作られない。
+#
+# 当初は中の .highwatermark (割り当て済み Task ID の最大値) を読み >= 1 を要求して
+# いたが、.highwatermark は TaskCreate に同期して書かれず、観測した環境では
+# セッション中ずっと出現しなかった。一方で各 Task は <id>.json として TaskCreate と
+# 同期生成される。.highwatermark に依存すると TaskCreate 済みでも deny され続け、
+# モデルが Bash ヒアドキュメントでゲートを迂回する事象が起きた。そのため判定を
+# ディレクトリの存在 (= TaskCreate が一度でも走った同期シグナル) へ変更した。
 # session_id を得る環境変数は無いため、ペイロード stdin が唯一の取得元である。
 # see: https://code.claude.com/docs/en/hooks#pretooluse-decision-control
 
@@ -35,14 +40,9 @@ case "$file_path" in
   */.claude/plans/*) exit 0 ;;
 esac
 
-# このセッションで 1 つでも Task が採番されていれば (.highwatermark >= 1) 許可。
-highwatermark_file="$HOME/.claude/tasks/$session_id/.highwatermark"
-if [[ -f "$highwatermark_file" ]]; then
-  highwatermark="$(cat "$highwatermark_file" 2>/dev/null || echo 0)"
-  if [[ "$highwatermark" =~ ^[0-9]+$ ]] && (( highwatermark >= 1 )); then
-    exit 0
-  fi
-fi
+# このセッションで 1 つでも TaskCreate されていれば tasks ディレクトリが存在する。
+tasks_dir="$HOME/.claude/tasks/$session_id"
+[[ -d "$tasks_dir" ]] && exit 0
 
 # Task が 1 つも無い — ブロックする。
 jq -n '{
