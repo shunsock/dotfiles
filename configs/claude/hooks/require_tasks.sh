@@ -1,21 +1,20 @@
 #!/bin/bash
 # require_tasks.sh - Claude Code 用 PreToolUse hook (Write|Edit)
 #
-# セッションに Task が 1 つも無い状態での Write/Edit を deny でブロックする。
-# 「編集の前に必ず TaskCreate で作業を分解する」という規約を強制するための
-# ハードゲート。以前は additionalContext による推奨だったが、非ブロッキング
-# ゆえに無視できてしまうため、permissionDecision: deny へ切り替えた。
+# in_progress な Task が 1 つも無い状態での Write/Edit を deny でブロックする。
+# 「編集を始める前に、その作業を担う Task を in_progress にする」という規約を
+# 強制するハードゲート。これにより「捨て Task を 1 つ作れば以降ずっと編集し放題」
+# という抜け穴を塞ぐ — 編集を続けるには常に in_progress な Task が要る。
 #
-# Task 有無の判定は $HOME/.claude/tasks/<session_id> ディレクトリの存在で行う。
-# このディレクトリは最初の TaskCreate と同時刻 (秒単位一致) に生成され、Task を
-# 一度も作っていないセッションでは作られない。
+# 判定は $HOME/.claude/tasks/<session_id>/<id>.json の .status を直接読む。
+# 実機検証の結果、アクティブセッション中は以下が成り立つ:
+#   - TaskCreate が <id>.json を同期生成し status="pending" を書く
+#   - TaskUpdate が同 json の .status を同期更新する (in_progress / completed)
+#   - status="deleted" にすると json ごと削除される
+# よって編集の瞬間の「現在 in_progress な Task」をディスクから確実に判定できる。
 #
-# 当初は中の .highwatermark (割り当て済み Task ID の最大値) を読み >= 1 を要求して
-# いたが、.highwatermark は TaskCreate に同期して書かれず、観測した環境では
-# セッション中ずっと出現しなかった。一方で各 Task は <id>.json として TaskCreate と
-# 同期生成される。.highwatermark に依存すると TaskCreate 済みでも deny され続け、
-# モデルが Bash ヒアドキュメントでゲートを迂回する事象が起きた。そのため判定を
-# ディレクトリの存在 (= TaskCreate が一度でも走った同期シグナル) へ変更した。
+# 過去に試した .highwatermark (割り当て済み Task ID の最大値) は、アクティブ
+# セッション中は書かれず終了時に遅延生成されると判明したため依存しない。
 # session_id を得る環境変数は無いため、ペイロード stdin が唯一の取得元である。
 # see: https://code.claude.com/docs/en/hooks#pretooluse-decision-control
 
@@ -40,15 +39,21 @@ case "$file_path" in
   */.claude/plans/*) exit 0 ;;
 esac
 
-# このセッションで 1 つでも TaskCreate されていれば tasks ディレクトリが存在する。
+# 現在 in_progress な Task が 1 つでもあれば許可する。
 tasks_dir="$HOME/.claude/tasks/$session_id"
-[[ -d "$tasks_dir" ]] && exit 0
+if [[ -d "$tasks_dir" ]]; then
+  for task_json in "$tasks_dir"/*.json; do
+    [[ -f "$task_json" ]] || continue
+    status="$(jq -r '.status // empty' "$task_json" 2>/dev/null)"
+    [[ "$status" == "in_progress" ]] && exit 0
+  done
+fi
 
-# Task が 1 つも無い — ブロックする。
+# in_progress な Task が無い — ブロックする。
 jq -n '{
   "hookSpecificOutput": {
     "hookEventName": "PreToolUse",
     "permissionDecision": "deny",
-    "permissionDecisionReason": "TaskCreate なしの Write/Edit は禁止されている。\n\nファイルを編集する前に、必ず TaskCreate で作業を追跡可能なステップへ分解しなければならない。タスク未作成のままの編集は規約違反であり、この編集はブロックされた。\n\n1. TaskCreate で作業を分解する\n2. 各ステップの開始前に in_progress へ更新する\n3. 完了したら completed へ更新する\n\nいま TaskCreate を実行してから、編集をやり直すこと。"
+    "permissionDecisionReason": "in_progress な Task が無い状態での Write/Edit は禁止されている。\n\nファイルを編集する前に、その編集を担う Task を必ず in_progress にしなければならない。in_progress な Task が 1 つも無いままの編集は規約違反であり、この編集はブロックされた。\n\n1. まだ Task が無ければ TaskCreate で作業を分解する\n2. これから着手するステップの Task を TaskUpdate で in_progress にする\n3. そのステップが完了したら completed にする\n\nいま該当 Task を in_progress にしてから、編集をやり直すこと。"
   }
 }'

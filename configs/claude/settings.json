@@ -97,6 +97,16 @@
           }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/block_stop_on_open_tasks.sh"
+          }
+        ]
+      }
     ]
   },
   "extraKnownMarketplaces": {
