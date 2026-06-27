@@ -64,11 +64,11 @@
           },
           {
             "type": "command",
-            "command": "$HOME/.claude/hooks/pr_submission_via_skill.sh"
+            "command": "dotnet run $HOME/.claude/hooks/pr_submission_via_skill.cs"
           },
           {
             "type": "command",
-            "command": "$HOME/.claude/hooks/quality_assurance_via_skill.sh"
+            "command": "dotnet run $HOME/.claude/hooks/quality_assurance_via_skill.cs"
           }
         ]
       },
@@ -77,7 +77,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.claude/hooks/require_tasks.sh"
+            "command": "dotnet run $HOME/.claude/hooks/require_tasks.cs"
           }
         ]
       }
@@ -88,7 +88,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.claude/hooks/trigger_ci_fix.sh"
+            "command": "dotnet run $HOME/.claude/hooks/trigger_ci_fix.cs"
           }
         ]
       },
@@ -97,7 +97,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.claude/hooks/clean_comment_out.sh"
+            "command": "dotnet run $HOME/.claude/hooks/clean_comment_out.cs"
           }
         ]
       }
@@ -107,7 +107,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.claude/hooks/block_stop_on_open_tasks.sh"
+            "command": "dotnet run $HOME/.claude/hooks/block_stop_on_open_tasks.cs"
           }
         ]
       }

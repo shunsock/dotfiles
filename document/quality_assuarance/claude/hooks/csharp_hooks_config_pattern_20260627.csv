@@ -1,0 +1,12 @@
+pattern_id;config_item;before;after;source;notes;update_date
+CFG-01;PreToolUse Bash hook (pr_submission);$HOME/.claude/hooks/pr_submission_via_skill.sh;dotnet run $HOME/.claude/hooks/pr_submission_via_skill.cs;configs/claude/settings.json;実行方式を shell から file-based app へ;2026-06-27
+CFG-02;PreToolUse Bash hook (quality_assurance);$HOME/.claude/hooks/quality_assurance_via_skill.sh;dotnet run $HOME/.claude/hooks/quality_assurance_via_skill.cs;configs/claude/settings.json;同上;2026-06-27
+CFG-03;PreToolUse Write|Edit hook (require_tasks);$HOME/.claude/hooks/require_tasks.sh;dotnet run $HOME/.claude/hooks/require_tasks.cs;configs/claude/settings.json;同上;2026-06-27
+CFG-04;PostToolUse Bash hook (trigger_ci_fix);$HOME/.claude/hooks/trigger_ci_fix.sh;dotnet run $HOME/.claude/hooks/trigger_ci_fix.cs;configs/claude/settings.json;同上;2026-06-27
+CFG-05;PostToolUse Write|Edit hook (clean_comment_out);$HOME/.claude/hooks/clean_comment_out.sh;dotnet run $HOME/.claude/hooks/clean_comment_out.cs;configs/claude/settings.json;同上;2026-06-27
+CFG-06;Stop hook (block_stop_on_open_tasks);$HOME/.claude/hooks/block_stop_on_open_tasks.sh;dotnet run $HOME/.claude/hooks/block_stop_on_open_tasks.cs;configs/claude/settings.json;同上;2026-06-27
+CFG-07;darwin 配布 install mode (6 hooks);-Dm755 *.sh;-Dm644 *.cs;nix-darwin/module/claude.nix;dotnet run 経由のため実行ビット不要;2026-06-27
+CFG-08;nixos 配布 install mode (6 hooks);-Dm755 *.sh;-Dm644 *.cs;nix-os/modules/claude.nix;同上;2026-06-27
+CFG-09;移植元スクリプト (6 本);configs/claude/hooks/*.sh (存在);削除;git rm;孤立したため削除 履歴で復元可;2026-06-27
+CFG-10;SKILL.md 内のフック参照;pr_submission_via_skill.sh;pr_submission_via_skill.cs;configs/claude/skills/submit__pull_request/SKILL.md;ドキュメント参照を実体へ追従;2026-06-27
+CFG-11;ランタイム依存;bash + jq + git;dotnet SDK + git;configs/claude/hooks/*.cs;PATH に dotnet が必要;2026-06-27

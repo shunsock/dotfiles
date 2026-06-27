@@ -38,11 +38,11 @@
   home.activation.claudeHooks = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run mkdir -p $HOME/.claude/hooks
     run install -Dm644 ${../../configs/claude/hooks/validate_bash.cs} $HOME/.claude/hooks/validate_bash.cs
-    run install -Dm755 ${../../configs/claude/hooks/pr_submission_via_skill.sh} $HOME/.claude/hooks/pr_submission_via_skill.sh
-    run install -Dm755 ${../../configs/claude/hooks/trigger_ci_fix.sh} $HOME/.claude/hooks/trigger_ci_fix.sh
-    run install -Dm755 ${../../configs/claude/hooks/require_tasks.sh} $HOME/.claude/hooks/require_tasks.sh
-    run install -Dm755 ${../../configs/claude/hooks/block_stop_on_open_tasks.sh} $HOME/.claude/hooks/block_stop_on_open_tasks.sh
-    run install -Dm755 ${../../configs/claude/hooks/clean_comment_out.sh} $HOME/.claude/hooks/clean_comment_out.sh
-    run install -Dm755 ${../../configs/claude/hooks/quality_assurance_via_skill.sh} $HOME/.claude/hooks/quality_assurance_via_skill.sh
+    run install -Dm644 ${../../configs/claude/hooks/pr_submission_via_skill.cs} $HOME/.claude/hooks/pr_submission_via_skill.cs
+    run install -Dm644 ${../../configs/claude/hooks/trigger_ci_fix.cs} $HOME/.claude/hooks/trigger_ci_fix.cs
+    run install -Dm644 ${../../configs/claude/hooks/require_tasks.cs} $HOME/.claude/hooks/require_tasks.cs
+    run install -Dm644 ${../../configs/claude/hooks/block_stop_on_open_tasks.cs} $HOME/.claude/hooks/block_stop_on_open_tasks.cs
+    run install -Dm644 ${../../configs/claude/hooks/clean_comment_out.cs} $HOME/.claude/hooks/clean_comment_out.cs
+    run install -Dm644 ${../../configs/claude/hooks/quality_assurance_via_skill.cs} $HOME/.claude/hooks/quality_assurance_via_skill.cs
   '';
 }

@@ -1,0 +1,24 @@
+requirement_id;requirement;classification;test_cases;notes;update_date
+REQ-PR-01;gh pr create を deny し submit__pull_request へ誘導する;testable;TC-PR-01;移植元 .sh と一致;2026-06-27
+REQ-PR-02;バイパスマーカー付き gh pr create は素通りする;testable;TC-PR-02;無限ループ防止;2026-06-27
+REQ-QA-01;バックエンドソース staged で git commit を deny する;testable;TC-QA-01;Git.StagedFiles 経由;2026-06-27
+REQ-QA-02;commit-graph 等を commit に誤マッチさせない;testable;TC-QA-02;語境界の同値性;2026-06-27
+REQ-QA-03;バイパスマーカー付き commit は素通りする;testable;TC-QA-03;無限ループ防止;2026-06-27
+REQ-QA-04;staged にバックエンドが無ければ素通りする (git 失敗時も安全側);testable;TC-QA-04;空集合フォールバック;2026-06-27
+REQ-RT-01;in_progress Task が無い Write/Edit を deny する;testable;TC-RT-01;Task 規約のハードゲート;2026-06-27
+REQ-RT-02;in_progress Task が有れば素通りする;testable;TC-RT-02;;2026-06-27
+REQ-RT-03;.claude/plans 配下は Task 不在でも素通りする;testable;TC-RT-03;plan モードを阻害しない;2026-06-27
+REQ-RT-04;session_id 欠損時は安全側で素通りする;testable;TC-RT-04;コードパリティで確認;2026-06-27
+REQ-BS-01;未完了 Task 残存時に停止を block する;testable;TC-BS-01;Stop は decision:block スキーマ;2026-06-27
+REQ-BS-02;stop_hook_active=true は素通りする;testable;TC-BS-02;無限ループ防止;2026-06-27
+REQ-BS-03;tasks dir 不在時は素通りする;testable;TC-BS-03;;2026-06-27
+REQ-CC-01;ソース拡張子の編集で整理指示を注入する;testable;TC-CC-01;additionalContext 注入;2026-06-27
+REQ-CC-02;非ソース (.md .json 等) は素通りする;testable;TC-CC-02;ノイズ抑制;2026-06-27
+REQ-TC-01;git push 成功後に CI 監視指示を注入する;testable;TC-TC-01;additionalContext 注入;2026-06-27
+REQ-TC-02;exit_code 非 0 の push では注入しない;testable;TC-TC-02;exit_code/exitCode 双方を許容;2026-06-27
+REQ-TC-03;gh pr create を git push より優先判定する;testable;TC-TC-03;複合コマンド対策;2026-06-27
+REQ-MG-01;6 フックすべてが旧 .sh と挙動同値;testable;TC-MG-01;移行トラック中核;2026-06-27
+REQ-MG-02;追加 6 .cs が dotnet build で通る;testable;TC-MG-02;CI 既存 glob でカバー;2026-06-27
+REQ-MG-03;settings.json のフックが dotnet run で起動する;deferred;TC-MG-03;実機 task apply 後に検証 (本セッションは sudo 不可);2026-06-27
+REQ-MG-04;nix-os 構成での .cs 配布評価;deferred;TC-MG-04;x86_64-linux 環境が無く本セッション未ビルド;2026-06-27
+REQ-MG-05;dotnet 不在環境でのフック挙動;impossible;-;dotnet 必須が前提。不在は構成エラーでテスト対象外;2026-06-27
