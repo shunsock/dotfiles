@@ -23,17 +23,24 @@ using System.Text.Json.Serialization;
 
 internal static class SourceFile
 {
-    // HACK:
-    // clean_comment_out.cs と拡張子集合を重複定義している。file-based app は単一
-    // ファイルで動く設計 (共有モジュールを持てない) ための意図的な重複であり、直さない。
-    // 片方の拡張子を変えたら、もう片方も必ず揃えること。
-    private static readonly HashSet<string> Extensions = new(StringComparer.OrdinalIgnoreCase)
+    // SEE: 対象拡張子は skills/reference/comment_out_skills_target/extensions.csv に
+    // 切り出し、clean_comment_out.cs と単一の定義を共有する (拡張子の二重管理を避ける)。
+    private static readonly HashSet<string> Extensions = LoadExtensions();
+
+    private static HashSet<string> LoadExtensions()
     {
-        ".rs", ".go", ".py", ".ts", ".tsx", ".js", ".jsx", ".java", ".kt", ".kts",
-        ".c", ".h", ".cpp", ".cc", ".hpp", ".cs", ".rb", ".php", ".swift",
-        ".scala", ".sh", ".bash", ".zsh", ".lua", ".ex", ".exs", ".hs",
-        ".ml", ".dart", ".nix",
-    };
+        var home = Environment.GetEnvironmentVariable("HOME") ?? "";
+        var csv = Path.Combine(
+            home, ".claude", "skills", "reference", "comment_out_skills_target", "extensions.csv");
+        var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        if (!File.Exists(csv)) return set;
+        foreach (var line in File.ReadLines(csv))
+        {
+            var ext = line.Trim();
+            if (ext.StartsWith('.')) set.Add(ext);
+        }
+        return set;
+    }
 
     public static bool IsSource(string filePath) => Extensions.Contains(Path.GetExtension(filePath));
 }
