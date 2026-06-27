@@ -5,10 +5,10 @@
 // これは「app.cs 単体で動く」ことを .NET 採用の主目的に置いた設計判断による。
 // 起動コストは実測 ~150ms/回 (bash+jq の約4倍) だが許容している。
 //
-// ルールはデータとして宣言する。新しいルールを足すときは CommandRules か
-// PatternRules に 1 要素を追加するだけでよく、ロジックは変更しない。
-//   - CommandRules : コマンド名。語境界 (\b) を自動で前後に付けて照合する。
-//   - PatternRules : 正規表現をそのまま照合する。
+// ルールはデータとして宣言する。新しいルールを足すときは Rules に 1 要素を
+// 追加するだけでよく、ロジックは変更しない。
+//   - Command(name, reason)  : コマンド名。語境界 (\b) を自動で前後に付けて照合する。
+//   - Pattern(regex, reason) : 正規表現をそのまま照合する。
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -16,20 +16,22 @@ using System.Text.RegularExpressions;
 
 internal static class ValidateBash
 {
-    private static readonly (string Command, string Reason)[] CommandRules =
-    {
-        ("awk", "awk is prohibited. Use the Edit tool or perl for text processing."),
-        ("sed", "sed is prohibited. Use the Edit tool or perl for text processing."),
-        ("python", "python is prohibited. Use uv for running python"),
-        ("uvx", "uvx is prohibited. Use tools via nix"),
-        ("npx", "npx is prohibited. Use tools via nix"),
-        ("bunx", "bunx is prohibited. Use tools via nix"),
-    };
+    private sealed record Rule(Regex Matcher, string Reason);
 
-    private static readonly (string Pattern, string Reason)[] PatternRules =
+    private static Rule Command(string name, string reason) => new(new Regex($@"\b{name}\b"), reason);
+
+    private static Rule Pattern(string regex, string reason) => new(new Regex(regex), reason);
+
+    private static readonly Rule[] Rules =
     {
-        (@"\bgit\s+add\s+(-A|--all|\.)",
-         "git add -A/--all/. is prohibited. Specify file names explicitly to avoid staging unintended files."),
+        Command("awk", "awk is prohibited. Use the Edit tool or perl for text processing."),
+        Command("sed", "sed is prohibited. Use the Edit tool or perl for text processing."),
+        Command("python", "python is prohibited. Use uv for running python"),
+        Command("uvx", "uvx is prohibited. Use tools via nix"),
+        Command("npx", "npx is prohibited. Use tools via nix"),
+        Command("bunx", "bunx is prohibited. Use tools via nix"),
+        Pattern(@"\bgit\s+add\s+(-A|--all|\.)",
+            "git add -A/--all/. is prohibited. Specify file names explicitly to avoid staging unintended files."),
     };
 
     private static async Task<int> Main()
@@ -41,14 +43,9 @@ internal static class ValidateBash
         var command = hook.ToolInput?.Command ?? "";
         if (command.Length == 0) return 0;
 
-        foreach (var (name, reason) in CommandRules)
+        foreach (var rule in Rules)
         {
-            if (Regex.IsMatch(command, $@"\b{name}\b")) return Reject(reason);
-        }
-
-        foreach (var (pattern, reason) in PatternRules)
-        {
-            if (Regex.IsMatch(command, pattern)) return Reject(reason);
+            if (rule.Matcher.IsMatch(command)) return Reject(rule.Reason);
         }
 
         return 0;
