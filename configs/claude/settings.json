@@ -60,7 +60,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.claude/hooks/validate_bash.sh"
+            "command": "dotnet run $HOME/.claude/hooks/validate_bash.cs"
           },
           {
             "type": "command",

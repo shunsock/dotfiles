@@ -1,0 +1,6 @@
+pattern_id;config_item;before;after;source;notes;update_date
+CFG-01;PreToolUse Bash hook command;$HOME/.claude/hooks/validate_bash.sh;dotnet run $HOME/.claude/hooks/validate_bash.cs;configs/claude/settings.json;実行方式を shell から file-based app へ;2026-06-27
+CFG-02;darwin 配布 install mode;-Dm755 validate_bash.sh;-Dm644 validate_bash.cs;nix-darwin/module/claude.nix;dotnet run 経由のため実行ビット不要;2026-06-27
+CFG-03;nixos 配布 install mode;-Dm755 validate_bash.sh;-Dm644 validate_bash.cs;nix-os/modules/claude.nix;同上;2026-06-27
+CFG-04;移植元スクリプト;configs/claude/hooks/validate_bash.sh (存在);削除;git rm;孤立したため削除 履歴で復元可;2026-06-27
+CFG-05;ランタイム依存;bash + jq;dotnet SDK;configs/claude/hooks/validate_bash.cs;PATH に dotnet が必要;2026-06-27

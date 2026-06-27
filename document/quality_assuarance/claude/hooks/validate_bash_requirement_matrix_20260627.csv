@@ -1,0 +1,14 @@
+requirement_id;requirement;classification;test_cases;notes;update_date
+REQ-VB-01;非 Bash ツールは素通りする (exit 0 無出力);testable;TC-01;tool_name 判定の早期 return;2026-06-27
+REQ-VB-02;command 欠損/空は素通りする;testable;TC-02;null 安全 (?? 演算子);2026-06-27
+REQ-VB-03;COMMAND_RULES (awk sed python uvx npx bunx) を理由付きで reject;testable;TC-03,TC-04,TC-05,TC-06;理由文も .sh と一致;2026-06-27
+REQ-VB-04;語境界 \b により python3 等の部分一致を除外;testable;TC-07;移行同値性の中核;2026-06-27
+REQ-VB-05;PATTERN_RULES (git add -A/--all/.) を reject;testable;TC-08;セキュリティ観点;2026-06-27
+REQ-VB-06;git add <file> は素通りする;testable;TC-09;過剰マッチ防止;2026-06-27
+REQ-VB-07;reject 出力が JSON {decision reason} として解釈可能;testable;TC-10;source-gen シリアライズ;2026-06-27
+REQ-VB-08;旧 .sh と全ケースで挙動同値;testable;TC-11;parity.sh pass=14;2026-06-27
+REQ-VB-09;未追跡 .cs は flake ソースに含まれない (運用制約);testable;TC-12;git add 必須の運用注意;2026-06-27
+REQ-VB-10;.cs 配布で darwin 構成が評価できる;testable;TC-13;task validate 成功;2026-06-27
+REQ-VB-11;settings.json のフックが dotnet run で起動する;deferred;TC-14;実機 task apply 後に検証 (本セッションでは sudo 不可);2026-06-27
+REQ-VB-12;nix-os 構成での .cs 配布評価;deferred;-;x86_64-linux 環境が無く本セッションで未ビルド;2026-06-27
+REQ-VB-13;dotnet 不在環境でのフック挙動;impossible;-;dotnet 必須が前提。不在は構成エラーでありテスト対象外;2026-06-27
