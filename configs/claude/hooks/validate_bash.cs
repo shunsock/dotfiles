@@ -14,45 +14,51 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
-(string Command, string Reason)[] commandRules =
+internal static class ValidateBash
 {
-    ("awk", "awk is prohibited. Use the Edit tool or perl for text processing."),
-    ("sed", "sed is prohibited. Use the Edit tool or perl for text processing."),
-    ("python", "python is prohibited. Use uv for running python"),
-    ("uvx", "uvx is prohibited. Use tools via nix"),
-    ("npx", "npx is prohibited. Use tools via nix"),
-    ("bunx", "bunx is prohibited. Use tools via nix"),
-};
+    private static readonly (string Command, string Reason)[] CommandRules =
+    {
+        ("awk", "awk is prohibited. Use the Edit tool or perl for text processing."),
+        ("sed", "sed is prohibited. Use the Edit tool or perl for text processing."),
+        ("python", "python is prohibited. Use uv for running python"),
+        ("uvx", "uvx is prohibited. Use tools via nix"),
+        ("npx", "npx is prohibited. Use tools via nix"),
+        ("bunx", "bunx is prohibited. Use tools via nix"),
+    };
 
-(string Pattern, string Reason)[] patternRules =
-{
-    (@"\bgit\s+add\s+(-A|--all|\.)",
-     "git add -A/--all/. is prohibited. Specify file names explicitly to avoid staging unintended files."),
-};
+    private static readonly (string Pattern, string Reason)[] PatternRules =
+    {
+        (@"\bgit\s+add\s+(-A|--all|\.)",
+         "git add -A/--all/. is prohibited. Specify file names explicitly to avoid staging unintended files."),
+    };
 
-var input = await Console.In.ReadToEndAsync();
-var hook = JsonSerializer.Deserialize(input, HookJson.Default.HookInput);
-if (hook?.ToolName != "Bash") return 0;
+    private static async Task<int> Main()
+    {
+        var input = await Console.In.ReadToEndAsync();
+        var hook = JsonSerializer.Deserialize(input, HookJson.Default.HookInput);
+        if (hook?.ToolName != "Bash") return 0;
 
-var command = hook.ToolInput?.Command ?? "";
-if (command.Length == 0) return 0;
+        var command = hook.ToolInput?.Command ?? "";
+        if (command.Length == 0) return 0;
 
-foreach (var (name, reason) in commandRules)
-{
-    if (Regex.IsMatch(command, $@"\b{name}\b")) return Reject(reason);
-}
+        foreach (var (name, reason) in CommandRules)
+        {
+            if (Regex.IsMatch(command, $@"\b{name}\b")) return Reject(reason);
+        }
 
-foreach (var (pattern, reason) in patternRules)
-{
-    if (Regex.IsMatch(command, pattern)) return Reject(reason);
-}
+        foreach (var (pattern, reason) in PatternRules)
+        {
+            if (Regex.IsMatch(command, pattern)) return Reject(reason);
+        }
 
-return 0;
+        return 0;
+    }
 
-int Reject(string reason)
-{
-    Console.WriteLine(JsonSerializer.Serialize(new Decision("reject", reason), HookJson.Default.Decision));
-    return 0;
+    private static int Reject(string reason)
+    {
+        Console.WriteLine(JsonSerializer.Serialize(new Decision("reject", reason), HookJson.Default.Decision));
+        return 0;
+    }
 }
 
 record HookInput(
