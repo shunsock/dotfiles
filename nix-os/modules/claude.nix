@@ -33,5 +33,6 @@
     run install -Dm755 ${../../configs/claude/hooks/require_tasks.sh} $HOME/.claude/hooks/require_tasks.sh
     run install -Dm755 ${../../configs/claude/hooks/block_stop_on_open_tasks.sh} $HOME/.claude/hooks/block_stop_on_open_tasks.sh
     run install -Dm755 ${../../configs/claude/hooks/clean_comment_out.sh} $HOME/.claude/hooks/clean_comment_out.sh
+    run install -Dm755 ${../../configs/claude/hooks/quality_assurance_via_skill.sh} $HOME/.claude/hooks/quality_assurance_via_skill.sh
   '';
 }
