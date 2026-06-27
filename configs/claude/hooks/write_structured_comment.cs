@@ -16,13 +16,17 @@
 //
 // 非ソースファイル (設定 / ドキュメント / データ) はスキップする。マーカー判断は
 // プログラミング言語に適用され、すべての Write/Edit (例: markdown, json) で発火させると
-// ノイズになるため。clean_comment_out.cs と同一の対象拡張子を維持する。
+// ノイズになるため。
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 internal static class SourceFile
 {
+    // HACK:
+    // clean_comment_out.cs と拡張子集合を重複定義している。file-based app は単一
+    // ファイルで動く設計 (共有モジュールを持てない) ための意図的な重複であり、直さない。
+    // 片方の拡張子を変えたら、もう片方も必ず揃えること。
     private static readonly HashSet<string> Extensions = new(StringComparer.OrdinalIgnoreCase)
     {
         ".rs", ".go", ".py", ".ts", ".tsx", ".js", ".jsx", ".java", ".kt", ".kts",

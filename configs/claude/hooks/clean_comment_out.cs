@@ -21,6 +21,10 @@ using System.Text.Json.Serialization;
 
 internal static class SourceFile
 {
+    // HACK:
+    // write_structured_comment.cs と拡張子集合を重複定義している。file-based app は単一
+    // ファイルで動く設計 (共有モジュールを持てない) ための意図的な重複であり、直さない。
+    // 片方の拡張子を変えたら、もう片方も必ず揃えること。
     private static readonly HashSet<string> Extensions = new(StringComparer.OrdinalIgnoreCase)
     {
         ".rs", ".go", ".py", ".ts", ".tsx", ".js", ".jsx", ".java", ".kt", ".kts",
