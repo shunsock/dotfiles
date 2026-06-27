@@ -66,7 +66,10 @@ internal static class Program
         var reason = validator.FindViolation(command);
         if (reason is null) return 0;
 
-        var decision = new Decision("reject", reason);
+        // 終了コードでは確実にブロックできない (exit 1 等は非ブロッキング扱い)。
+        // PreToolUse は permissionDecision: "deny" の JSON 出力でのみツール実行を拒否する。
+        // see: https://code.claude.com/docs/en/hooks
+        var decision = new Decision(new HookSpecificOutput("PreToolUse", "deny", reason));
         Console.WriteLine(JsonSerializer.Serialize(decision, HookJson.Default.Decision));
         return 0;
     }
@@ -79,8 +82,12 @@ record HookInput(
 record ToolInput([property: JsonPropertyName("command")] string? Command);
 
 record Decision(
-    [property: JsonPropertyName("decision")] string DecisionKind,
-    [property: JsonPropertyName("reason")] string Reason);
+    [property: JsonPropertyName("hookSpecificOutput")] HookSpecificOutput HookSpecificOutput);
+
+record HookSpecificOutput(
+    [property: JsonPropertyName("hookEventName")] string HookEventName,
+    [property: JsonPropertyName("permissionDecision")] string PermissionDecision,
+    [property: JsonPropertyName("permissionDecisionReason")] string PermissionDecisionReason);
 
 [JsonSourceGenerationOptions(DefaultIgnoreCondition = JsonIgnoreCondition.Never)]
 [JsonSerializable(typeof(HookInput))]
