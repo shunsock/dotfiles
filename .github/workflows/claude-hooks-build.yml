@@ -1,0 +1,34 @@
+name: claude_hooks_build
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "configs/claude/hooks/**.cs"
+      - ".github/workflows/claude-hooks-build.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      # フックは file-based app (単一 .cs) であり Nix はこれを配布するだけ。
+      # buildable 確認はコンパイルが通るかであり、各 .cs を dotnet build する。
+      - name: Build file-based hook apps
+        run: |
+          for f in configs/claude/hooks/*.cs; do
+            echo "::group::build $f"
+            dotnet build "$f"
+            echo "::endgroup::"
+          done
