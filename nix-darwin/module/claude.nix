@@ -37,7 +37,7 @@
   # hook スクリプトをコピーとして配置（実行権限が必要）
   home.activation.claudeHooks = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run mkdir -p $HOME/.claude/hooks
-    run install -Dm755 ${../../configs/claude/hooks/validate_bash.sh} $HOME/.claude/hooks/validate_bash.sh
+    run install -Dm644 ${../../configs/claude/hooks/validate_bash.cs} $HOME/.claude/hooks/validate_bash.cs
     run install -Dm755 ${../../configs/claude/hooks/pr_submission_via_skill.sh} $HOME/.claude/hooks/pr_submission_via_skill.sh
     run install -Dm755 ${../../configs/claude/hooks/trigger_ci_fix.sh} $HOME/.claude/hooks/trigger_ci_fix.sh
     run install -Dm755 ${../../configs/claude/hooks/require_tasks.sh} $HOME/.claude/hooks/require_tasks.sh
