@@ -28,7 +28,7 @@ whitelist として開ける。
 
 | marker | これを書く条件 |
 |---|---|
-| `SEE` | 外部権威 (issue / RFC / 仕様 / commit / ベンダー doc) へのポインタ |
+| `SEE` | 外部権威 (issue / RFC / 仕様 / commit / ベンダー doc / 関連ファイル) へのポインタ。内容は**ファイルパスまたは URL のみ**とし、散文を付けない |
 | `CONSTRAINT` | 他システムの実行時挙動による制約 (レート制限・ベンダーバグ 等) |
 | `COMPAT` | 旧クライアント・旧データ・外部バージョンとの互換のための形 |
 | `SAFETY` | `unsafe` の健全性根拠 (型で検証不能な、人間が担保する不変条件) |
@@ -49,6 +49,8 @@ whitelist として開ける。
 
 - インライン: `MARKER: content`
 - 複数行: `MARKER:` の次行から本文。本文の各行にコメント記号を付ける。
+- `SEE` の内容はファイルパスまたは URL のみとし、説明の散文を付けない (常にインラインで 1 つ)。
+  パス/URL だけでは伝わらない知識があるなら、それは別マーカーで書くべき知識である。
 
 例 (Rust):
 
@@ -65,7 +67,7 @@ unsafe { slice::from_raw_parts(ptr, len) }
 例 (Python):
 
 ```python
-# SEE: 締め処理の仕様は RFC-1234 §4.2
+# SEE: https://www.rfc-editor.org/rfc/rfc1234#section-4.2
 # TODO: タイムアウトを設定から注入する
 ```
 

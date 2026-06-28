@@ -23,8 +23,7 @@ using System.Text.Json.Serialization;
 
 internal static class SourceFile
 {
-    // SEE: 対象拡張子は skills/reference/comment_out_skills_target/extensions.csv に
-    // 切り出し、clean_comment_out.cs と単一の定義を共有する (拡張子の二重管理を避ける)。
+    // SEE: ~/.claude/skills/reference/comment_out_skills_target/extensions.csv
     private static readonly HashSet<string> Extensions = LoadExtensions();
 
     private static HashSet<string> LoadExtensions()
