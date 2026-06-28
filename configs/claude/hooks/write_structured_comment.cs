@@ -1,22 +1,6 @@
-// write_structured_comment.cs - PostToolUse hook for Claude Code (.NET file-based app)
-// ソースファイルへの Write/Edit の後に、write__structured_comment スキルの実行を促す
-// 必須指示を注入する。デフォルトはコメント 0 とし、コードに表現できない知識
-// (未完の事実と外部世界の事実) のみを共有マーカー語彙から whitelist として書かせる。
-//
-// 発火順は writer -> cleaner。settings.json の Write|Edit matcher で本フックを
-// clean_comment_out.cs より前に登録し、まず構造化マーカーを書いてから掃除を回す。
-// 「write (構造化) -> clean (掃除) で cleaner が no-op になる」品質ゲートの流れによる。
-//
-// 実行は AOT ビルドせず `dotnet run write_structured_comment.cs` で単一ファイルのまま行う。
-// 「app.cs 単体で動く」ことを .NET 採用の主目的に置いた設計判断による。
-//
-// additionalContext による注入は会話へ文章を追加するだけで、ツール実行を強制しない。
-// そのためメッセージは明示的な指示で書く。注入先は hookSpecificOutput.additionalContext。
-// see: https://code.claude.com/docs/en/hooks#posttooluse-decision-control
-//
-// 非ソースファイル (設定 / ドキュメント / データ) はスキップする。マーカー判断は
-// プログラミング言語に適用され、すべての Write/Edit (例: markdown, json) で発火させると
-// ノイズになるため。
+// write_structured_comment.cs - PostToolUse(Write|Edit) フック。ソース編集後に
+// write__structured_comment スキルの実行を促す。
+// SEE: ~/.claude/hooks/README.md
 
 using System.Text.Json;
 using System.Text.Json.Serialization;

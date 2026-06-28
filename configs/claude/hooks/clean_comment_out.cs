@@ -1,20 +1,6 @@
-// clean_comment_out.cs - PostToolUse hook for Claude Code (.NET file-based app)
-// ソースファイルへの Write/Edit の後に、clean__comment_out スキルの実行を促す必須
-// 指示を注入する。意味のないコメントやコメントアウトされたデッドコードを削除させ、
-// 価値あるコメント (Why / 設計判断 / 共有テンプレートのマーカー / 公開仕様) は残させる。
-// 保持マーカー語彙は write_structured_comment.cs と
-// `~/.claude/skills/template/comment_markers.md` を single source of truth として共有する。
-//
-// 実行は AOT ビルドせず `dotnet run clean_comment_out.cs` で単一ファイルのまま行う。
-// 「app.cs 単体で動く」ことを .NET 採用の主目的に置いた設計判断による。
-//
-// additionalContext による注入は会話へ文章を追加するだけで、ツール実行を強制しない。
-// そのためメッセージは明示的な指示で書く。注入先は hookSpecificOutput.additionalContext。
-// see: https://code.claude.com/docs/en/hooks#posttooluse-decision-control
-//
-// 非ソースファイル (設定 / ドキュメント / データ) はスキップする。コメント整理の判断
-// (Why か What か、デッドコード、ドキュメントコメント、マーカー) はプログラミング言語に
-// 適用され、すべての Write/Edit (例: markdown, json) で発火させるとノイズになるため。
+// clean_comment_out.cs - PostToolUse(Write|Edit) フック。ソース編集後に
+// clean__comment_out スキルの実行を促す。
+// SEE: ~/.claude/hooks/README.md
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
