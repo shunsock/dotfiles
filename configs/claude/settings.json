@@ -97,6 +97,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "dotnet run $HOME/.claude/hooks/write_structured_comment.cs"
+          },
+          {
+            "type": "command",
             "command": "dotnet run $HOME/.claude/hooks/clean_comment_out.cs"
           }
         ]

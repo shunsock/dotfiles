@@ -1,5 +1,5 @@
-// clean_comment_out.cs - PostToolUse(Write|Edit) フック。ソース編集後に
-// clean__comment_out スキルの実行を促す。
+// write_structured_comment.cs - PostToolUse(Write|Edit) フック。ソース編集後に
+// write__structured_comment スキルの実行を促す。
 // SEE: ~/.claude/hooks/README.md
 
 using System.Text.Json;
@@ -32,17 +32,16 @@ internal static class Program
 {
     private static string BuildContext(string path) =>
         $"ソースファイルが Write/Edit されました: {path}\n\n" +
-        "[必須アクション] いま変更したファイルに対して、ただちに clean__comment_out スキルを実行しなければならない。" +
-        "省略してはならない。ユーザーへの確認も不要である。\n\n" +
-        "clean__comment_out スキルは、意味のないコメントとコメントアウトされたデッドコードを削除し、" +
-        "価値あるコメントは残す。保持すべきマーカー語彙は write__structured_comment と共有する。いま次を適用すること:\n" +
-        "1. 保持マーカー語彙の single source of truth `~/.claude/skills/template/comment_markers.md` を読み込む。\n" +
-        "2. いま編集したファイルのコメントを洗い出す。\n" +
-        "3. 削除する: コードを見れば自明な内容 (What) を述べただけのコメント、コメントアウトされた古いコード (デッドコード)。\n" +
-        "4. 残す: なぜ (Why) を説明するコメント (設計判断 / 制約 / トレードオフ)、共有テンプレートのマーカー (および legacy XXX)、公開インターフェースのドキュメントコメント。\n" +
-        "5. 迷ったらコメントを残す。\n" +
-        "6. コメントのみを編集する — コードの挙動は変えず、いま変更したファイルだけを対象にする。\n\n" +
-        "いま編集したファイルのコメント整理が完了するまで、他のタスクへ進んではならない。";
+        "[必須アクション] いま変更したファイルに対して、ただちに write__structured_comment スキルを実行しなければならない。" +
+        "これは後続の clean__comment_out より先に行う。省略してはならない。ユーザーへの確認も不要である。\n\n" +
+        "write__structured_comment スキルは、デフォルトをコメント 0 とし、コードに表現できない知識だけを" +
+        "共有マーカー語彙から whitelist として書く。いま次を適用すること:\n" +
+        "1. 語彙・フォーマット・契約の single source of truth `~/.claude/skills/template/comment_markers.md` を読み込む。\n" +
+        "2. いま編集した箇所ごとに「コードへ表現できない知識があるか」を問う。既定の答えは No (コメントを足さない)。\n" +
+        "3. 足すのは whitelist の 7 マーカー (TODO/FIXME/HACK/SEE/CONSTRAINT/COMPAT/SAFETY) に該当するときだけ。正規フォーマット (インライン `MARKER: content` / 複数行) で書く。\n" +
+        "4. プログラム知識は命名・型・構造で、ドメイン知識はドメインモデルで表現する — コメントにしない。一過性の経緯は commit/PR へ。\n" +
+        "5. コメントのみを追加する — コードの挙動は変えず、いま変更したファイルだけを対象にする。\n\n" +
+        "いま編集したファイルへのマーカー記述が完了するまで、他のタスクへ進んではならない。";
 
     private static async Task<int> Main()
     {
