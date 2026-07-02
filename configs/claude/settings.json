@@ -1,5 +1,6 @@
 {
   "env": {
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-opus-4-8",
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "BASH_DEFAULT_TIMEOUT_MS": "180000",
     "MAX_THINKING_TOKENS": "10000",
