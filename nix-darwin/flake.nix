@@ -146,6 +146,24 @@
                 "wezterm"
               ];
             };
+
+            # Docker Desktop (Docker.app) が /opt/homebrew 配下へ張る補完シンボリックリンクは
+            # brews の `docker` formula の link ステップと衝突し、`brew bundle` を失敗させる。
+            # Docker Desktop はこの構成の管理外 (casks 未登録) で、docker CLI は brew + Colima に
+            # 一元化する方針のため、bundle 実行前 (extraActivation は homebrew ステップより先に走る) に
+            # Docker.app を指す古い補完シンボリックリンクだけを除去する。
+            # formula 側の補完は brew が改めて配置するため冪等かつ再現可能。
+            system.activationScripts.extraActivation.text = ''
+              for docker_completion in \
+                /opt/homebrew/etc/bash_completion.d/docker \
+                /opt/homebrew/share/fish/vendor_completions.d/docker.fish \
+                /opt/homebrew/share/zsh/site-functions/_docker; do
+                if [ -L "$docker_completion" ] && readlink "$docker_completion" | grep -q '/Applications/Docker.app/'; then
+                  echo "removing stale Docker Desktop completion symlink: $docker_completion" >&2
+                  rm -f "$docker_completion"
+                fi
+              done
+            '';
           }
 
           # Home Manager integration
