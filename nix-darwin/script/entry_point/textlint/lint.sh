@@ -23,16 +23,16 @@ node_path="$technical_writing/lib/node_modules:$spacing/lib/node_modules"
 # mapfile は macOS 標準の bash 3.2 に無いため while-read で配列に積む。
 md_files=()
 while IFS= read -r file; do
-  md_files+=("$file")
+	md_files+=("$file")
 done < <(find "$TARGET_DIR" -path '*/skills/template' -prune -o -name '*.md' -print)
 
 # textlint の起動をまとめる。第1引数以降がそのまま textlint の引数になる。
 textlint() {
-  nix shell nixpkgs#textlint \
-    nixpkgs#textlint-rule-preset-ja-technical-writing \
-    nixpkgs#textlint-rule-preset-ja-spacing \
-    --command env NODE_PATH="$node_path" \
-    textlint --config "$CONFIG" "$@"
+	nix shell nixpkgs#textlint \
+		nixpkgs#textlint-rule-preset-ja-technical-writing \
+		nixpkgs#textlint-rule-preset-ja-spacing \
+		--command env NODE_PATH="$node_path" \
+		textlint --config "$CONFIG" "$@"
 }
 
 # Phase 1: 自動修正の適用。
@@ -45,4 +45,4 @@ textlint --fix "${md_files[@]}" || true
 # 自動修正後に残る指摘 (一文の長さ・助詞の重複など手動対応が必要なもの) を出力し、
 # その有無で run の終了コード = タスクの合否を決める。
 run "日本語テクニカルライティングの校正" \
-  textlint "${md_files[@]}"
+	textlint "${md_files[@]}"

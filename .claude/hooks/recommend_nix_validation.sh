@@ -17,8 +17,8 @@ input="$(cat)"
 
 tool_name="$(echo "$input" | jq -r '.tool_name // empty')"
 case "$tool_name" in
-  Write | Edit | MultiEdit) ;;
-  *) exit 0 ;;
+Write | Edit | MultiEdit) ;;
+*) exit 0 ;;
 esac
 
 file_path="$(echo "$input" | jq -r '.tool_input.file_path // empty')"
@@ -26,15 +26,15 @@ file_path="$(echo "$input" | jq -r '.tool_input.file_path // empty')"
 
 # nix-darwin 配下のファイルのみを対象とする。
 case "$file_path" in
-  */nix-darwin/* | nix-darwin/*) ;;
-  *) exit 0 ;;
+*/nix-darwin/* | nix-darwin/*) ;;
+*) exit 0 ;;
 esac
 
 # Nix 設定ファイルのみを対象にする (*.nix または config/ module/ 配下)。
 is_nix_config=false
 case "$file_path" in
-  *.nix) is_nix_config=true ;;
-  */config/* | */module/*) is_nix_config=true ;;
+*.nix) is_nix_config=true ;;
+*/config/* | */module/*) is_nix_config=true ;;
 esac
 [[ "$is_nix_config" == "false" ]] && exit 0
 

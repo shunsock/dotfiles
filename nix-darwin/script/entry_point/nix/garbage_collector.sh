@@ -6,4 +6,4 @@ source "$SCRIPT_ROOT/const.sh"
 source "$SCRIPT_ROOT/library/runner.sh"
 
 run "${GC_KEEP_DURATION} より古い Nix store 世代の削除" \
-  nix-collect-garbage --delete-older-than "${GC_KEEP_DURATION}"
+	nix-collect-garbage --delete-older-than "${GC_KEEP_DURATION}"

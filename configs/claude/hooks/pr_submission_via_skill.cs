@@ -25,21 +25,24 @@ internal static class Gate
 internal static class Program
 {
     private const string Reason =
-        "`gh pr create` の直接実行は禁止されています。代わりに submit__pull_request スキルを使用してください。" +
-        "このスキルはナラティブ型の PR 説明文（概要・背景・課題・目標・採用手法・変更箇所・妥協と制限・" +
-        "検証方法・確認事項・参考文献）を生成し、その後 CI を自動で監視します。\n\n" +
-        "いま submit__pull_request スキルを実行し、適切なナラティブ説明文付きでこの PR を作成してください。";
+        "`gh pr create` の直接実行は禁止されています。代わりに submit__pull_request スキルを使用してください。"
+        + "このスキルはナラティブ型の PR 説明文（概要・背景・課題・目標・採用手法・変更箇所・妥協と制限・"
+        + "検証方法・確認事項・参考文献）を生成し、その後 CI を自動で監視します。\n\n"
+        + "いま submit__pull_request スキルを実行し、適切なナラティブ説明文付きでこの PR を作成してください。";
 
     private static async Task<int> Main()
     {
         var input = await Console.In.ReadToEndAsync();
         var hook = JsonSerializer.Deserialize(input, HookJson.Default.HookInput);
-        if (hook?.ToolName != "Bash") return 0;
+        if (hook?.ToolName != "Bash")
+            return 0;
 
         var command = hook.ToolInput?.Command ?? "";
-        if (command.Length == 0) return 0;
+        if (command.Length == 0)
+            return 0;
 
-        if (!Gate.ShouldDeny(command)) return 0;
+        if (!Gate.ShouldDeny(command))
+            return 0;
 
         // 終了コードでは確実にブロックできない (exit 1 等は非ブロッキング扱い)。
         // PreToolUse は permissionDecision: "deny" の JSON 出力でのみツール実行を拒否する。
@@ -52,17 +55,20 @@ internal static class Program
 
 record HookInput(
     [property: JsonPropertyName("tool_name")] string? ToolName,
-    [property: JsonPropertyName("tool_input")] ToolInput? ToolInput);
+    [property: JsonPropertyName("tool_input")] ToolInput? ToolInput
+);
 
 record ToolInput([property: JsonPropertyName("command")] string? Command);
 
 record Decision(
-    [property: JsonPropertyName("hookSpecificOutput")] HookSpecificOutput HookSpecificOutput);
+    [property: JsonPropertyName("hookSpecificOutput")] HookSpecificOutput HookSpecificOutput
+);
 
 record HookSpecificOutput(
     [property: JsonPropertyName("hookEventName")] string HookEventName,
     [property: JsonPropertyName("permissionDecision")] string PermissionDecision,
-    [property: JsonPropertyName("permissionDecisionReason")] string PermissionDecisionReason);
+    [property: JsonPropertyName("permissionDecisionReason")] string PermissionDecisionReason
+);
 
 [JsonSourceGenerationOptions(DefaultIgnoreCondition = JsonIgnoreCondition.Never)]
 [JsonSerializable(typeof(HookInput))]

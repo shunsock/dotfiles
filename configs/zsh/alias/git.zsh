@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 alias gad='git add .'
 alias gamd='git commit --amend'
 alias gbD='git branch -D'

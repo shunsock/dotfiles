@@ -24,8 +24,8 @@ NEW_USER="${1:-$(whoami)}"
 NEW_DARWIN_CONFIG="${NEW_USER%%.*}-darwin"
 
 if [ "$OLD_USER" = "$NEW_USER" ]; then
-  echo "ユーザー名が同じです ($OLD_USER)。変更不要です。"
-  exit 0
+	echo "ユーザー名が同じです ($OLD_USER)。変更不要です。"
+	exit 0
 fi
 
 echo "=== nix-darwin 設定のパーソナライズ ==="
@@ -37,53 +37,53 @@ echo ""
 # --- flake.nix ---
 echo "[1/7] flake.nix を更新..."
 sed -i '' \
-  -e "s/darwinConfigurations\\.\"${OLD_DARWIN_CONFIG}\"/darwinConfigurations.\"${NEW_DARWIN_CONFIG}\"/" \
-  -e "s/system\\.primaryUser = \"${OLD_USER}\"/system.primaryUser = \"${NEW_USER}\"/" \
-  -e "s/users\\.${OLD_USER} = import/users.\"${NEW_USER}\" = import/" \
-  "$NIX_DARWIN_DIR/flake.nix"
+	-e "s/darwinConfigurations\\.\"${OLD_DARWIN_CONFIG}\"/darwinConfigurations.\"${NEW_DARWIN_CONFIG}\"/" \
+	-e "s/system\\.primaryUser = \"${OLD_USER}\"/system.primaryUser = \"${NEW_USER}\"/" \
+	-e "s/users\\.${OLD_USER} = import/users.\"${NEW_USER}\" = import/" \
+	"$NIX_DARWIN_DIR/flake.nix"
 
 # --- home.nix ---
 echo "[2/7] home.nix を更新..."
 sed -i '' \
-  -e "s/home\\.username = \"${OLD_USER}\"/home.username = \"${NEW_USER}\"/" \
-  -e "s|home\\.homeDirectory = lib\\.mkForce \"/Users/${OLD_USER}\"|home.homeDirectory = lib.mkForce \"/Users/${NEW_USER}\"|" \
-  "$NIX_DARWIN_DIR/home.nix"
+	-e "s/home\\.username = \"${OLD_USER}\"/home.username = \"${NEW_USER}\"/" \
+	-e "s|home\\.homeDirectory = lib\\.mkForce \"/Users/${OLD_USER}\"|home.homeDirectory = lib.mkForce \"/Users/${NEW_USER}\"|" \
+	"$NIX_DARWIN_DIR/home.nix"
 
 # --- Taskfile.yml ---
 echo "[3/7] Taskfile.yml を更新..."
 sed -i '' \
-  -e "s/#${OLD_DARWIN_CONFIG}/#${NEW_DARWIN_CONFIG}/g" \
-  "$NIX_DARWIN_DIR/Taskfile.yml"
+	-e "s/#${OLD_DARWIN_CONFIG}/#${NEW_DARWIN_CONFIG}/g" \
+	"$NIX_DARWIN_DIR/Taskfile.yml"
 
 # --- config/bash/path.bash ---
 echo "[4/7] config/bash/path.bash を更新..."
 sed -i '' \
-  -e "s|per-user/${OLD_USER}/|per-user/${NEW_USER}/|g" \
-  "$NIX_DARWIN_DIR/config/bash/path.bash"
+	-e "s|per-user/${OLD_USER}/|per-user/${NEW_USER}/|g" \
+	"$NIX_DARWIN_DIR/config/bash/path.bash"
 
 # --- config/zsh/path.zsh ---
 echo "[5/7] config/zsh/path.zsh を更新..."
 sed -i '' \
-  -e "s|per-user/${OLD_USER}/|per-user/${NEW_USER}/|g" \
-  "$NIX_DARWIN_DIR/config/zsh/path.zsh"
+	-e "s|per-user/${OLD_USER}/|per-user/${NEW_USER}/|g" \
+	"$NIX_DARWIN_DIR/config/zsh/path.zsh"
 
 # --- script/entry_point/remove_backup.sh ---
 echo "[6/7] script/entry_point/remove_backup.sh を更新..."
 sed -i '' \
-  -e "s|/Users/${OLD_USER}/|/Users/${NEW_USER}/|g" \
-  "$NIX_DARWIN_DIR/script/entry_point/remove_backup.sh"
+	-e "s|/Users/${OLD_USER}/|/Users/${NEW_USER}/|g" \
+	"$NIX_DARWIN_DIR/script/entry_point/remove_backup.sh"
 
 # --- CLAUDE.md, README.md ---
 echo "[7/7] ドキュメントを更新..."
 for doc in CLAUDE.md README.md; do
-  if [ -f "$NIX_DARWIN_DIR/$doc" ]; then
-    sed -i '' \
-      -e "s/#${OLD_DARWIN_CONFIG}/#${NEW_DARWIN_CONFIG}/g" \
-      -e "s/\\.${OLD_DARWIN_CONFIG}\\./.${NEW_DARWIN_CONFIG}./g" \
-      -e "s/user \`${OLD_USER}\`/user \`${NEW_USER}\`/g" \
-      -e "s|/Users/${OLD_USER}|/Users/${NEW_USER}|g" \
-      "$NIX_DARWIN_DIR/$doc"
-  fi
+	if [ -f "$NIX_DARWIN_DIR/$doc" ]; then
+		sed -i '' \
+			-e "s/#${OLD_DARWIN_CONFIG}/#${NEW_DARWIN_CONFIG}/g" \
+			-e "s/\\.${OLD_DARWIN_CONFIG}\\./.${NEW_DARWIN_CONFIG}./g" \
+			-e "s/user \`${OLD_USER}\`/user \`${NEW_USER}\`/g" \
+			-e "s|/Users/${OLD_USER}|/Users/${NEW_USER}|g" \
+			"$NIX_DARWIN_DIR/$doc"
+	fi
 done
 
 echo ""

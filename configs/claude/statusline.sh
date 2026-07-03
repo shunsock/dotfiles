@@ -14,21 +14,21 @@ FILLED=$((PCT * BAR_WIDTH / 100))
 EMPTY=$((BAR_WIDTH - FILLED))
 BAR=""
 if [ "$FILLED" -gt 0 ]; then
-  printf -v FILL "%${FILLED}s"
-  BAR="${FILL// /▓}"
+	printf -v FILL "%${FILLED}s"
+	BAR="${FILL// /▓}"
 fi
 if [ "$EMPTY" -gt 0 ]; then
-  printf -v PAD "%${EMPTY}s"
-  BAR="${BAR}${PAD// /░}"
+	printf -v PAD "%${EMPTY}s"
+	BAR="${BAR}${PAD// /░}"
 fi
 
 # Color context bar based on usage
 if [ "$PCT" -ge 80 ]; then
-  CTX_COLOR="\033[31m" # red
+	CTX_COLOR="\033[31m" # red
 elif [ "$PCT" -ge 50 ]; then
-  CTX_COLOR="\033[33m" # yellow
+	CTX_COLOR="\033[33m" # yellow
 else
-  CTX_COLOR="\033[32m" # green
+	CTX_COLOR="\033[32m" # green
 fi
 RESET="\033[0m"
 
@@ -46,9 +46,9 @@ SECS=$((DURATION_SEC % 60))
 CWD=$(echo "$input" | jq -r '.workspace.current_dir // "."')
 BRANCH=$(git -C "$CWD" branch --show-current 2>/dev/null)
 if [ -n "$BRANCH" ]; then
-  GIT_PART=" | ${BRANCH}"
+	GIT_PART=" | ${BRANCH}"
 else
-  GIT_PART=""
+	GIT_PART=""
 fi
 
 printf "%b" "${MODEL} | ${CTX_COLOR}${BAR} ${PCT}%${RESET} | ${COST_FMT} | ${MINS}m${SECS}s${GIT_PART}\n"

@@ -1,1 +1,2 @@
-  export EDITOR='vim'
+# shellcheck shell=bash
+export EDITOR='vim'
