@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # History
 setopt share_history
 setopt hist_ignore_dups
@@ -11,7 +12,7 @@ setopt extended_glob
 setopt nonomatch
 
 # Ignore Warning
-setopt RM_STAR_SILENT  # warning when using rm with *
+setopt RM_STAR_SILENT # warning when using rm with *
 
 # Completion
 setopt auto_cd

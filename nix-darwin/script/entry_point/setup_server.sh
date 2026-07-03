@@ -20,9 +20,9 @@ set -euo pipefail
 
 # --- root 権限チェック ---
 if [ "$(id -u)" -ne 0 ]; then
-  echo "エラー: このスクリプトは sudo で実行してください。"
-  echo "  sudo bash $0"
-  exit 1
+	echo "エラー: このスクリプトは sudo で実行してください。"
+	echo "  sudo bash $0"
+	exit 1
 fi
 
 echo "=== macOS サーバー設定 ==="
@@ -64,17 +64,17 @@ $FW --unblockapp /usr/sbin/sshd
 # RSS サーバーは Vite dev server (5173) が /api を backend (3000) にプロキシするため、
 # 外部からは 5173 のみアクセスできれば動作する
 DOCKER_APPS=(
-  "/Applications/Docker.app/Contents/MacOS/Docker"
-  "/Applications/Docker.app/Contents/MacOS/com.docker.backend"
+	"/Applications/Docker.app/Contents/MacOS/Docker"
+	"/Applications/Docker.app/Contents/MacOS/com.docker.backend"
 )
 for app in "${DOCKER_APPS[@]}"; do
-  if [ -f "$app" ]; then
-    $FW --add "$app"
-    $FW --unblockapp "$app"
-    echo "  許可: $app"
-  else
-    echo "  スキップ (未インストール): $app"
-  fi
+	if [ -f "$app" ]; then
+		$FW --add "$app"
+		$FW --unblockapp "$app"
+		echo "  許可: $app"
+	else
+		echo "  スキップ (未インストール): $app"
+	fi
 done
 
 echo "  完了: ファイアウォール有効, sshd + Docker のみ許可, ステルスモード有効"

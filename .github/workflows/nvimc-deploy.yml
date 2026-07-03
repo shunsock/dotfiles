@@ -3,14 +3,22 @@ name: nvimc_docker_deploy
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   extract-version:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
     outputs:
       version: ${{ steps.extract.outputs.version }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
 
       - name: Extract VERSION from Taskfile.yml
         id: extract
@@ -21,11 +29,14 @@ jobs:
             echo "ERROR: VERSION is empty"
             exit 1
           fi
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
   deploy-images:
     needs: extract-version
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
     strategy:
       fail-fast: true
       matrix:
@@ -47,19 +58,21 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
 
       - name: Log in to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
           context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
@@ -72,8 +85,12 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Log deployment details
+        env:
+          IMAGE_NAME: ${{ matrix.name }}
+          IMAGE_PLATFORM: ${{ matrix.platform }}
+          IMAGE_VERSION: ${{ needs.extract-version.outputs.version }}
         run: |
-          echo "Deployed: tsuchiya55docker/nvimc:${{ matrix.name }}-${{ needs.extract-version.outputs.version }}"
-          echo "Deployed: tsuchiya55docker/nvimc:${{ matrix.name }}-latest"
-          echo "Platform: ${{ matrix.platform }}"
+          echo "Deployed: tsuchiya55docker/nvimc:${IMAGE_NAME}-${IMAGE_VERSION}"
+          echo "Deployed: tsuchiya55docker/nvimc:${IMAGE_NAME}-latest"
+          echo "Platform: ${IMAGE_PLATFORM}"
           echo "Timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"

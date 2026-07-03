@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 alias dcm='docker compose'
 alias dcmd='docker compose down'
 alias dimg='docker image'

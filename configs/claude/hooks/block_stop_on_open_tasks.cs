@@ -25,7 +25,8 @@ internal static class Tasks
     {
         var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         var dir = Path.Combine(home, ".claude", "tasks", sessionId);
-        if (!Directory.Exists(dir)) return [];
+        if (!Directory.Exists(dir))
+            return [];
 
         var lines = new List<string>();
         foreach (var path in Directory.EnumerateFiles(dir, "*.json"))
@@ -62,21 +63,24 @@ internal static class Program
 
         // stop_hook_active な停止は、この hook 自身のブロックで再入した停止。ここで再び
         // ブロックすると無限ループになるため許可する。
-        if (hook?.StopHookActive == true) return 0;
+        if (hook?.StopHookActive == true)
+            return 0;
 
         // session_id が取れない場合は、別セッションの状態で誤ってブロックしないよう
         // 安全側に倒して許可する。
         var sessionId = hook?.SessionId ?? "";
-        if (sessionId.Length == 0) return 0;
+        if (sessionId.Length == 0)
+            return 0;
 
         var incomplete = Tasks.IncompleteLines(sessionId);
-        if (incomplete.Count == 0) return 0;
+        if (incomplete.Count == 0)
+            return 0;
 
         var reason =
-            "未完了の Task が残っている:\n" +
-            string.Join('\n', incomplete) +
-            "\n各 Task は実際に作業を行って解決すること (作業せずに completed にしてはならない)。" +
-            "すべて片付けてから停止し直すこと。";
+            "未完了の Task が残っている:\n"
+            + string.Join('\n', incomplete)
+            + "\n各 Task は実際に作業を行って解決すること (作業せずに completed にしてはならない)。"
+            + "すべて片付けてから停止し直すこと。";
 
         var decision = new Decision("block", reason);
         Console.WriteLine(JsonSerializer.Serialize(decision, HookJson.Default.Decision));
@@ -86,15 +90,18 @@ internal static class Program
 
 record HookInput(
     [property: JsonPropertyName("session_id")] string? SessionId,
-    [property: JsonPropertyName("stop_hook_active")] bool? StopHookActive);
+    [property: JsonPropertyName("stop_hook_active")] bool? StopHookActive
+);
 
 record TaskState(
     [property: JsonPropertyName("status")] string? Status,
-    [property: JsonPropertyName("subject")] string? Subject);
+    [property: JsonPropertyName("subject")] string? Subject
+);
 
 record Decision(
     [property: JsonPropertyName("decision")] string DecisionValue,
-    [property: JsonPropertyName("reason")] string Reason);
+    [property: JsonPropertyName("reason")] string Reason
+);
 
 [JsonSourceGenerationOptions(DefaultIgnoreCondition = JsonIgnoreCondition.Never)]
 [JsonSerializable(typeof(HookInput))]

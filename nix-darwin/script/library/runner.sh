@@ -11,19 +11,19 @@ source "$RUNNER_DIR/logger.sh"
 # 第1引数のラベルで開始・成功・失敗を info/error に出力しつつ、残りの引数をコマンドとして実行する。
 # コマンドの終了コードをそのまま返し、失敗時の中断は呼び出し元の set -e に委ねる。
 run() {
-  local label="$1"
-  shift
+	local label="$1"
+	shift
 
-  info "${label}を開始します"
+	info "${label}を開始します"
 
-  local exit_code=0
-  "$@" || exit_code=$?
+	local exit_code=0
+	"$@" || exit_code=$?
 
-  if [ "$exit_code" -eq 0 ]; then
-    info "${label}に成功しました"
-  else
-    error "${label}に失敗しました (exit ${exit_code})"
-  fi
+	if [ "$exit_code" -eq 0 ]; then
+		info "${label}に成功しました"
+	else
+		error "${label}に失敗しました (exit ${exit_code})"
+	fi
 
-  return "$exit_code"
+	return "$exit_code"
 }

@@ -10,10 +10,10 @@
 
 # 進捗・通知メッセージを標準出力へ出力する。
 info() {
-  printf '[INFO] %s\n' "$*"
+	printf '[INFO] %s\n' "$*"
 }
 
 # エラーメッセージを標準エラー出力へ出力する。
 error() {
-  printf '[ERROR] %s\n' "$*" >&2
+	printf '[ERROR] %s\n' "$*" >&2
 }

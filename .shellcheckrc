@@ -1,0 +1,5 @@
+# エントリポイントスクリプトは実行時に算出する $SCRIPT_ROOT 経由で
+# library/runner.sh などを source する。パスが動的なため shellcheck は
+# 追跡できず SC1091 (info) を出すが、これはコードの欠陥ではない。
+# --external-sources でも静的解決できないため、リポジトリ全体で無効化する。
+disable=SC1091

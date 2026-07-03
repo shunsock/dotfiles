@@ -12,23 +12,23 @@ source "$SCRIPT_ROOT/library/logger.sh"
 
 # 存在すれば削除し、結果をログ出力する。存在しなくてもエラーにしない。
 remove_if_exists() {
-  local target="$1"
-  if [ -e "$target" ]; then
-    rm "$target"
-    info "削除しました: $target"
-  else
-    info "ファイルが存在しません: $target"
-  fi
+	local target="$1"
+	if [ -e "$target" ]; then
+		rm "$target"
+		info "削除しました: $target"
+	else
+		info "ファイルが存在しません: $target"
+	fi
 }
 
 readonly HOME_DIR="/Users/shunsock"
 readonly BACKUP_FILES=(
-  "$HOME_DIR/Library/Application Support/AquaSKK/skk-jisyo.utf8.hm-backup"
-  "$HOME_DIR/Library/Application Support/AquaSKK/SKK-JISYO.L.hm-backup"
-  "$HOME_DIR/Library/Application Support/Firefox/profiles.ini.hm-backup"
-  "$HOME_DIR/.gemini/antigravity-cli/settings.json.hm-backup"
+	"$HOME_DIR/Library/Application Support/AquaSKK/skk-jisyo.utf8.hm-backup"
+	"$HOME_DIR/Library/Application Support/AquaSKK/SKK-JISYO.L.hm-backup"
+	"$HOME_DIR/Library/Application Support/Firefox/profiles.ini.hm-backup"
+	"$HOME_DIR/.gemini/antigravity-cli/settings.json.hm-backup"
 )
 
 for backup in "${BACKUP_FILES[@]}"; do
-  remove_if_exists "$backup"
+	remove_if_exists "$backup"
 done

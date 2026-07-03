@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # 'exit' like Vim ❤️
 alias :q='exit'
 

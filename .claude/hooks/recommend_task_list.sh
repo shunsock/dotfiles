@@ -24,12 +24,12 @@ command="$(echo "$input" | jq -r '.tool_input.command // empty')"
 # task をコマンドの先頭位置で呼んでいるか (行頭 / ; / & / | の直後)。
 # ファイル名等に含まれる "task" を誤検知しないため位置で判定する。
 if ! echo "$command" | grep -qE '(^|[;&|])[[:space:]]*task([[:space:]]|$)'; then
-  exit 0
+	exit 0
 fi
 
 # 既に一覧表示 (task -l / --list) の場合は促さない。
 if echo "$command" | grep -qE '(^|[;&|])[[:space:]]*task[[:space:]]+(-l|--list)([[:space:]]|$)'; then
-  exit 0
+	exit 0
 fi
 
 # nix-darwin スコープ: コマンドが nix-darwin を対象にしている (例: cd nix-darwin && task ...)、
@@ -37,10 +37,10 @@ fi
 cwd="$(echo "$input" | jq -r '.cwd // empty')"
 in_nix_darwin=false
 if echo "$command" | grep -qE '(^|[/[:space:]])nix-darwin([/[:space:]]|$)'; then
-  in_nix_darwin=true
+	in_nix_darwin=true
 fi
 case "$cwd" in
-  */nix-darwin | */nix-darwin/*) in_nix_darwin=true ;;
+*/nix-darwin | */nix-darwin/*) in_nix_darwin=true ;;
 esac
 [[ "$in_nix_darwin" == "false" ]] && exit 0
 
