@@ -1,5 +1,5 @@
-// clean_comment_out.cs - PostToolUse(Write|Edit) フック。ソース編集後に
-// clean__comment_out スキルの実行を促す。
+// clean_comment_out.cs - PostToolUse(Write|Edit) フック。
+// ソース編集後に clean__comment_out スキルの実行を促す。
 // SEE: ~/.claude/hooks/README.md
 
 using System.Text.Json;

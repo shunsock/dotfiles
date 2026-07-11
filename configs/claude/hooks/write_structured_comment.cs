@@ -1,5 +1,5 @@
-// write_structured_comment.cs - PostToolUse(Write|Edit) フック。ソース編集後に
-// write__structured_comment スキルの実行を促す。
+// write_structured_comment.cs - PostToolUse(Write|Edit) フック。
+// ソース編集後に write__structured_comment スキルの実行を促す。
 // SEE: ~/.claude/hooks/README.md
 
 using System.Text.Json;

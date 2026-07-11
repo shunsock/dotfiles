@@ -1,7 +1,7 @@
-// validate_comment_format.cs - PostToolUse(Write|Edit) フック。ソース編集後に
-// コメントを走査し、共有 whitelist 語彙とフォーマット制約への違反を検出して修正を促す。
-// 制約: (1) 各コメントは whitelist マーカーで始まる (2) 1 論理コメントは 2 行以内
-// (3) 1 行は 80 文字以内 (4) issue/PR 番号を含まない。doc コメントと先頭ヘッダは例外。
+// validate_comment_format.cs - PostToolUse(Write|Edit) フック。
+// ソース編集後にコメントを走査し、語彙とフォーマットの違反を検出して修正を促す。
+// 制約: マーカー始まり、2 行以内、80 文字以内、issue/PR 番号なし。
+// doc コメントと先頭ヘッダは例外とする。
 // SEE: ~/.claude/skills/template/comment_markers.md
 // SEE: ~/.claude/hooks/README.md
 
