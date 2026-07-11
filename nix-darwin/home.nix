@@ -48,7 +48,7 @@
       hurl
       hyperfine
       nerd-fonts.jetbrains-mono
-      nixfmt-rfc-style
+      nixfmt
       rustup
       tree
       wthrr
