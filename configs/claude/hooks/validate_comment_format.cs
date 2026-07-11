@@ -105,9 +105,25 @@ internal static class CommentScanner
     private static Family? FamilyOf(string ext) =>
         ext.ToLowerInvariant() switch
         {
-            ".rs" or ".go" or ".ts" or ".tsx" or ".js" or ".jsx" or ".java" or ".kt" or ".kts"
-            or ".c" or ".h" or ".cpp" or ".cc" or ".hpp" or ".cs" or ".php" or ".swift"
-            or ".scala" or ".dart" => Family.Slash,
+            ".rs"
+            or ".go"
+            or ".ts"
+            or ".tsx"
+            or ".js"
+            or ".jsx"
+            or ".java"
+            or ".kt"
+            or ".kts"
+            or ".c"
+            or ".h"
+            or ".cpp"
+            or ".cc"
+            or ".hpp"
+            or ".cs"
+            or ".php"
+            or ".swift"
+            or ".scala"
+            or ".dart" => Family.Slash,
             ".py" or ".rb" or ".sh" or ".bash" or ".zsh" or ".nix" or ".ex" or ".exs" =>
                 Family.Hash,
             ".lua" or ".hs" => Family.Dash,
@@ -351,7 +367,9 @@ internal static class Program
         sb.Append(
             "1. すべてのコメントは whitelist マーカー (TODO/FIXME/SEE/CONSTRAINT/NOTE/HACK/SAFETY) で始める。始まらないコメントは、コードを直す/モデル化する/削除するのいずれかで解消する (マーカーを機械的に足すだけにしない)。\n"
         );
-        sb.Append("2. 1 論理コメントは最大 2 行。3 行以上に渡るなら短く要約するか、コメントに収めない。\n");
+        sb.Append(
+            "2. 1 論理コメントは最大 2 行。3 行以上に渡るなら短く要約するか、コメントに収めない。\n"
+        );
         sb.Append("3. 1 行は最大 80 文字。短く簡潔に言い換える。\n");
         sb.Append(
             "4. issue/PR 番号 (#123・GH-123・issues/123・pull/123・issue/PR の URL) を取り除く。外部参照は RFC・仕様・ベンダー doc・ファイルパスに限り SEE で書く。\n"
