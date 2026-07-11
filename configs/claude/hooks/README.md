@@ -54,6 +54,10 @@ SEE: https://code.claude.com/docs/en/hooks#posttooluse-decision-control
 
 共有する定義の置き場:
 
-- マーカー語彙・フォーマット・契約: `~/.claude/skills/template/comment_markers.md`
-- 機械可読な語彙リスト (validator が読む): `~/.claude/skills/reference/comment_out_skills_target/markers.csv`
-- 対象拡張子: `~/.claude/skills/reference/comment_out_skills_target/extensions.csv`
+- マーカー語彙・フォーマット・契約 (人間・スキル向け): `~/.claude/skills/template/comment_markers.md`
+- 対象拡張子 (3 hook が共有するため外部ファイルに切り出す): `~/.claude/skills/reference/comment_out_skills_target/extensions.csv`
+
+マーカー語彙の機械可読な形は validator (`validate_comment_format.cs`) 内の const が
+持つ。読者がこの 1 フックだけなので外部ファイルにせず const とした。対象拡張子は
+3 hook が参照するため、file-based app では共有 const を持てず外部ファイルに切り出す
+(各ファイルの読み込みロジックはミラーされる)。

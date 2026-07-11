@@ -44,34 +44,11 @@ internal static class SourceFile
 
 internal static class Markers
 {
-    // SEE: ~/.claude/skills/reference/comment_out_skills_target/markers.csv
-    private static readonly Regex StartsWithMarker = BuildRegex();
-
-    private static Regex BuildRegex()
-    {
-        var home = Environment.GetEnvironmentVariable("HOME") ?? "";
-        var csv = Path.Combine(
-            home,
-            ".claude",
-            "skills",
-            "reference",
-            "comment_out_skills_target",
-            "markers.csv"
-        );
-        var names = new List<string>();
-        if (File.Exists(csv))
-        {
-            foreach (var line in File.ReadLines(csv))
-            {
-                var token = line.Trim();
-                if (token.Length > 0 && token.All(char.IsAsciiLetterUpper))
-                    names.Add(Regex.Escape(token));
-            }
-        }
-        if (names.Count == 0)
-            names.AddRange(["TODO", "FIXME", "SEE", "CONSTRAINT", "NOTE", "HACK", "SAFETY"]);
-        return new Regex($"^(?:{string.Join('|', names)})\\b", RegexOptions.Compiled);
-    }
+    // SEE: ~/.claude/skills/template/comment_markers.md
+    private static readonly Regex StartsWithMarker = new(
+        "^(?:TODO|FIXME|SEE|CONSTRAINT|NOTE|HACK|SAFETY)\\b",
+        RegexOptions.Compiled
+    );
 
     public static bool StartsMarker(string commentText) => StartsWithMarker.IsMatch(commentText);
 }

@@ -4,10 +4,10 @@
 single source of truth。両スキルはこのファイルのマーカー語彙・フォーマット・契約を
 参照する。ここを変えれば両スキルの挙動が同時に変わり、契約のずれ (drift) が起きない。
 
-機械可読な語彙リストは `~/.claude/skills/reference/comment_out_skills_target/markers.csv`
-に置く。検証フック `validate_comment_format.cs` はこの csv を読んで制約を機械的に
-強制する。このファイル (人間・スキル向けの意味定義) と markers.csv (フック向けの
-列挙) は必ず同じ 7 マーカーを保つこと。
+このファイルは人間・スキル向けの意味定義であり、両スキルはこれを読む。機械可読な
+語彙は検証フック `validate_comment_format.cs` 内の const (正規表現) が持つ。読者が
+この 1 フックだけなので外部ファイルに切り出さず const とした。このファイルと const は
+必ず同じ 7 マーカーを保つこと。
 
 ## 原則 — デフォルトはコメント 0
 
