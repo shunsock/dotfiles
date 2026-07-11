@@ -10,49 +10,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
-internal static class SourceFile
-{
-    // SEE: ~/.claude/skills/reference/comment_out_skills_target/extensions.csv
-    private static readonly HashSet<string> Extensions = LoadExtensions();
-
-    private static HashSet<string> LoadExtensions()
-    {
-        var home = Environment.GetEnvironmentVariable("HOME") ?? "";
-        var csv = Path.Combine(
-            home,
-            ".claude",
-            "skills",
-            "reference",
-            "comment_out_skills_target",
-            "extensions.csv"
-        );
-        var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        if (!File.Exists(csv))
-            return set;
-        foreach (var line in File.ReadLines(csv))
-        {
-            var ext = line.Trim();
-            if (ext.StartsWith('.'))
-                set.Add(ext);
-        }
-        return set;
-    }
-
-    public static bool IsSource(string filePath) =>
-        Extensions.Contains(Path.GetExtension(filePath));
-}
-
-internal static class Markers
-{
-    // SEE: ~/.claude/skills/template/comment_markers.md
-    private static readonly Regex StartsWithMarker = new(
-        "^(?:TODO|FIXME|SEE|CONSTRAINT|NOTE|HACK|SAFETY)\\b",
-        RegexOptions.Compiled
-    );
-
-    public static bool StartsMarker(string commentText) => StartsWithMarker.IsMatch(commentText);
-}
-
 internal enum Family
 {
     Slash,
@@ -60,26 +17,77 @@ internal enum Family
     Dash,
 }
 
-internal readonly record struct Violation(int Line, string Kind, string Snippet);
-
-internal sealed class LogicalComment
+internal enum SlashKind
 {
-    public int StartLine { get; init; }
-    public bool HasMarker { get; init; }
-    public List<(int Line, string Text, int Width)> Lines { get; } = [];
+    DocBlock,
+    Block,
+    DocLine,
+    LineComment,
+    Code,
 }
 
-internal static class CommentScanner
+internal readonly record struct Violation(int Line, string Kind, string Snippet);
+
+internal readonly record struct FormatRules(int MaxLines, int MaxWidth);
+
+internal readonly record struct CommentLine(int Number, string Text, int Width);
+
+internal sealed record LogicalComment(
+    int StartLine,
+    bool HasMarker,
+    IReadOnlyList<CommentLine> Lines
+);
+
+internal sealed record ScannerConfig(
+    IReadOnlySet<string> Extensions,
+    Regex MarkerStart,
+    Regex IssueRef,
+    FormatRules Rules
+);
+
+internal static class Vocabulary
 {
-    private const int MaxLines = 2;
-    private const int MaxWidth = 80;
+    // SEE: ~/.claude/skills/template/comment_markers.md
+    public static readonly IReadOnlyList<string> Markers =
+    [
+        "TODO",
+        "FIXME",
+        "SEE",
+        "CONSTRAINT",
+        "NOTE",
+        "HACK",
+        "SAFETY",
+    ];
 
-    private static readonly Regex IssueRef = new(
-        @"#\d+|\bGH-\d+\b|\b(?:issues?|pull)/\d+|\b(?:issue|pr)\b\s*#?\s*\d+",
-        RegexOptions.Compiled | RegexOptions.IgnoreCase
-    );
+    public static readonly FormatRules DefaultRules = new(MaxLines: 2, MaxWidth: 80);
 
-    private static Family? FamilyOf(string ext) =>
+    public const string IssuePattern =
+        @"#\d+|\bGH-\d+\b|\b(?:issues?|pull)/\d+|\b(?:issue|pr)\b\s*#?\s*\d+";
+
+    public static Regex MarkerRegex() =>
+        new($"^(?:{string.Join('|', Markers)})\\b", RegexOptions.Compiled);
+
+    public static Regex IssueRegex() =>
+        new(IssuePattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+}
+
+internal static class Tokens
+{
+    public const string Line = "//";
+    public const string Hash = "#";
+    public const string Dash = "--";
+    public const string DocLine = "///";
+    public const string InnerDocLine = "//!";
+    public const string BlockOpen = "/*";
+    public const string DocBlockOpen = "/**";
+    public const string InnerDocBlockOpen = "/*!";
+    public const string BlockClose = "*/";
+    public const string Shebang = "#!";
+}
+
+internal static class Language
+{
+    public static Family? FamilyOf(string ext) =>
         ext.ToLowerInvariant() switch
         {
             ".rs"
@@ -107,136 +115,170 @@ internal static class CommentScanner
             _ => null,
         };
 
-    public static List<Violation> Scan(string filePath)
-    {
-        var family = FamilyOf(Path.GetExtension(filePath));
-        if (family is null || !File.Exists(filePath))
-            return [];
-
-        var lines = File.ReadAllLines(filePath);
-        var headerLimit = FirstCodeLine(lines, family.Value);
-        var comments = family switch
+    public static string LineToken(Family family) =>
+        family switch
         {
-            Family.Slash => CollectSlash(lines),
-            Family.Hash => CollectPrefix(lines, "#", shebangAware: true),
-            _ => CollectPrefix(lines, "--", shebangAware: false),
+            Family.Hash => Tokens.Hash,
+            Family.Dash => Tokens.Dash,
+            _ => Tokens.Line,
         };
+}
 
+internal static class ExtensionSource
+{
+    // SEE: ~/.claude/skills/reference/comment_out_skills_target/extensions.csv
+    public static IReadOnlySet<string> Load()
+    {
+        var home = Environment.GetEnvironmentVariable("HOME") ?? "";
+        var csv = Path.Combine(
+            home,
+            ".claude",
+            "skills",
+            "reference",
+            "comment_out_skills_target",
+            "extensions.csv"
+        );
+        var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        if (!File.Exists(csv))
+            return set;
+        foreach (var line in File.ReadLines(csv))
+        {
+            var ext = line.Trim();
+            if (ext.StartsWith('.'))
+                set.Add(ext);
+        }
+        return set;
+    }
+}
+
+internal sealed class CommentScanner(ScannerConfig config)
+{
+    public IReadOnlyList<Violation> Scan(string[] lines, Family family)
+    {
+        var headerLimit = FirstCodeLine(lines, family);
+        var comments = Collect(lines, family);
         var violations = new List<Violation>();
-        foreach (var c in comments)
-            Check(c, violations, isHeader: c.StartLine < headerLimit);
+        foreach (var comment in comments)
+            CheckComment(comment, comment.StartLine < headerLimit, violations);
         return violations;
     }
+
+    private IReadOnlyList<LogicalComment> Collect(string[] lines, Family family) =>
+        family switch
+        {
+            Family.Slash => CollectSlash(lines),
+            Family.Hash => CollectPrefix(lines, Tokens.Hash, shebangAware: true),
+            _ => CollectPrefix(lines, Tokens.Dash, shebangAware: false),
+        };
 
     private static int FirstCodeLine(string[] lines, Family family)
     {
         var inBlock = false;
         for (var i = 0; i < lines.Length; i++)
         {
-            var t = lines[i].TrimStart();
-            if (t.Length == 0)
+            var trimmed = lines[i].TrimStart();
+            if (trimmed.Length == 0)
                 continue;
-            if (family == Family.Slash)
+            var isCode = family switch
             {
-                if (inBlock)
-                {
-                    if (t.Contains("*/"))
-                        inBlock = false;
-                    continue;
-                }
-                if (t.StartsWith("/*"))
-                {
-                    if (!t.Contains("*/"))
-                        inBlock = true;
-                    continue;
-                }
-                if (t.StartsWith("//"))
-                    continue;
+                Family.Slash => !SlashLineIsComment(trimmed, ref inBlock),
+                _ => !trimmed.StartsWith(Language.LineToken(family)),
+            };
+            if (isCode)
                 return i + 1;
-            }
-            var token = family == Family.Hash ? "#" : "--";
-            if (t.StartsWith(token))
-                continue;
-            return i + 1;
         }
         return int.MaxValue;
     }
 
-    private static void Check(LogicalComment c, List<Violation> violations, bool isHeader)
+    private static bool SlashLineIsComment(string trimmed, ref bool inBlock)
     {
-        if (!isHeader && !c.HasMarker)
-            violations.Add(new(c.StartLine, "マーカー語彙なし", First(c)));
-        if (!isHeader && c.Lines.Count > MaxLines)
-            violations.Add(new(c.StartLine, $"{MaxLines + 1}行以上 (最大{MaxLines}行)", First(c)));
-        foreach (var (line, text, width) in c.Lines)
+        if (inBlock)
         {
-            if (width > MaxWidth)
-                violations.Add(new(line, $"{MaxWidth}文字超過 ({width}文字)", text));
-            if (IssueRef.IsMatch(text))
-                violations.Add(new(line, "issue/PR 番号を含む", text));
+            if (trimmed.Contains(Tokens.BlockClose))
+                inBlock = false;
+            return true;
+        }
+        if (trimmed.StartsWith(Tokens.BlockOpen))
+        {
+            if (!trimmed.Contains(Tokens.BlockClose))
+                inBlock = true;
+            return true;
+        }
+        return trimmed.StartsWith(Tokens.Line);
+    }
+
+    private void CheckComment(LogicalComment comment, bool isHeader, List<Violation> violations)
+    {
+        if (!isHeader && !comment.HasMarker)
+            violations.Add(new(comment.StartLine, "マーカー語彙なし", FirstText(comment)));
+        if (!isHeader && comment.Lines.Count > config.Rules.MaxLines)
+            violations.Add(
+                new(
+                    comment.StartLine,
+                    $"{config.Rules.MaxLines + 1}行以上 (最大{config.Rules.MaxLines}行)",
+                    FirstText(comment)
+                )
+            );
+        foreach (var line in comment.Lines)
+        {
+            if (line.Width > config.Rules.MaxWidth)
+                violations.Add(
+                    new(
+                        line.Number,
+                        $"{config.Rules.MaxWidth}文字超過 ({line.Width}文字)",
+                        line.Text
+                    )
+                );
+            if (config.IssueRef.IsMatch(line.Text))
+                violations.Add(new(line.Number, "issue/PR 番号を含む", line.Text));
         }
     }
 
-    private static string First(LogicalComment c) => c.Lines.Count > 0 ? c.Lines[0].Text : "";
+    private static string FirstText(LogicalComment comment) =>
+        comment.Lines.Count > 0 ? comment.Lines[0].Text : "";
 
-    private static void SplitRun(
-        List<(int Line, string Text, int Width)> run,
-        List<LogicalComment> sink
-    )
+    private void SplitRun(IReadOnlyList<CommentLine> run, List<LogicalComment> sink)
     {
-        LogicalComment? current = null;
-        foreach (var entry in run)
+        var i = 0;
+        while (i < run.Count)
         {
-            var isMarker = Markers.StartsMarker(entry.Text);
-            if (isMarker || current is null)
+            var group = new List<CommentLine> { run[i] };
+            var hasMarker = config.MarkerStart.IsMatch(run[i].Text);
+            i++;
+            while (i < run.Count && !config.MarkerStart.IsMatch(run[i].Text))
             {
-                current = new LogicalComment { StartLine = entry.Line, HasMarker = isMarker };
-                sink.Add(current);
+                group.Add(run[i]);
+                i++;
             }
-            current.Lines.Add(entry);
+            sink.Add(new LogicalComment(group[0].Number, hasMarker, group));
         }
     }
 
-    private static int Width(string raw) => raw.TrimEnd().Length;
+    private static SlashKind ClassifySlash(string trimmed) =>
+        trimmed switch
+        {
+            _ when trimmed.StartsWith(Tokens.DocBlockOpen)
+                    || trimmed.StartsWith(Tokens.InnerDocBlockOpen) => SlashKind.DocBlock,
+            _ when trimmed.StartsWith(Tokens.BlockOpen) => SlashKind.Block,
+            _ when trimmed.StartsWith(Tokens.DocLine) || trimmed.StartsWith(Tokens.InnerDocLine) =>
+                SlashKind.DocLine,
+            _ when trimmed.StartsWith(Tokens.Line) => SlashKind.LineComment,
+            _ => SlashKind.Code,
+        };
 
-    private static List<LogicalComment> CollectSlash(string[] lines)
+    private IReadOnlyList<LogicalComment> CollectSlash(string[] lines)
     {
         var result = new List<LogicalComment>();
         var i = 0;
         while (i < lines.Length)
         {
-            var trimmed = lines[i].TrimStart();
-
-            if (trimmed.StartsWith("/**") || trimmed.StartsWith("/*!"))
+            i = ClassifySlash(lines[i].TrimStart()) switch
             {
-                i = SkipBlock(lines, i);
-                continue;
-            }
-            if (trimmed.StartsWith("/*"))
-            {
-                i = CollectBlock(lines, i, result);
-                continue;
-            }
-            if (trimmed.StartsWith("///") || trimmed.StartsWith("//!"))
-            {
-                i++;
-                continue;
-            }
-            if (trimmed.StartsWith("//"))
-            {
-                var run = new List<(int, string, int)>();
-                while (i < lines.Length)
-                {
-                    var t = lines[i].TrimStart();
-                    if (t.StartsWith("///") || t.StartsWith("//!") || !t.StartsWith("//"))
-                        break;
-                    run.Add((i + 1, t[2..].Trim(), Width(lines[i])));
-                    i++;
-                }
-                SplitRun(run, result);
-                continue;
-            }
-            i++;
+                SlashKind.DocBlock => SkipBlock(lines, i),
+                SlashKind.Block => CollectBlock(lines, i, result),
+                SlashKind.LineComment => CollectLineRun(lines, i, result),
+                _ => i + 1,
+            };
         }
         return result;
     }
@@ -246,7 +288,7 @@ internal static class CommentScanner
         var i = start;
         while (i < lines.Length)
         {
-            var closes = lines[i].Contains("*/");
+            var closes = lines[i].Contains(Tokens.BlockClose);
             i++;
             if (closes)
                 break;
@@ -254,35 +296,50 @@ internal static class CommentScanner
         return i;
     }
 
-    private static int CollectBlock(string[] lines, int start, List<LogicalComment> sink)
+    private int CollectBlock(string[] lines, int start, List<LogicalComment> sink)
     {
+        var body = new List<CommentLine>();
         var i = start;
-        var body = new List<(int, string, int)>();
         while (i < lines.Length)
         {
             var stripped = lines[i]
-                .Replace("/*", "")
-                .Replace("*/", "")
+                .Replace(Tokens.BlockOpen, "")
+                .Replace(Tokens.BlockClose, "")
                 .TrimStart()
                 .TrimStart('*')
                 .Trim();
-            body.Add((i + 1, stripped, Width(lines[i])));
-            var closes = lines[i].Contains("*/");
+            body.Add(new CommentLine(i + 1, stripped, WidthOf(lines[i])));
+            var closes = lines[i].Contains(Tokens.BlockClose);
             i++;
             if (closes)
                 break;
         }
-        var comment = new LogicalComment
-        {
-            StartLine = start + 1,
-            HasMarker = body.Any(b => Markers.StartsMarker(b.Item2)),
-        };
-        comment.Lines.AddRange(body);
-        sink.Add(comment);
+        var hasMarker = body.Any(line => config.MarkerStart.IsMatch(line.Text));
+        sink.Add(new LogicalComment(start + 1, hasMarker, body));
         return i;
     }
 
-    private static List<LogicalComment> CollectPrefix(
+    private int CollectLineRun(string[] lines, int start, List<LogicalComment> sink)
+    {
+        var run = new List<CommentLine>();
+        var i = start;
+        while (i < lines.Length)
+        {
+            var trimmed = lines[i].TrimStart();
+            if (
+                trimmed.StartsWith(Tokens.DocLine)
+                || trimmed.StartsWith(Tokens.InnerDocLine)
+                || !trimmed.StartsWith(Tokens.Line)
+            )
+                break;
+            run.Add(new CommentLine(i + 1, trimmed[2..].Trim(), WidthOf(lines[i])));
+            i++;
+        }
+        SplitRun(run, sink);
+        return i;
+    }
+
+    private IReadOnlyList<LogicalComment> CollectPrefix(
         string[] lines,
         string token,
         bool shebangAware
@@ -292,37 +349,44 @@ internal static class CommentScanner
         var i = 0;
         while (i < lines.Length)
         {
-            if (i == 0 && shebangAware && lines[i].TrimStart().StartsWith("#!"))
+            if (i == 0 && shebangAware && lines[i].TrimStart().StartsWith(Tokens.Shebang))
             {
                 i++;
                 continue;
             }
-            var trimmed = lines[i].TrimStart();
-            if (!trimmed.StartsWith(token))
+            if (!lines[i].TrimStart().StartsWith(token))
             {
                 i++;
                 continue;
             }
-            var run = new List<(int, string, int)>();
+            var run = new List<CommentLine>();
             while (i < lines.Length)
             {
-                var t = lines[i].TrimStart();
-                if (i == 0 && shebangAware && t.StartsWith("#!"))
+                var trimmed = lines[i].TrimStart();
+                if (i == 0 && shebangAware && trimmed.StartsWith(Tokens.Shebang))
                     break;
-                if (!t.StartsWith(token))
+                if (!trimmed.StartsWith(token))
                     break;
-                run.Add((i + 1, t.TrimStart(token[0]).Trim(), Width(lines[i])));
+                run.Add(
+                    new CommentLine(i + 1, trimmed.TrimStart(token[0]).Trim(), WidthOf(lines[i]))
+                );
                 i++;
             }
             SplitRun(run, result);
         }
         return result;
     }
+
+    private static int WidthOf(string raw) => raw.TrimEnd().Length;
 }
 
-internal static class Program
+internal static class ViolationReporter
 {
-    private static string BuildContext(string path, List<Violation> violations)
+    public static string Build(
+        string path,
+        IReadOnlyList<Violation> violations,
+        IReadOnlyList<string> markers
+    )
     {
         var sb = new StringBuilder();
         sb.Append($"ソースファイルが Write/Edit されました: {path}\n\n");
@@ -342,7 +406,7 @@ internal static class Program
             "\n共有ルール (single source of truth: `~/.claude/skills/template/comment_markers.md`) に従い修正する:\n"
         );
         sb.Append(
-            "1. すべてのコメントは whitelist マーカー (TODO/FIXME/SEE/CONSTRAINT/NOTE/HACK/SAFETY) で始める。始まらないコメントは、コードを直す/モデル化する/削除するのいずれかで解消する (マーカーを機械的に足すだけにしない)。\n"
+            $"1. すべてのコメントは whitelist マーカー ({string.Join('/', markers)}) で始める。始まらないコメントは、コードを直す/モデル化する/削除するのいずれかで解消する (マーカーを機械的に足すだけにしない)。\n"
         );
         sb.Append(
             "2. 1 論理コメントは最大 2 行。3 行以上に渡るなら短く要約するか、コメントに収めない。\n"
@@ -357,28 +421,53 @@ internal static class Program
         sb.Append("すべての違反を解消するまで、他のタスクへ進んではならない。");
         return sb.ToString();
     }
+}
 
-    private static async Task<int> Main()
+internal static class HookIo
+{
+    public static async Task<string?> ReadEditedFilePathAsync()
     {
         var input = await Console.In.ReadToEndAsync();
         var hook = JsonSerializer.Deserialize(input, HookJson.Default.HookInput);
         if (hook?.ToolName is not ("Write" or "Edit"))
+            return null;
+        var path = hook.ToolInput?.FilePath ?? "";
+        return path.Length == 0 ? null : path;
+    }
+
+    public static void WriteContext(string context)
+    {
+        var output = new Output(new HookSpecificOutput("PostToolUse", context));
+        Console.WriteLine(JsonSerializer.Serialize(output, HookJson.Default.Output));
+    }
+}
+
+internal static class Program
+{
+    private static async Task<int> Main()
+    {
+        var config = new ScannerConfig(
+            ExtensionSource.Load(),
+            Vocabulary.MarkerRegex(),
+            Vocabulary.IssueRegex(),
+            Vocabulary.DefaultRules
+        );
+
+        var path = await HookIo.ReadEditedFilePathAsync();
+        if (path is null)
+            return 0;
+        if (!config.Extensions.Contains(Path.GetExtension(path)))
+            return 0;
+        if (Language.FamilyOf(Path.GetExtension(path)) is not { } family)
+            return 0;
+        if (!File.Exists(path))
             return 0;
 
-        var filePath = hook.ToolInput?.FilePath ?? "";
-        if (filePath.Length == 0)
-            return 0;
-        if (!SourceFile.IsSource(filePath))
-            return 0;
-
-        var violations = CommentScanner.Scan(filePath);
+        var violations = new CommentScanner(config).Scan(File.ReadAllLines(path), family);
         if (violations.Count == 0)
             return 0;
 
-        var output = new Output(
-            new HookSpecificOutput("PostToolUse", BuildContext(filePath, violations))
-        );
-        Console.WriteLine(JsonSerializer.Serialize(output, HookJson.Default.Output));
+        HookIo.WriteContext(ViolationReporter.Build(path, violations, Vocabulary.Markers));
         return 0;
     }
 }
