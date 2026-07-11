@@ -103,6 +103,10 @@
           {
             "type": "command",
             "command": "dotnet run $HOME/.claude/hooks/clean_comment_out.cs"
+          },
+          {
+            "type": "command",
+            "command": "dotnet run $HOME/.claude/hooks/validate_comment_format.cs"
           }
         ]
       }

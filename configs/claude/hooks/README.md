@@ -32,21 +32,32 @@ SEE: https://code.claude.com/docs/en/hooks#posttooluse-decision-control
 | `trigger_ci_fix.cs` | PostToolUse (Bash) | `git push` / `gh pr create` 成功後に monitor__ci_status を促す |
 | `write_structured_comment.cs` | PostToolUse (Write\|Edit) | ソース編集後に write__structured_comment を促す |
 | `clean_comment_out.cs` | PostToolUse (Write\|Edit) | ソース編集後に clean__comment_out を促す |
+| `validate_comment_format.cs` | PostToolUse (Write\|Edit) | コメントを走査し語彙・2行・80文字・issue番号の違反を検出して修正を促す |
 | `block_stop_on_open_tasks.cs` | Stop | 未完了 Task が残ったままの停止をブロックする |
 
-## コメント整理フック (writer → cleaner)
+## コメント整理フック (writer → cleaner → validator)
 
-`write_structured_comment.cs` と `clean_comment_out.cs` は対で動く。`settings.json` の
-`Write|Edit` matcher で writer を cleaner より前に登録し、ソース編集時に
-**write (構造化) → clean (掃除)** の順で発火させる。
+`write_structured_comment.cs`・`clean_comment_out.cs`・`validate_comment_format.cs` は
+3 段で動く。`settings.json` の `Write|Edit` matcher にこの順で登録し、ソース編集時に
+**write (構造化) → clean (掃除) → validate (検証)** の順で発火させる。
 
 - **writer**: デフォルトはコメント 0。コードに表現できない知識 (未完の事実・外部世界
-  の事実) だけを whitelist マーカーで書く。
-- **cleaner**: 意味のないコメントとデッドコードを削除し、価値あるコメントを残す。
-- 両者が扱うマーカー語彙は単一の定義を共有するため、**writer が書いたコメントに
-  cleaner をかけても no-op** になる。
+  の事実・ユーザーの明示指示) だけを whitelist マーカーで書く。
+- **cleaner**: whitelist マーカーで始まらない非 doc コメントをすべて削除し、マーカー付き
+  コメントと doc コメントだけを残す。
+- **validator**: 編集後のコメントを機械的に走査し、(1) 語彙マーカー始まり (2) 2 行以内
+  (3) 80 文字以内 (4) issue/PR 番号なし、の違反を検出して修正を強制する。doc コメントと
+  先頭のモジュールヘッダは免除する。writer/cleaner の誘導 (additionalContext) が守られた
+  かを機械的に裏取りする最終ゲート。
+- 3 者が同じ whitelist を共有するため、**writer が書いたコメントに cleaner・validator を
+  かけても no-op** になる。
 
 共有する定義の置き場:
 
-- マーカー語彙・フォーマット・契約: `~/.claude/skills/template/comment_markers.md`
-- 対象拡張子: `~/.claude/skills/reference/comment_out_skills_target/extensions.csv`
+- マーカー語彙・フォーマット・契約 (人間・スキル向け): `~/.claude/skills/template/comment_markers.md`
+- 対象拡張子 (3 hook が共有するため外部ファイルに切り出す): `~/.claude/skills/reference/comment_out_skills_target/extensions.csv`
+
+マーカー語彙の機械可読な形は validator (`validate_comment_format.cs`) 内の const が
+持つ。読者がこの 1 フックだけなので外部ファイルにせず const とした。対象拡張子は
+3 hook が参照するため、file-based app では共有 const を持てず外部ファイルに切り出す
+(各ファイルの読み込みロジックはミラーされる)。
