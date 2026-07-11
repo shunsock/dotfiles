@@ -2,18 +2,18 @@
   description = "Flake for macOS";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-25.11";
+    nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-26.05";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
-    home-manager.url = "github:nix-community/home-manager/release-25.11";
+    home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     llm-agents.url = "github:numtide/llm-agents.nix";
-    # lazynix は nixpkgs を nixos-25.11 にピンしており当方と一致するため follows で一本化する。
+    # lazynix 上流の nixpkgs ピンに関わらず、follows で当方の nixpkgs に一本化する。
     lazynix.url = "github:shunsock/lazynix";
     lazynix.inputs.nixpkgs.follows = "nixpkgs";
     # hisui 上流は nixos-25.05 ピンだが、その dotnet SDK は aarch64-darwin で
-    # configureNuget フェーズがクラッシュする。当方の nixos-25.11 に follows させて
+    # configureNuget フェーズがクラッシュする。当方の nixos-26.05 に follows させて
     # 新しい dotnet SDK でビルドする。
     hisui.url = "github:shunsock/hisui";
     hisui.inputs.nixpkgs.follows = "nixpkgs";
