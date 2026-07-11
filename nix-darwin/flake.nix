@@ -74,7 +74,7 @@
       formatter.${system} = pkgs.writeShellApplication {
         name = "nixfmt-tree";
         runtimeInputs = [
-          pkgs.nixfmt-rfc-style
+          pkgs.nixfmt
           pkgs.findutils
         ];
         text = ''
