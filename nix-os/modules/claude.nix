@@ -32,7 +32,9 @@
     run install -Dm644 ${../../configs/claude/hooks/trigger_ci_fix.cs} $HOME/.claude/hooks/trigger_ci_fix.cs
     run install -Dm644 ${../../configs/claude/hooks/require_tasks.cs} $HOME/.claude/hooks/require_tasks.cs
     run install -Dm644 ${../../configs/claude/hooks/block_stop_on_open_tasks.cs} $HOME/.claude/hooks/block_stop_on_open_tasks.cs
+    run install -Dm644 ${../../configs/claude/hooks/write_structured_comment.cs} $HOME/.claude/hooks/write_structured_comment.cs
     run install -Dm644 ${../../configs/claude/hooks/clean_comment_out.cs} $HOME/.claude/hooks/clean_comment_out.cs
+    run install -Dm644 ${../../configs/claude/hooks/validate_comment_format.cs} $HOME/.claude/hooks/validate_comment_format.cs
     run install -Dm644 ${../../configs/claude/hooks/quality_assurance_via_skill.cs} $HOME/.claude/hooks/quality_assurance_via_skill.cs
   '';
 }

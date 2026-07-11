@@ -47,7 +47,7 @@ internal static class Program
         + "共有マーカー語彙から whitelist として書く。いま次を適用すること:\n"
         + "1. 語彙・フォーマット・契約の single source of truth `~/.claude/skills/template/comment_markers.md` を読み込む。\n"
         + "2. いま編集した箇所ごとに「コードへ表現できない知識があるか」を問う。既定の答えは No (コメントを足さない)。\n"
-        + "3. 足すのは whitelist の 7 マーカー (TODO/FIXME/HACK/SEE/CONSTRAINT/COMPAT/SAFETY) に該当するときだけ。正規フォーマット (インライン `MARKER: content` / 複数行) で書く。\n"
+        + "3. 足すのは whitelist の 7 マーカー (TODO/FIXME/SEE/CONSTRAINT/NOTE/HACK/SAFETY) に該当するときだけ。各コメントは必ずマーカーで始め、1 論理コメントは 2 行以内・1 行 80 文字以内に収め、issue/PR 番号は書かない。NOTE はユーザーの明示指示があるときだけ使う。\n"
         + "4. プログラム知識は命名・型・構造で、ドメイン知識はドメインモデルで表現する — コメントにしない。一過性の経緯は commit/PR へ。\n"
         + "5. コメントのみを追加する — コードの挙動は変えず、いま変更したファイルだけを対象にする。\n\n"
         + "いま編集したファイルへのマーカー記述が完了するまで、他のタスクへ進んではならない。";
