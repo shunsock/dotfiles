@@ -67,10 +67,6 @@
           {
             "type": "command",
             "command": "dotnet run $HOME/.claude/hooks/pr_submission_via_skill.cs"
-          },
-          {
-            "type": "command",
-            "command": "dotnet run $HOME/.claude/hooks/quality_assurance_via_skill.cs"
           }
         ]
       },
