@@ -27,7 +27,6 @@ SEE: https://code.claude.com/docs/en/hooks#posttooluse-decision-control
 |---|---|---|
 | `validate_bash.cs` | PreToolUse (Bash) | 禁止コマンドを拒否し代替を案内する |
 | `pr_submission_via_skill.cs` | PreToolUse (Bash) | `gh pr create` の直接実行を拒否し submit__pull_request へ誘導する |
-| `quality_assurance_via_skill.cs` | PreToolUse (Bash) | バックエンドが staged な `git commit` を捕捉し QA スキルへ誘導する |
 | `require_tasks.cs` | PreToolUse (Write\|Edit) | in_progress な Task が無い状態の編集を deny でブロックする |
 | `trigger_ci_fix.cs` | PostToolUse (Bash) | `git push` / `gh pr create` 成功後に monitor__ci_status を促す |
 | `write_structured_comment.cs` | PostToolUse (Write\|Edit) | ソース編集後に write__structured_comment を促す |
