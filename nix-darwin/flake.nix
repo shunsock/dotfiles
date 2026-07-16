@@ -134,6 +134,7 @@
               brews = [
                 "colima"
                 "docker"
+                "docker-buildx"
                 "docker-compose"
                 "curl"
               ];
