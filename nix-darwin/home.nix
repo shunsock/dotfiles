@@ -53,6 +53,7 @@
       tree
       wthrr
       yazi
+      yubikey-manager
     ]
     ++ [
       complexity
