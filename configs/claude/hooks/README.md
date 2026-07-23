@@ -27,12 +27,25 @@ SEE: https://code.claude.com/docs/en/hooks#posttooluse-decision-control
 |---|---|---|
 | `validate_bash.cs` | PreToolUse (Bash) | 禁止コマンドを拒否し代替を案内する |
 | `pr_submission_via_skill.cs` | PreToolUse (Bash) | `gh pr create` の直接実行を拒否し submit__pull_request へ誘導する |
-| `require_tasks.cs` | PreToolUse (Write\|Edit) | in_progress な Task が無い状態の編集を deny でブロックする |
+| `require_tasks.cs` | PreToolUse (Write\|Edit) | in_progress な Task が無い状態の編集を deny でブロックする (plans/ と scratchpad は除外) |
 | `trigger_ci_fix.cs` | PostToolUse (Bash) | `git push` / `gh pr create` 成功後に monitor__ci_status を促す |
 | `write_structured_comment.cs` | PostToolUse (Write\|Edit) | ソース編集後に write__structured_comment を促す |
 | `clean_comment_out.cs` | PostToolUse (Write\|Edit) | ソース編集後に clean__comment_out を促す |
 | `validate_comment_format.cs` | PostToolUse (Write\|Edit) | コメントを走査し語彙・2行・80文字・issue番号の違反を検出して修正を促す |
 | `block_stop_on_open_tasks.cs` | Stop | 未完了 Task が残ったままの停止をブロックする |
+
+## Task 必須フック (require_tasks.cs)
+
+`$HOME/.claude/tasks/<session_id>/*.json` を走査し in_progress な Task が 1 つも
+無い状態の Write/Edit を deny でブロックする。判定対象外は次の 2 つ:
+
+- `/.claude/plans/` を含むパス — 計画メモは作業単位を持たない
+- `/private/tmp/claude-` から始まるパス — scratchpad は作業単位を持たない
+
+TaskCreate/TaskUpdate ツールが利用できないハーネスでも編集を再開できるよう、deny
+メッセージ (`permissionDecisionReason`) に task json を直接作成する `mkdir` + `printf`
+の実行例を埋め込んでいる。session_id は hook が stdin ペイロードから取得しメッセージに
+差し込むため、そのままコピーして実行すれば in_progress な Task を宣言できる。
 
 ## コメント整理フック (writer → cleaner → validator)
 
