@@ -1,4 +1,4 @@
-// require_tasks.cs - PreToolUse hook for Claude Code (.NET file-based app, Write|Edit)
+// require_tasks.cs - PreToolUse hook for Claude Code (Write|Edit)
 //
 // in_progress な Task が 1 つも無い状態での Write/Edit を deny でブロックする。
 // 「編集を始める前に、その作業を担う Task を in_progress にする」規約を強制する
@@ -11,88 +11,97 @@
 // 実機検証の結果、アクティブセッション中は TaskCreate/TaskUpdate が同 json を同期で
 // 生成・更新するため、編集の瞬間の「現在 in_progress な Task」をディスクから確実に
 // 判定できる。session_id を得る環境変数は無いため、stdin ペイロードが唯一の取得元。
-// see: https://code.claude.com/docs/en/hooks#pretooluse-decision-control
+// SEE: https://code.claude.com/docs/en/hooks#pretooluse-decision-control
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 internal static class Tasks
 {
-    // session のタスク json を走査し、in_progress な Task が 1 つでもあれば true。
-    // ディレクトリが無い / 読めない json は安全側に無視する。
+    // CONSTRAINT: ディレクトリ欠落・不正 json は安全側に無視し false を返す。
     public static bool HasInProgress(string sessionId)
     {
         var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         var dir = Path.Combine(home, ".claude", "tasks", sessionId);
-        if (!Directory.Exists(dir))
-            return false;
-
-        foreach (var path in Directory.EnumerateFiles(dir, "*.json"))
-        {
-            if (ReadStatus(path) == "in_progress")
-                return true;
-        }
-
-        return false;
+        return Directory.Exists(dir)
+            && Directory.EnumerateFiles(dir, "*.json").Any(IsInProgress);
     }
 
-    private static string? ReadStatus(string path)
+    private static bool IsInProgress(string path)
     {
         try
         {
-            var task = JsonSerializer.Deserialize(
-                File.ReadAllText(path),
-                TaskJson.Default.TaskState
-            );
-            return task?.Status;
+            var t = JsonSerializer.Deserialize(File.ReadAllText(path), TaskJson.Default.TaskState);
+            return t?.Status == "in_progress";
         }
         catch
         {
-            return null;
+            return false;
         }
     }
 }
 
 internal static class Program
 {
-    private const string Reason =
+    // CONSTRAINT: "." / ".." は tasks/../ 外を指すため負の先読みで除外する。
+    private static readonly Regex SessionIdPattern = new(@"^(?!\.+$)[A-Za-z0-9._-]+$");
+
+    // CONSTRAINT: 手動で task json を作る fallback コマンドを reason に埋め込む。
+    private static string BuildReason(string sessionId) =>
         "in_progress な Task が無い状態での Write/Edit は禁止されている。\n\n"
         + "ファイルを編集する前に、その編集を担う Task を必ず in_progress にしなければならない。"
         + "in_progress な Task が 1 つも無いままの編集は規約違反であり、この編集はブロックされた。\n\n"
         + "1. まだ Task が無ければ TaskCreate で作業を分解する\n"
         + "2. これから着手するステップの Task を TaskUpdate で in_progress にする\n"
         + "3. そのステップが完了したら completed にする\n\n"
-        + "いま該当 Task を in_progress にしてから、編集をやり直すこと。";
+        + "いま該当 Task を in_progress にしてから、編集をやり直すこと。\n\n"
+        + "TaskCreate/TaskUpdate ツールがこのセッションで利用不可の場合は、"
+        + "作業単位を宣言する task json を直接作成してから編集をやり直すこと。実行例:\n"
+        + $"mkdir -p ~/.claude/tasks/{sessionId} && "
+        + "printf '{\"status\":\"in_progress\",\"subject\":\"<作業内容>\"}' "
+        + $"> ~/.claude/tasks/{sessionId}/manual-1.json";
 
     private static async Task<int> Main()
     {
-        var input = await Console.In.ReadToEndAsync();
-        var hook = JsonSerializer.Deserialize(input, HookJson.Default.HookInput);
-        if (hook?.ToolName is not ("Write" or "Edit"))
-            return 0;
+        HookInput? hook = TryParse(await Console.In.ReadToEndAsync());
+        var sessionId = hook?.SessionId ?? "";
+        var filePath = hook?.ToolInput?.FilePath ?? "";
+        var mustDeny =
+            hook?.ToolName is "Write" or "Edit"
+            && SessionIdPattern.IsMatch(sessionId)
+            && !IsExemptPath(filePath)
+            && !Tasks.HasInProgress(sessionId);
+        if (!mustDeny) return 0;
 
-        // session_id が取れない場合は、別セッションやサブエージェントの状態で
-        // 誤ってブロックしないよう、安全側に倒して許可する。
-        var sessionId = hook.SessionId ?? "";
-        if (sessionId.Length == 0)
-            return 0;
-
-        // 計画立案そのものは止めない。plan ファイルの作成は編集前の安全なステップで
-        // あり、Task の存在を要求すると plan モードが自身の plan を書けなくなる。
-        var filePath = hook.ToolInput?.FilePath ?? "";
-        if (filePath.Contains("/.claude/plans/"))
-            return 0;
-
-        if (Tasks.HasInProgress(sessionId))
-            return 0;
-
-        // 終了コードでは確実にブロックできない (exit 1 等は非ブロッキング扱い)。
-        // PreToolUse は permissionDecision: "deny" の JSON 出力でのみツール実行を拒否する。
-        // see: https://code.claude.com/docs/en/hooks
-        var decision = new Decision(new HookSpecificOutput("PreToolUse", "deny", Reason));
+        // CONSTRAINT: deny は JSON 出力でのみ有効 (終了コードではブロック不可)。
+        // SEE: https://code.claude.com/docs/en/hooks
+        var decision = new Decision(new HookSpecificOutput("PreToolUse", "deny", BuildReason(sessionId)));
         Console.WriteLine(JsonSerializer.Serialize(decision, HookJson.Default.Decision));
         return 0;
     }
+
+    // CONSTRAINT: 不正 JSON・空 stdin では未捕捉例外で落ちるため null を返す。
+    private static HookInput? TryParse(string input)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize(input, HookJson.Default.HookInput);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    // CONSTRAINT: plans/ と scratchpad は作業単位を持たないため対象外。
+    // CONSTRAINT: traversal を弾くため正規化後のパスで判定する。
+    // CONSTRAINT: Path.GetFullPath("") は例外になるため長さで先に弾く。
+    private static bool IsExemptPath(string filePath) =>
+        filePath.Length > 0
+        && Path.GetFullPath(filePath) is string full
+        && (full.Contains("/.claude/plans/")
+            || full.StartsWith("/private/tmp/claude-"));
 }
 
 record HookInput(
