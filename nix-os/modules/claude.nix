@@ -19,6 +19,11 @@
     run install -Dm644 ${../../configs/claude/settings.json} $HOME/.claude/settings.json
   '';
 
+  # CONSTRAINT: keybindings.json は /keybindings コマンドが実行時に書き込むため symlink 不可
+  home.activation.claudeKeybindings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    run install -Dm644 ${../../configs/claude/keybindings.json} $HOME/.claude/keybindings.json
+  '';
+
   home.activation.claudeHooks = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run mkdir -p $HOME/.claude/hooks
     run install -Dm644 ${../../configs/claude/hooks/validate_bash.cs} $HOME/.claude/hooks/validate_bash.cs
