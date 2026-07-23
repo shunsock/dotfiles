@@ -3,10 +3,65 @@
   "$docs": "https://code.claude.com/docs/ja/keybindings",
   "bindings": [
     {
-      "context": "Select",
+      "context": "Global",
       "bindings": {
-        "shift+j": "select:next",
-        "shift+k": "select:previous"
+        "alt+j": "select:next",
+        "alt+k": "select:previous"
+      }
+    },
+    {
+      "context": "Confirmation",
+      "bindings": {
+        "alt+j": "confirm:next",
+        "alt+k": "confirm:previous",
+        "alt+h": "confirm:previousField",
+        "alt+l": "confirm:nextField"
+      }
+    },
+    {
+      "context": "MessageSelector",
+      "bindings": {
+        "alt+j": "messageSelector:down",
+        "alt+k": "messageSelector:up"
+      }
+    },
+    {
+      "context": "DiffDialog",
+      "bindings": {
+        "alt+j": "diff:nextFile",
+        "alt+k": "diff:previousFile",
+        "alt+h": "diff:previousSource",
+        "alt+l": "diff:nextSource"
+      }
+    },
+    {
+      "context": "ModelPicker",
+      "bindings": {
+        "alt+h": "modelPicker:decreaseEffort",
+        "alt+l": "modelPicker:increaseEffort"
+      }
+    },
+    {
+      "context": "Tabs",
+      "bindings": {
+        "alt+h": "tabs:previous",
+        "alt+l": "tabs:next"
+      }
+    },
+    {
+      "context": "Attachments",
+      "bindings": {
+        "alt+h": "attachments:previous",
+        "alt+l": "attachments:next"
+      }
+    },
+    {
+      "context": "Footer",
+      "bindings": {
+        "alt+j": "footer:down",
+        "alt+k": "footer:up",
+        "alt+h": "footer:previous",
+        "alt+l": "footer:next"
       }
     }
   ]
