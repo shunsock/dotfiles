@@ -24,8 +24,7 @@ internal static class Tasks
     {
         var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         var dir = Path.Combine(home, ".claude", "tasks", sessionId);
-        return Directory.Exists(dir)
-            && Directory.EnumerateFiles(dir, "*.json").Any(IsInProgress);
+        return Directory.Exists(dir) && Directory.EnumerateFiles(dir, "*.json").Any(IsInProgress);
     }
 
     private static bool IsInProgress(string path)
