@@ -71,11 +71,14 @@ internal static class Program
             && SessionIdPattern.IsMatch(sessionId)
             && !IsExemptPath(filePath)
             && !Tasks.HasInProgress(sessionId);
-        if (!mustDeny) return 0;
+        if (!mustDeny)
+            return 0;
 
         // CONSTRAINT: deny は JSON 出力でのみ有効 (終了コードではブロック不可)。
         // SEE: https://code.claude.com/docs/en/hooks
-        var decision = new Decision(new HookSpecificOutput("PreToolUse", "deny", BuildReason(sessionId)));
+        var decision = new Decision(
+            new HookSpecificOutput("PreToolUse", "deny", BuildReason(sessionId))
+        );
         Console.WriteLine(JsonSerializer.Serialize(decision, HookJson.Default.Decision));
         return 0;
     }
@@ -99,8 +102,7 @@ internal static class Program
     private static bool IsExemptPath(string filePath) =>
         filePath.Length > 0
         && Path.GetFullPath(filePath) is string full
-        && (full.Contains("/.claude/plans/")
-            || full.StartsWith("/private/tmp/claude-"));
+        && (full.Contains("/.claude/plans/") || full.StartsWith("/private/tmp/claude-"));
 }
 
 record HookInput(
