@@ -76,8 +76,7 @@ internal static class Vocabulary
     public static Regex IssueRegex() =>
         new(IssuePattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-    public static Regex ConstraintPrefixRegex() =>
-        new(@"^CONSTRAINT\b", RegexOptions.Compiled);
+    public static Regex ConstraintPrefixRegex() => new(@"^CONSTRAINT\b", RegexOptions.Compiled);
 
     public static Regex ReasonPrefixRegex() =>
         new($@"^{ReasonContinuation}\b", RegexOptions.Compiled);
@@ -233,11 +232,7 @@ internal sealed class CommentScanner(ScannerConfig config)
             );
         if (!isHeader && IsConstraintMissingReason(comment))
             violations.Add(
-                new(
-                    comment.StartLine,
-                    "CONSTRAINT は 2 行目に REASON: が必要",
-                    FirstText(comment)
-                )
+                new(comment.StartLine, "CONSTRAINT は 2 行目に REASON: が必要", FirstText(comment))
             );
         foreach (var line in comment.Lines)
         {
