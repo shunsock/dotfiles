@@ -31,7 +31,7 @@ SEE: https://code.claude.com/docs/en/hooks#posttooluse-decision-control
 | `trigger_ci_fix.cs` | PostToolUse (Bash) | `git push` / `gh pr create` 成功後に monitor__ci_status を促す |
 | `write_structured_comment.cs` | PostToolUse (Write\|Edit) | ソース編集後に write__structured_comment を促す |
 | `clean_comment_out.cs` | PostToolUse (Write\|Edit) | ソース編集後に clean__comment_out を促す |
-| `validate_comment_format.cs` | PostToolUse (Write\|Edit) | コメントを走査し語彙・2行・80文字・issue番号・CONSTRAINT ペア形式/件数の違反を検出して修正を促す |
+| `validate_comment_format.cs` | PostToolUse (Write\|Edit) | コメントを走査し語彙・2行・70文字・issue番号・CONSTRAINT ペア形式/句点終端/件数の違反を検出して修正を促す |
 | `block_stop_on_open_tasks.cs` | Stop | 未完了 Task が残ったままの停止をブロックする |
 
 ## Task 必須フック (require_tasks.cs)
@@ -58,8 +58,8 @@ TaskCreate/TaskUpdate ツールが利用できないハーネスでも編集を�
 - **cleaner**: whitelist マーカーで始まらない非 doc コメントをすべて削除し、マーカー付き
   コメントと doc コメントだけを残す。
 - **validator**: 編集後のコメントを機械的に走査し、(1) 語彙マーカー始まり (2) 2 行以内
-  (3) 80 文字以内 (4) issue/PR 番号なし (5) CONSTRAINT は REASON 付き 2 行ペアかつ
-  1 ファイル 3 件まで、の違反を検出して修正を強制する。doc コメントと
+  (3) 70 文字以内 (4) issue/PR 番号なし (5) CONSTRAINT は REASON 付き句点終端の
+  2 行ペアかつ 1 ファイル 3 件まで、の違反を検出して修正を強制する。doc コメントと
   先頭のモジュールヘッダは免除する。writer/cleaner の誘導 (additionalContext) が守られた
   かを機械的に裏取りする最終ゲート。
 - 3 者が同じ whitelist を共有するため、**writer が書いたコメントに cleaner・validator を

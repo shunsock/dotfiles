@@ -1,7 +1,7 @@
 // validate_comment_format.cs - PostToolUse(Write|Edit) フック。
 // ソース編集後にコメントを走査し、語彙とフォーマットの違反を検出して修正を促す。
-// 制約: マーカー始まり、2 行以内、80 文字以内、issue/PR 番号なし、
-// CONSTRAINT は REASON 付き 2 行ペアかつ 1 ファイル 3 件まで。
+// 制約: マーカー始まり、2 行以内、70 文字以内、issue/PR 番号なし、
+// CONSTRAINT は REASON 付き句点終端の 2 行ペアかつ 1 ファイル 3 件まで。
 // doc コメントと先頭ヘッダは例外とする。
 // SEE: ~/.claude/skills/template/comment_markers.md
 // SEE: ~/.claude/hooks/README.md
@@ -60,7 +60,7 @@ internal static class Vocabulary
         "SAFETY",
     ];
 
-    public static readonly FormatRules DefaultRules = new(MaxLines: 2, MaxWidth: 80);
+    public static readonly FormatRules DefaultRules = new(MaxLines: 2, MaxWidth: 70);
 
     public const string IssuePattern =
         @"#\d+|\bGH-\d+\b|\b(?:issues?|pull)/\d+|\b(?:issue|pr)\b\s*#?\s*\d+";
@@ -79,9 +79,9 @@ internal static class ConstraintRule
 
     public static readonly Regex Start = new(@"^CONSTRAINT\b", RegexOptions.Compiled);
 
-    public static readonly Regex Head = new(@"^CONSTRAINT:\s*\S", RegexOptions.Compiled);
+    public static readonly Regex Head = new(@"^CONSTRAINT:\s*\S.*。$", RegexOptions.Compiled);
 
-    public static readonly Regex Reason = new(@"^REASON:\s*\S", RegexOptions.Compiled);
+    public static readonly Regex Reason = new(@"^REASON:\s*\S.*。$", RegexOptions.Compiled);
 }
 
 internal static class Tokens
@@ -453,12 +453,12 @@ internal static class ViolationReporter
         sb.Append(
             "2. 1 論理コメントは最大 2 行。3 行以上に渡るなら短く要約するか、コメントに収めない。\n"
         );
-        sb.Append("3. 1 行は最大 80 文字。短く簡潔に言い換える。\n");
+        sb.Append("3. 1 行は最大 70 文字。短く簡潔に言い換える。\n");
         sb.Append(
             "4. issue/PR 番号 (#123・GH-123・issues/123・pull/123・issue/PR の URL) を取り除く。外部参照は RFC・仕様・ベンダー doc・ファイルパスに限り SEE で書く。\n"
         );
         sb.Append(
-            "5. CONSTRAINT は「CONSTRAINT: 満たすべき制約」+「REASON: 根拠」の 2 行ペアで書き、1 ファイル 3 件まで。超過・単独行の CONSTRAINT は設計 (型・構造) で表現するか削除する。\n"
+            "5. CONSTRAINT は「CONSTRAINT: 満たすべき制約」+「REASON: 根拠」の 2 行ペアで書き、1 ファイル 3 件まで。各行の主張は簡潔に述べ、必ず句点 (。) で終える。超過・単独行の CONSTRAINT は設計 (型・構造) で表現するか削除する。\n"
         );
         sb.Append(
             "6. doc コメント (rustdoc /// ・JSDoc /** */ ・docstring) と先頭のモジュールヘッダは対象外。コメントのみ編集し、コードの挙動は変えない。\n\n"
