@@ -1,6 +1,7 @@
 // validate_comment_format.cs - PostToolUse(Write|Edit) フック。
 // ソース編集後にコメントを走査し、語彙とフォーマットの違反を検出して修正を促す。
-// 制約: マーカー始まり、2 行以内、80 文字以内、issue/PR 番号なし。
+// 制約: マーカー始まり、2 行以内、80 文字以内、issue/PR 番号なし、
+// CONSTRAINT は REASON 付き 2 行ペアかつ 1 ファイル 3 件まで。
 // doc コメントと先頭ヘッダは例外とする。
 // SEE: ~/.claude/skills/template/comment_markers.md
 // SEE: ~/.claude/hooks/README.md
@@ -69,6 +70,18 @@ internal static class Vocabulary
 
     public static Regex IssueRegex() =>
         new(IssuePattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+}
+
+internal static class ConstraintRule
+{
+    // SEE: ~/.claude/skills/template/comment_markers.md
+    public const int MaxPerFile = 3;
+
+    public static readonly Regex Start = new(@"^CONSTRAINT\b", RegexOptions.Compiled);
+
+    public static readonly Regex Head = new(@"^CONSTRAINT:\s*\S", RegexOptions.Compiled);
+
+    public static readonly Regex Reason = new(@"^REASON:\s*\S", RegexOptions.Compiled);
 }
 
 internal static class Tokens
@@ -160,6 +173,7 @@ internal sealed class CommentScanner(ScannerConfig config)
         var violations = new List<Violation>();
         foreach (var comment in comments)
             CheckComment(comment, comment.StartLine < headerLimit, violations);
+        CheckConstraints(comments.Where(c => c.StartLine >= headerLimit), violations);
         return violations;
     }
 
@@ -233,6 +247,34 @@ internal sealed class CommentScanner(ScannerConfig config)
                 violations.Add(new(line.Number, "issue/PR 番号を含む", line.Text));
         }
     }
+
+    private static void CheckConstraints(
+        IEnumerable<LogicalComment> comments,
+        List<Violation> violations
+    )
+    {
+        var constraints = comments.Where(IsConstraint).ToList();
+        violations.AddRange(constraints.Where(c => !IsConstraintPair(c)).Select(PairViolation));
+        violations.AddRange(constraints.Skip(ConstraintRule.MaxPerFile).Select(ExcessViolation));
+    }
+
+    private static bool IsConstraint(LogicalComment comment) =>
+        ConstraintRule.Start.IsMatch(FirstText(comment));
+
+    private static Violation PairViolation(LogicalComment comment) =>
+        new(comment.StartLine, "CONSTRAINT/REASON ペア形式違反", FirstText(comment));
+
+    private static Violation ExcessViolation(LogicalComment comment) =>
+        new(
+            comment.StartLine,
+            $"CONSTRAINT 超過 (1 ファイル最大 {ConstraintRule.MaxPerFile} 件)",
+            FirstText(comment)
+        );
+
+    private static bool IsConstraintPair(LogicalComment comment) =>
+        comment.Lines.Count == 2
+        && ConstraintRule.Head.IsMatch(comment.Lines[0].Text)
+        && ConstraintRule.Reason.IsMatch(comment.Lines[1].Text);
 
     private static string FirstText(LogicalComment comment) =>
         comment.Lines.Count > 0 ? comment.Lines[0].Text : "";
@@ -416,7 +458,10 @@ internal static class ViolationReporter
             "4. issue/PR 番号 (#123・GH-123・issues/123・pull/123・issue/PR の URL) を取り除く。外部参照は RFC・仕様・ベンダー doc・ファイルパスに限り SEE で書く。\n"
         );
         sb.Append(
-            "5. doc コメント (rustdoc /// ・JSDoc /** */ ・docstring) と先頭のモジュールヘッダは対象外。コメントのみ編集し、コードの挙動は変えない。\n\n"
+            "5. CONSTRAINT は「CONSTRAINT: 満たすべき制約」+「REASON: 根拠」の 2 行ペアで書き、1 ファイル 3 件まで。超過・単独行の CONSTRAINT は設計 (型・構造) で表現するか削除する。\n"
+        );
+        sb.Append(
+            "6. doc コメント (rustdoc /// ・JSDoc /** */ ・docstring) と先頭のモジュールヘッダは対象外。コメントのみ編集し、コードの挙動は変えない。\n\n"
         );
         sb.Append("すべての違反を解消するまで、他のタスクへ進んではならない。");
         return sb.ToString();
