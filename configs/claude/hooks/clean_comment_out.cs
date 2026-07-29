@@ -47,8 +47,8 @@ internal static class Program
         + "マーカー付きコメントと doc コメントだけを残す。語彙は write__structured_comment と共有する。いま次を適用すること:\n"
         + "1. 保持マーカー語彙の single source of truth `~/.claude/skills/template/comment_markers.md` を読み込む。\n"
         + "2. いま編集したファイルのコメントを洗い出す。\n"
-        + "3. 残す: whitelist マーカー (TODO/FIXME/SEE/CONSTRAINT/NOTE/HACK/SAFETY) で始まるコメントと、公開インターフェースの doc コメント (rustdoc /// ・JSDoc ・docstring)。\n"
-        + "4. 削除する: 上記以外すべて。What コメント・マーカー無しの Why 散文・コメントアウトされたデッドコード・legacy XXX を含む。\n"
+        + "3. 残す: whitelist マーカー (TODO/FIXME/SEE/CONSTRAINT/NOTE/HACK/SAFETY) で始まるコメントと、CONSTRAINT に続く REASON: 継続行と、公開インターフェースの doc コメント (rustdoc /// ・JSDoc ・docstring)。\n"
+        + "4. 削除する: 上記以外すべて。What コメント・マーカー無しの Why 散文・コメントアウトされたデッドコード・legacy XXX・CONSTRAINT に紐付かない単独 REASON: 行を含む。\n"
         + "5. 迷ったら削除する。本当に必要な知識なら writer がマーカー付きで書き直す。\n"
         + "6. コメントのみを編集する — コードの挙動は変えず、いま変更したファイルだけを対象にする。\n\n"
         + "いま編集したファイルのコメント整理が完了するまで、他のタスクへ進んではならない。";

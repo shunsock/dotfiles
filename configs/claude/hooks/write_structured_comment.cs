@@ -48,8 +48,9 @@ internal static class Program
         + "1. 語彙・フォーマット・契約の single source of truth `~/.claude/skills/template/comment_markers.md` を読み込む。\n"
         + "2. いま編集した箇所ごとに「コードへ表現できない知識があるか」を問う。既定の答えは No (コメントを足さない)。\n"
         + "3. 足すのは whitelist の 7 マーカー (TODO/FIXME/SEE/CONSTRAINT/NOTE/HACK/SAFETY) に該当するときだけ。各コメントは必ずマーカーで始め、1 論理コメントは 2 行以内・1 行 80 文字以内に収め、issue/PR 番号は書かない。NOTE はユーザーの明示指示があるときだけ使う。\n"
-        + "4. プログラム知識は命名・型・構造で、ドメイン知識はドメインモデルで表現する — コメントにしない。一過性の経緯は commit/PR へ。\n"
-        + "5. コメントのみを追加する — コードの挙動は変えず、いま変更したファイルだけを対象にする。\n\n"
+        + "4. CONSTRAINT は必ず 2 行組で書く: 1 行目に『CONSTRAINT: 〜でなくてはならない / 〜しなくてはならない』の must 形の制約、2 行目に『REASON: 〜』の理由を添える。1 行だけの CONSTRAINT や REASON を欠く CONSTRAINT は違反である。REASON は CONSTRAINT の 2 行目専用の継続語彙であり、単独で使ってはならない。\n"
+        + "5. プログラム知識は命名・型・構造で、ドメイン知識はドメインモデルで表現する — コメントにしない。一過性の経緯は commit/PR へ。\n"
+        + "6. コメントのみを追加する — コードの挙動は変えず、いま変更したファイルだけを対象にする。\n\n"
         + "いま編集したファイルへのマーカー記述が完了するまで、他のタスクへ進んではならない。";
 
     private static async Task<int> Main()

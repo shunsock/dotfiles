@@ -1,6 +1,7 @@
 // validate_comment_format.cs - PostToolUse(Write|Edit) フック。
 // ソース編集後にコメントを走査し、語彙とフォーマットの違反を検出して修正を促す。
 // 制約: マーカー始まり、2 行以内、80 文字以内、issue/PR 番号なし。
+// CONSTRAINT は 1 行目 must 形 + 2 行目 REASON: の 2 行組を必須とする。
 // doc コメントと先頭ヘッダは例外とする。
 // SEE: ~/.claude/skills/template/comment_markers.md
 // SEE: ~/.claude/hooks/README.md
@@ -42,6 +43,8 @@ internal sealed record ScannerConfig(
     IReadOnlySet<string> Extensions,
     Regex MarkerStart,
     Regex IssueRef,
+    Regex ConstraintPrefix,
+    Regex ReasonPrefix,
     FormatRules Rules
 );
 
@@ -59,6 +62,9 @@ internal static class Vocabulary
         "SAFETY",
     ];
 
+    // SEE: ~/.claude/skills/template/comment_markers.md
+    public const string ReasonContinuation = "REASON";
+
     public static readonly FormatRules DefaultRules = new(MaxLines: 2, MaxWidth: 80);
 
     public const string IssuePattern =
@@ -69,6 +75,12 @@ internal static class Vocabulary
 
     public static Regex IssueRegex() =>
         new(IssuePattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+    public static Regex ConstraintPrefixRegex() =>
+        new(@"^CONSTRAINT\b", RegexOptions.Compiled);
+
+    public static Regex ReasonPrefixRegex() =>
+        new($@"^{ReasonContinuation}\b", RegexOptions.Compiled);
 }
 
 internal static class Tokens
@@ -219,6 +231,14 @@ internal sealed class CommentScanner(ScannerConfig config)
                     FirstText(comment)
                 )
             );
+        if (!isHeader && IsConstraintMissingReason(comment))
+            violations.Add(
+                new(
+                    comment.StartLine,
+                    "CONSTRAINT は 2 行目に REASON: が必要",
+                    FirstText(comment)
+                )
+            );
         foreach (var line in comment.Lines)
         {
             if (line.Width > config.Rules.MaxWidth)
@@ -232,6 +252,15 @@ internal sealed class CommentScanner(ScannerConfig config)
             if (config.IssueRef.IsMatch(line.Text))
                 violations.Add(new(line.Number, "issue/PR 番号を含む", line.Text));
         }
+    }
+
+    private bool IsConstraintMissingReason(LogicalComment comment)
+    {
+        if (comment.Lines.Count == 0)
+            return false;
+        if (!config.ConstraintPrefix.IsMatch(comment.Lines[0].Text))
+            return false;
+        return comment.Lines.Count != 2 || !config.ReasonPrefix.IsMatch(comment.Lines[1].Text);
     }
 
     private static string FirstText(LogicalComment comment) =>
@@ -416,7 +445,10 @@ internal static class ViolationReporter
             "4. issue/PR 番号 (#123・GH-123・issues/123・pull/123・issue/PR の URL) を取り除く。外部参照は RFC・仕様・ベンダー doc・ファイルパスに限り SEE で書く。\n"
         );
         sb.Append(
-            "5. doc コメント (rustdoc /// ・JSDoc /** */ ・docstring) と先頭のモジュールヘッダは対象外。コメントのみ編集し、コードの挙動は変えない。\n\n"
+            "5. CONSTRAINT は必ず 2 行組で書く。1 行目は『CONSTRAINT: 〜でなくてはならない / 〜しなくてはならない』の must 形の制約、2 行目は『REASON: 〜』の理由。1 行だけの CONSTRAINT や 2 行目が REASON: で始まらない CONSTRAINT は違反である。REASON: を単独行に書いてはならない (マーカー無しコメントとして検出される)。\n"
+        );
+        sb.Append(
+            "6. doc コメント (rustdoc /// ・JSDoc /** */ ・docstring) と先頭のモジュールヘッダは対象外。コメントのみ編集し、コードの挙動は変えない。\n\n"
         );
         sb.Append("すべての違反を解消するまで、他のタスクへ進んではならない。");
         return sb.ToString();
@@ -450,6 +482,8 @@ internal static class Program
             ExtensionSource.Load(),
             Vocabulary.MarkerRegex(),
             Vocabulary.IssueRegex(),
+            Vocabulary.ConstraintPrefixRegex(),
+            Vocabulary.ReasonPrefixRegex(),
             Vocabulary.DefaultRules
         );
 
