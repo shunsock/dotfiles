@@ -19,6 +19,10 @@
     source = ../../configs/claude/rules;
     recursive = true;
   };
+  home.file.".claude/cli" = {
+    source = ../../configs/claude/cli;
+    recursive = true;
+  };
   # CONSTRAINT: settings.json は Claude Code が実行時に書き込むため symlink 不可
   home.activation.claudeSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run install -Dm644 ${../../configs/claude/settings.json} $HOME/.claude/settings.json
@@ -43,5 +47,6 @@
     run install -Dm644 ${../../configs/claude/hooks/write_structured_comment.cs} $HOME/.claude/hooks/write_structured_comment.cs
     run install -Dm644 ${../../configs/claude/hooks/clean_comment_out.cs} $HOME/.claude/hooks/clean_comment_out.cs
     run install -Dm644 ${../../configs/claude/hooks/validate_comment_format.cs} $HOME/.claude/hooks/validate_comment_format.cs
+    run install -Dm644 ${../../configs/claude/hooks/validate_japanese_stop_word.cs} $HOME/.claude/hooks/validate_japanese_stop_word.cs
   '';
 }

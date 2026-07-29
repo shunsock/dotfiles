@@ -1,0 +1,5 @@
+stop_word,replacement
+写像,メソッド
+空,要素無し
+非空,要素あり
+窓,範囲
