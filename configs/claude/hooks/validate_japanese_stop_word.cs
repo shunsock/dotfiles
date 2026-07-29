@@ -171,7 +171,9 @@ internal static class DenyReason
         if (findings.Length > MaxShownFindings)
             sb.Append($"- (ほか {findings.Length - MaxShownFindings} 件)\n");
         sb.Append("\n各指摘の言い換え先に沿って該当箇所を書き直してください。");
-        sb.Append("機械的な置換で文が不自然になる場合は、文全体を自然な日本語へ書き直してください。");
+        sb.Append(
+            "機械的な置換で文が不自然になる場合は、文全体を自然な日本語へ書き直してください。"
+        );
         sb.Append("すべて修正したうえで、再度同じコマンドを実行してください。\n");
         sb.Append("語彙の一覧: ~/.claude/skills/reference/japanese_stop_word/stop_word.csv");
         return sb.ToString();

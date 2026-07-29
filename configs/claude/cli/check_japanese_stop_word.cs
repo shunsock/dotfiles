@@ -53,10 +53,16 @@ internal static class LineScanner
     )
     {
         var claimed = new List<(int Start, int End)>();
-        return stopWords.Where(stopWord => HasUnclaimedMatch(line, stopWord.Word, claimed)).ToList();
+        return stopWords
+            .Where(stopWord => HasUnclaimedMatch(line, stopWord.Word, claimed))
+            .ToList();
     }
 
-    private static bool HasUnclaimedMatch(string line, string word, List<(int Start, int End)> claimed)
+    private static bool HasUnclaimedMatch(
+        string line,
+        string word,
+        List<(int Start, int End)> claimed
+    )
     {
         var found = false;
         var index = line.IndexOf(word, StringComparison.Ordinal);
