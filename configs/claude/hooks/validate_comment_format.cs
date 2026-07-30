@@ -1,7 +1,7 @@
 // validate_comment_format.cs - PostToolUse(Write|Edit) フック。
 // ソース編集後にコメントを走査し、語彙とフォーマットの違反を検出して修正を促す。
 // 制約: マーカー始まり、2 行以内、70 文字以内、issue/PR 番号なし、
-// CONSTRAINT は REASON 付き句点終端の 2 行ペアかつ 1 ファイル 3 件まで。
+// CONSTRAINT は must 形 + REASON: の句点終端 2 行ペアかつ 1 ファイル 3 件まで。
 // doc コメントと先頭ヘッダは例外とする。
 // SEE: ~/.claude/skills/template/comment_markers.md
 // SEE: ~/.claude/hooks/README.md
@@ -139,7 +139,7 @@ internal static class Language
 
 internal static class ExtensionSource
 {
-    // SEE: ~/.claude/skills/reference/comment_out_skills_target/extensions.csv
+    // SEE: ~/.claude/skills/reference/comment_out_skills_target/
     public static IReadOnlySet<string> Load()
     {
         var home = Environment.GetEnvironmentVariable("HOME") ?? "";
@@ -458,7 +458,7 @@ internal static class ViolationReporter
             "4. issue/PR 番号 (#123・GH-123・issues/123・pull/123・issue/PR の URL) を取り除く。外部参照は RFC・仕様・ベンダー doc・ファイルパスに限り SEE で書く。\n"
         );
         sb.Append(
-            "5. CONSTRAINT は「CONSTRAINT: 満たすべき制約」+「REASON: 根拠」の 2 行ペアで書き、1 ファイル 3 件まで。各行の主張は簡潔に述べ、必ず句点 (。) で終える。超過・単独行の CONSTRAINT は設計 (型・構造) で表現するか削除する。\n"
+            "5. CONSTRAINT は『CONSTRAINT: 〜でなくてはならない / 〜しなくてはならない』の must 形の制約 +『REASON: 根拠』の 2 行ペアで書き、1 ファイル 3 件まで。各行の主張は簡潔に述べ、必ず句点 (。) で終える。REASON: を単独行に書いてはならない (マーカー無しコメントとして検出される)。超過・単独行の CONSTRAINT は設計 (型・構造) で表現するか削除する。\n"
         );
         sb.Append(
             "6. doc コメント (rustdoc /// ・JSDoc /** */ ・docstring) と先頭のモジュールヘッダは対象外。コメントのみ編集し、コードの挙動は変えない。\n\n"

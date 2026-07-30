@@ -7,8 +7,9 @@ single source of truth。両スキルはこのファイルのマーカー語彙�
 このファイルは人間・スキル向けの意味定義であり、両スキルはこれを読む。機械可読な
 語彙は検証フック `validate_comment_format.cs` 内の const (正規表現) が持つ。読者が
 この 1 フックだけなので外部ファイルに切り出さず const とした。このファイルと const は
-必ず同じ 7 マーカーを保つこと。CONSTRAINT の特則 (ペア形式・件数上限) の機械可読形も
-同フックの const (`ConstraintRule`) が持ち、このファイルの定義と常に一致させる。
+必ず同じ 7 マーカー + 1 継続語彙 (`REASON`) を保つこと。CONSTRAINT の特則
+(ペア形式・件数上限) の機械可読形も同フックの const (`ConstraintRule`) が持ち、
+このファイルの定義と常に一致させる。
 
 ## 原則 — デフォルトはコメント 0
 
@@ -35,7 +36,7 @@ single source of truth。両スキルはこのファイルのマーカー語彙�
 | marker | これを書く条件 |
 |---|---|
 | `SEE` | 外部権威 (RFC / 仕様 / ベンダー doc / 関連ファイル) へのポインタ。内容は**ファイルパスまたは URL のみ**とし、散文を付けない。**issue / PR 番号・issue / PR の URL は書かない** (下記参照) |
-| `CONSTRAINT` | 他システムの実行時挙動による制約 (レート制限・ベンダーバグ 等)。必ず `REASON` 行とのペア形式で書き、**1 ファイル 3 件まで** (下記「CONSTRAINT の特則」参照) |
+| `CONSTRAINT` | 他システムの実行時挙動による制約 (レート制限・ベンダーバグ 等)。**必ず 2 行組で書く**: 1 行目に「〜でなくてはならない / 〜しなくてはならない」の must 形で制約を書き、2 行目に `REASON:` で理由を書く。**1 ファイル 3 件まで** (下記「CONSTRAINT の特則」参照) |
 | `SAFETY` | `unsafe` の健全性根拠 (型で検証不能な、人間が担保する不変条件) |
 
 ### 人間の明示指示 — ユーザーが残せと指示した知識
@@ -58,14 +59,15 @@ single source of truth。両スキルはこのファイルのマーカー語彙�
 ## CONSTRAINT の特則 (ペア形式・件数上限)
 
 `CONSTRAINT` は本来「ある理由からその手法を選ばなければならない」という強い主張であり、
-一般的な Why コメントの受け皿ではない。誤用を防ぐため、他マーカーより厳しい 2 つの
+一般的な Why コメントの受け皿ではない。誤用を防ぐため、他マーカーより厳しい
 特則を課し、`validate_comment_format.cs` が機械的に強制する。
 
 - **ペア形式必須**: `CONSTRAINT` は必ず次の 2 行ペアで書く。1 行目が満たすべき制約
-  (主張)、2 行目がその根拠である。単独行の `CONSTRAINT` は形式違反となる。
+  (主張) で、「〜でなくてはならない / 〜しなくてはならない」の must 形で書く。
+  2 行目がその根拠である。単独行の `CONSTRAINT` は形式違反となる。
 
   ```
-  [comment_marker] CONSTRAINT: Aを満たす必要がある。
+  [comment_marker] CONSTRAINT: Aを満たさなくてはならない。
   [comment_marker] REASON: Bであるため。
   ```
 
@@ -78,10 +80,12 @@ single source of truth。両スキルはこのファイルのマーカー語彙�
   思えたら、それは外部制約ではなく設計で表現すべき知識 (型・構造へのモデル化) か、
   他マーカー・commit / PR 本文に属す知識である。
 
-`REASON` は独立したマーカーではない。`CONSTRAINT` 行の直後の 2 行目としてだけ
-存在を許され、単独の `REASON` 行はマーカー無しコメントとして削除対象になる。
+`REASON` は独立したマーカーではなく、`CONSTRAINT` の 2 行目にだけ書ける継続語彙である。
+単独では使えず、他マーカー (`TODO` / `FIXME` / `SEE` / `NOTE` / `HACK` / `SAFETY`) の
+継続として書いてもならない。単独の `REASON` 行はマーカー無しコメントとして削除対象になる。
 REASON を要求するのは、根拠を書けない CONSTRAINT は主張ではなく感想であり、
-一般コメントの誤用をその場で露呈させるためである。
+一般コメントの誤用をその場で露呈させるためである。制約 (What) に理由 (Why) を
+必ず添えることで、読み手が「なぜこの妥協があるのか」を追跡できるようにする。
 
 ## フォーマット (機械的に強制する)
 
@@ -101,14 +105,15 @@ REASON を要求するのは、根拠を書けない CONSTRAINT は主張では�
   ファイルパスに限る。
 - インライン: `MARKER: content` (1 行に収める)。
 - 複数行: `MARKER:` の次行に本文 1 行 (合計 2 行まで)。各行にコメント記号を付ける。
-- **`CONSTRAINT` はペア形式必須・句点終端・1 ファイル 3 件まで**
-  (上記「CONSTRAINT の特則」参照)。
+- **`CONSTRAINT` はペア形式必須 (1 行目 must 形 + 2 行目 `REASON:`)・句点終端・
+  1 ファイル 3 件まで** (上記「CONSTRAINT の特則」参照)。`REASON` は `CONSTRAINT` の
+  2 行目でのみ有効であり、単独行に書くと「マーカー語彙なし」の違反になる。
 
 例 (Rust):
 
 ```rust
-// CONSTRAINT: リクエスト間隔を 100ms 以上空ける必要がある。
-// REASON: 上流 API が 10 req/s でレート制限されるため。
+// CONSTRAINT: 上流 API へは 10 req/s 以下で送らなくてはならない。
+// REASON: 超過すると 429 Too Many Requests でロックされるため。
 sleep(Duration::from_millis(120));
 
 // SAFETY:
@@ -131,11 +136,12 @@ unsafe { slice::from_raw_parts(ptr, len) }
 
 - **writer (`write__structured_comment`) の出力集合** = 上記 7 マーカーちょうど。
   これ以外のコメントを生成しない。すべて 2 行・70 文字・issue/PR 番号禁止に従い、
-  `CONSTRAINT` は必ず `REASON` 付きペア・句点終端・1 ファイル 3 件以内で書く。
-- **cleaner (`clean__comment_out`) の保持集合** = 7 マーカー + doc コメントちょうど。
-  whitelist マーカーで始まらない非 doc コメント (What コメント・汎用 Why・
-  デッドコード・legacy `XXX` 等) は**すべて削除する**。`CONSTRAINT` 直後の
-  `REASON` 行はペアの一部として保持し、単独の `REASON` 行は削除する。
+  `CONSTRAINT` は必ず must 形 + `REASON` 付きペア・句点終端・1 ファイル 3 件以内で書く。
+- **cleaner (`clean__comment_out`) の保持集合** = 7 マーカー + `CONSTRAINT` に続く
+  `REASON` 継続行 + doc コメントちょうど。whitelist マーカーで始まらない非 doc コメント
+  (What コメント・汎用 Why・デッドコード・legacy `XXX` 等) は**すべて削除する**。
+  `REASON` は `CONSTRAINT` に続く 2 行目としてのみ保持し、単独行の `REASON:` は
+  マーカーの無いコメントとして削除する。
 - 帰結: **writer が書いたコメントに cleaner をかけても no-op になる** (掃除人は
   書き手の出力を消さない)。両者が同じ whitelist を厳格に共有し、doc コメントだけを
   共通の例外とする — この対称が正しい関係である。

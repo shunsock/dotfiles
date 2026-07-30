@@ -19,7 +19,8 @@ using System.Text.RegularExpressions;
 
 internal static class Tasks
 {
-    // CONSTRAINT: ディレクトリ欠落・不正 json は安全側に無視し false を返す。
+    // CONSTRAINT: ディレクトリ欠落・不正 json は false を返して黙って握らねばならない。
+    // REASON: 起動時失敗で編集ゲートが常時 deny に張り付くと開発が止まる。
     public static bool HasInProgress(string sessionId)
     {
         var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
@@ -43,10 +44,12 @@ internal static class Tasks
 
 internal static class Program
 {
-    // CONSTRAINT: "." / ".." は tasks/../ 外を指すため負の先読みで除外する。
+    // CONSTRAINT: session_id に "." や ".." だけの文字列を通してはならない。
+    // REASON: tasks/../ 外を指し無関係ディレクトリを in_progress 判定に混入させる。
     private static readonly Regex SessionIdPattern = new(@"^(?!\.+$)[A-Za-z0-9._-]+$");
 
-    // CONSTRAINT: 手動で task json を作る fallback コマンドを reason に埋め込む。
+    // CONSTRAINT: fallback の task json 手動作成コマンドを reason に必ず埋め込まねばならない。
+    // REASON: Task ツール不在セッションでは手動 fallback しか脱出手段が無い。
     private static string BuildReason(string sessionId) =>
         "in_progress な Task が無い状態での Write/Edit は禁止されている。\n\n"
         + "ファイルを編集する前に、その編集を担う Task を必ず in_progress にしなければならない。"
@@ -74,7 +77,8 @@ internal static class Program
         if (!mustDeny)
             return 0;
 
-        // CONSTRAINT: deny は JSON 出力でのみ有効 (終了コードではブロック不可)。
+        // CONSTRAINT: deny は stdout JSON 経由で返さねばならない。
+        // REASON: Claude Code 仕様上、終了コード非 0 ではツール実行をブロックできない。
         // SEE: https://code.claude.com/docs/en/hooks
         var decision = new Decision(
             new HookSpecificOutput("PreToolUse", "deny", BuildReason(sessionId))
@@ -83,7 +87,8 @@ internal static class Program
         return 0;
     }
 
-    // CONSTRAINT: 不正 JSON・空 stdin では未捕捉例外で落ちるため null を返す。
+    // CONSTRAINT: 不正 JSON・空 stdin では例外を捕まえて null を返さねばならない。
+    // REASON: 未捕捉例外で落ちると PreToolUse 全体が失敗しツールが止まる。
     private static HookInput? TryParse(string input)
     {
         try
@@ -96,9 +101,8 @@ internal static class Program
         }
     }
 
-    // CONSTRAINT: plans/ と scratchpad は作業単位を持たないため対象外。
-    // CONSTRAINT: traversal を弾くため正規化後のパスで判定する。
-    // CONSTRAINT: Path.GetFullPath("") は例外になるため長さで先に弾く。
+    // CONSTRAINT: plans/ 配下と /private/tmp/claude-* パスは対象から外さねばならない。
+    // REASON: いずれもスクラッチ領域で Task in_progress を持たない作業単位外である。
     private static bool IsExemptPath(string filePath) =>
         filePath.Length > 0
         && Path.GetFullPath(filePath) is string full

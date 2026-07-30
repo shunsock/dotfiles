@@ -4,7 +4,8 @@ description: >-
   ソースコードを編集・作成した後に起動する。変更したファイルから、共有 whitelist
   マーカー (TODO/FIXME/SEE/CONSTRAINT/NOTE/HACK/SAFETY) で始まらない非 doc コメントを
   すべて削除する。What コメント・汎用 Why・コメントアウトされたデッドコード・
-  legacy XXX などマーカーの無いコメントは削除し、whitelist マーカーで始まるコメントと
+  legacy XXX・CONSTRAINT に紐付かない単独 REASON: 行などマーカーの無いコメントは削除し、
+  whitelist マーカーで始まるコメントと CONSTRAINT に続く REASON: 継続行と
   公開インターフェースのドキュメンテーションコメント (rustdoc /// ・JSDoc・docstring)
   だけを残す。コードを編集したときのコメントのクリーンアップ品質ゲートとして機能する。
 tools: Bash, Read, Edit
@@ -19,7 +20,7 @@ model: inherit
 ~/.claude/skills/template/comment_markers.md
 ```
 
-このスキルの保持集合は、共有テンプレートの 7 マーカー (`TODO` `FIXME` `SEE` `CONSTRAINT` `NOTE` `HACK` `SAFETY`) で始まるコメントと、公開インターフェースの doc コメントちょうどである (保持集合 = 書き手の出力集合 + doc)。両者が同じ whitelist を厳格に共有するため、**書き手が書いたコメントにこのスキルをかけても no-op になる**。legacy `XXX` はもはや保持しない — マーカーの無いコメントとして削除する。
+このスキルの保持集合は、共有テンプレートの 7 マーカー (`TODO` `FIXME` `SEE` `CONSTRAINT` `NOTE` `HACK` `SAFETY`) で始まるコメントと、`CONSTRAINT` に続く `REASON:` 継続行と、公開インターフェースの doc コメントちょうどである (保持集合 = 書き手の出力集合 + doc)。両者が同じ whitelist を厳格に共有するため、**書き手が書いたコメントにこのスキルをかけても no-op になる**。legacy `XXX` はもはや保持しない — マーカーの無いコメントとして削除する。単独行の `REASON:` は `CONSTRAINT` に紐付かない孤立継続なので削除対象とする。
 
 ## 前提
 
@@ -28,14 +29,15 @@ model: inherit
 ## 判断基準
 
 コメントは「削除する」か「残す」かの二択で判定する。判定は語彙で機械的に決まる:
-**whitelist マーカーで始まるコメントと doc コメントだけを残し、それ以外はすべて削除する**。
-迷ったら削除する — マーカーの無いコメントは、コードで表現すべき知識かコメントアウトの
-ノイズであり、残す価値のある知識なら writer がマーカー付きで書き直しているはずである。
+**whitelist マーカーで始まるコメントと (CONSTRAINT に直接続く REASON: 継続行) と doc
+コメントだけを残し、それ以外はすべて削除する**。迷ったら削除する — マーカーの無い
+コメントは、コードで表現すべき知識かコメントアウトのノイズであり、残す価値のある
+知識なら writer がマーカー付きで書き直しているはずである。
 
-### 残す (2 種類だけ)
+### 残す (3 種類だけ)
 
 - 共有テンプレートの whitelist マーカー (`TODO` `FIXME` `SEE` `CONSTRAINT` `NOTE` `HACK` `SAFETY`) で始まるコメント
-  - `CONSTRAINT` 直後の `REASON:` 行はペアの 2 行目としてこれに含め、一緒に残す
+- `CONSTRAINT` 行の直下に置かれた `REASON:` 継続行 (ペアの 2 行目として CONSTRAINT と 1 論理コメントを成すので一緒に残す)
 - 公開インターフェース (関数・メソッド・型・モジュール) のドキュメンテーションコメント (rustdoc `///`、JSDoc `/** */`、docstring)。目的・引数の制約・戻り値の意味・例外を記述するもの
 
 ### 削除する (上記以外すべて)
@@ -47,8 +49,8 @@ model: inherit
 - コメントアウトされた古いコード (デッドコード)。履歴は VCS で追える
   - 例: `// const oldValue = legacyCompute();`
 - legacy `XXX` マーカーを含むコメント (新 whitelist から除外された)
-- 単独の `REASON:` 行 (直前に `CONSTRAINT` が無い)。`REASON` は独立したマーカーでは
-  なく、`CONSTRAINT` ペアの 2 行目としてだけ存在を許される
+- `CONSTRAINT` の直後ではない位置に置かれた単独の `REASON:` 行 (孤立継続)。`REASON` は
+  独立したマーカーではなく、`CONSTRAINT` ペアの 2 行目としてだけ存在を許される
 - 実装と乖離して古くなったコメント
 
 なお、`REASON` を欠く単独行の `CONSTRAINT` や 1 ファイル 4 件目以降の `CONSTRAINT` は
@@ -75,7 +77,8 @@ git diff --name-only --diff-filter=ACMR "$BASE" -- ; git diff --name-only --diff
 
 - ドキュメンテーションコメント (`///`, `/** */`, docstring など) は例外として残す。
 - 行の先頭 (行末インライン含む) が whitelist マーカーで始まるコメントは残す。
-- それ以外のコメントはマーカーが無いので削除する。
+- `CONSTRAINT` 行の直下の `REASON:` 行は継続として残す。
+- それ以外のコメントはマーカーが無いので削除する (単独 `REASON:` を含む)。
 
 ### Phase 3: 削除を適用する
 
@@ -100,7 +103,7 @@ Edit で「削除する」と判定したコメントだけを取り除く。
 
 ## Important Notes
 
-- 残すのは whitelist マーカーで始まるコメントと doc コメントの 2 種だけ。それ以外は削除する。
+- 残すのは whitelist マーカーで始まるコメントと、CONSTRAINT に続く REASON: 継続行と、doc コメントの 3 種だけ。それ以外は削除する。
 - コードの挙動を変える編集をしてはならない。削除するのはコメントだけである。
 - 今回の変更で触れていないファイルのコメントを書き換えてはならない。
 - 削除した結果、意図が読み取れなくなるほど重要な知識なら、削除ではなく writer が該当マーカー付きコメント (2 行・70 文字以内) へ書き換えるべき対象として報告する。
