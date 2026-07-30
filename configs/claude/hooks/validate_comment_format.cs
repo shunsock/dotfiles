@@ -1,7 +1,7 @@
 // validate_comment_format.cs - PostToolUse(Write|Edit) フック。
 // ソース編集後にコメントを走査し、語彙とフォーマットの違反を検出して修正を促す。
-// 制約: マーカー始まり、2 行以内、80 文字以内、issue/PR 番号なし。
-// CONSTRAINT は 1 行目 must 形 + 2 行目 REASON: の 2 行組を必須とする。
+// 制約: マーカー始まり、2 行以内、70 文字以内、issue/PR 番号なし、
+// CONSTRAINT は must 形 + REASON: の句点終端 2 行ペアかつ 1 ファイル 3 件まで。
 // doc コメントと先頭ヘッダは例外とする。
 // SEE: ~/.claude/skills/template/comment_markers.md
 // SEE: ~/.claude/hooks/README.md
@@ -43,8 +43,6 @@ internal sealed record ScannerConfig(
     IReadOnlySet<string> Extensions,
     Regex MarkerStart,
     Regex IssueRef,
-    Regex ConstraintPrefix,
-    Regex ReasonPrefix,
     FormatRules Rules
 );
 
@@ -62,10 +60,7 @@ internal static class Vocabulary
         "SAFETY",
     ];
 
-    // SEE: ~/.claude/skills/template/comment_markers.md
-    public const string ReasonContinuation = "REASON";
-
-    public static readonly FormatRules DefaultRules = new(MaxLines: 2, MaxWidth: 80);
+    public static readonly FormatRules DefaultRules = new(MaxLines: 2, MaxWidth: 70);
 
     public const string IssuePattern =
         @"#\d+|\bGH-\d+\b|\b(?:issues?|pull)/\d+|\b(?:issue|pr)\b\s*#?\s*\d+";
@@ -75,11 +70,18 @@ internal static class Vocabulary
 
     public static Regex IssueRegex() =>
         new(IssuePattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+}
 
-    public static Regex ConstraintPrefixRegex() => new(@"^CONSTRAINT\b", RegexOptions.Compiled);
+internal static class ConstraintRule
+{
+    // SEE: ~/.claude/skills/template/comment_markers.md
+    public const int MaxPerFile = 3;
 
-    public static Regex ReasonPrefixRegex() =>
-        new($@"^{ReasonContinuation}\b", RegexOptions.Compiled);
+    public static readonly Regex Start = new(@"^CONSTRAINT\b", RegexOptions.Compiled);
+
+    public static readonly Regex Head = new(@"^CONSTRAINT:\s*\S.*。$", RegexOptions.Compiled);
+
+    public static readonly Regex Reason = new(@"^REASON:\s*\S.*。$", RegexOptions.Compiled);
 }
 
 internal static class Tokens
@@ -137,7 +139,7 @@ internal static class Language
 
 internal static class ExtensionSource
 {
-    // SEE: ~/.claude/skills/reference/comment_out_skills_target/extensions.csv
+    // SEE: ~/.claude/skills/reference/comment_out_skills_target/
     public static IReadOnlySet<string> Load()
     {
         var home = Environment.GetEnvironmentVariable("HOME") ?? "";
@@ -171,6 +173,7 @@ internal sealed class CommentScanner(ScannerConfig config)
         var violations = new List<Violation>();
         foreach (var comment in comments)
             CheckComment(comment, comment.StartLine < headerLimit, violations);
+        CheckConstraints(comments.Where(c => c.StartLine >= headerLimit), violations);
         return violations;
     }
 
@@ -230,10 +233,6 @@ internal sealed class CommentScanner(ScannerConfig config)
                     FirstText(comment)
                 )
             );
-        if (!isHeader && IsConstraintMissingReason(comment))
-            violations.Add(
-                new(comment.StartLine, "CONSTRAINT は 2 行目に REASON: が必要", FirstText(comment))
-            );
         foreach (var line in comment.Lines)
         {
             if (line.Width > config.Rules.MaxWidth)
@@ -249,14 +248,33 @@ internal sealed class CommentScanner(ScannerConfig config)
         }
     }
 
-    private bool IsConstraintMissingReason(LogicalComment comment)
+    private static void CheckConstraints(
+        IEnumerable<LogicalComment> comments,
+        List<Violation> violations
+    )
     {
-        if (comment.Lines.Count == 0)
-            return false;
-        if (!config.ConstraintPrefix.IsMatch(comment.Lines[0].Text))
-            return false;
-        return comment.Lines.Count != 2 || !config.ReasonPrefix.IsMatch(comment.Lines[1].Text);
+        var constraints = comments.Where(IsConstraint).ToList();
+        violations.AddRange(constraints.Where(c => !IsConstraintPair(c)).Select(PairViolation));
+        violations.AddRange(constraints.Skip(ConstraintRule.MaxPerFile).Select(ExcessViolation));
     }
+
+    private static bool IsConstraint(LogicalComment comment) =>
+        ConstraintRule.Start.IsMatch(FirstText(comment));
+
+    private static Violation PairViolation(LogicalComment comment) =>
+        new(comment.StartLine, "CONSTRAINT/REASON ペア形式違反", FirstText(comment));
+
+    private static Violation ExcessViolation(LogicalComment comment) =>
+        new(
+            comment.StartLine,
+            $"CONSTRAINT 超過 (1 ファイル最大 {ConstraintRule.MaxPerFile} 件)",
+            FirstText(comment)
+        );
+
+    private static bool IsConstraintPair(LogicalComment comment) =>
+        comment.Lines.Count == 2
+        && ConstraintRule.Head.IsMatch(comment.Lines[0].Text)
+        && ConstraintRule.Reason.IsMatch(comment.Lines[1].Text);
 
     private static string FirstText(LogicalComment comment) =>
         comment.Lines.Count > 0 ? comment.Lines[0].Text : "";
@@ -435,12 +453,12 @@ internal static class ViolationReporter
         sb.Append(
             "2. 1 論理コメントは最大 2 行。3 行以上に渡るなら短く要約するか、コメントに収めない。\n"
         );
-        sb.Append("3. 1 行は最大 80 文字。短く簡潔に言い換える。\n");
+        sb.Append("3. 1 行は最大 70 文字。短く簡潔に言い換える。\n");
         sb.Append(
             "4. issue/PR 番号 (#123・GH-123・issues/123・pull/123・issue/PR の URL) を取り除く。外部参照は RFC・仕様・ベンダー doc・ファイルパスに限り SEE で書く。\n"
         );
         sb.Append(
-            "5. CONSTRAINT は必ず 2 行組で書く。1 行目は『CONSTRAINT: 〜でなくてはならない / 〜しなくてはならない』の must 形の制約、2 行目は『REASON: 〜』の理由。1 行だけの CONSTRAINT や 2 行目が REASON: で始まらない CONSTRAINT は違反である。REASON: を単独行に書いてはならない (マーカー無しコメントとして検出される)。\n"
+            "5. CONSTRAINT は『CONSTRAINT: 〜でなくてはならない / 〜しなくてはならない』の must 形の制約 +『REASON: 根拠』の 2 行ペアで書き、1 ファイル 3 件まで。各行の主張は簡潔に述べ、必ず句点 (。) で終える。REASON: を単独行に書いてはならない (マーカー無しコメントとして検出される)。超過・単独行の CONSTRAINT は設計 (型・構造) で表現するか削除する。\n"
         );
         sb.Append(
             "6. doc コメント (rustdoc /// ・JSDoc /** */ ・docstring) と先頭のモジュールヘッダは対象外。コメントのみ編集し、コードの挙動は変えない。\n\n"
@@ -477,8 +495,6 @@ internal static class Program
             ExtensionSource.Load(),
             Vocabulary.MarkerRegex(),
             Vocabulary.IssueRegex(),
-            Vocabulary.ConstraintPrefixRegex(),
-            Vocabulary.ReasonPrefixRegex(),
             Vocabulary.DefaultRules
         );
 
