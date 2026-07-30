@@ -1,7 +1,8 @@
-// validate_japanese_stop_word.cs - PreToolUse(Bash) フック。
-// `git commit` / `gh pr create` の実行前に、変更ファイルを stop word CLI で走査する。
-// AI 特有の不自然な日本語語彙が残っていれば deny でブロックし、書き直しを指示する。
-// CLI や git が実行できない環境ではブロックしない (fail open)。
+// validate_japanese_stop_word.cs - PostToolUse(Write|Edit) フック。
+// ドキュメントやソースの編集直後に、編集されたファイルを stop word CLI で走査する。
+// AI 特有の不自然な日本語語彙が含まれていれば、additionalContext で検出結果と
+// 言い換え先を出力し、書き直しを指示する。
+// dotnet や CLI が実行できない環境では何も出力しない (fail open)。
 // SEE: ~/.claude/cli/check_japanese_stop_word.cs
 // SEE: ~/.claude/skills/reference/japanese_stop_word/stop_word.csv
 
@@ -9,27 +10,6 @@ using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
-
-internal enum DiffScope
-{
-    Staged,
-    Branch,
-}
-
-internal static class Gate
-{
-    private static readonly Regex GitCommit = new(@"\bgit\s+commit\b");
-    private static readonly Regex GhPrCreate = new(@"\bgh\s+pr\s+create\b");
-
-    public static DiffScope? ScopeOf(string command) =>
-        command switch
-        {
-            _ when GitCommit.IsMatch(command) => DiffScope.Staged,
-            _ when GhPrCreate.IsMatch(command) => DiffScope.Branch,
-            _ => null,
-        };
-}
 
 internal static class TargetExtensions
 {
@@ -64,18 +44,13 @@ internal readonly record struct CommandResult(int ExitCode, string Stdout, strin
 
 internal static class Shell
 {
-    public static CommandResult? Run(
-        string fileName,
-        IReadOnlyList<string> arguments,
-        string workingDirectory
-    )
+    public static CommandResult? Run(string fileName, IReadOnlyList<string> arguments)
     {
         try
         {
             var info = new ProcessStartInfo
             {
                 FileName = fileName,
-                WorkingDirectory = workingDirectory,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
             };
@@ -96,87 +71,64 @@ internal static class Shell
     }
 }
 
-internal static class ChangedFiles
-{
-    public static IReadOnlyList<string> Collect(
-        DiffScope scope,
-        string cwd,
-        IReadOnlySet<string> extensions
-    )
-    {
-        var repoRoot = GitStdout(["rev-parse", "--show-toplevel"], cwd);
-        if (repoRoot is null)
-            return [];
-        var names = scope switch
-        {
-            DiffScope.Staged => GitStdout(
-                ["diff", "--cached", "--name-only", "--diff-filter=ACMR"],
-                cwd
-            ),
-            _ => BranchDiff(cwd),
-        };
-        if (names is null)
-            return [];
-        return names
-            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .Where(name => extensions.Contains(Path.GetExtension(name)))
-            .Select(name => Path.Combine(repoRoot, name))
-            .Where(File.Exists)
-            .ToList();
-    }
-
-    private static string? BranchDiff(string cwd)
-    {
-        var originHead = GitStdout(["symbolic-ref", "--short", "refs/remotes/origin/HEAD"], cwd);
-        var baseRef = string.IsNullOrEmpty(originHead) ? "origin/main" : originHead;
-        return GitStdout(["diff", "--name-only", "--diff-filter=ACMR", $"{baseRef}...HEAD"], cwd);
-    }
-
-    private static string? GitStdout(string[] arguments, string cwd)
-    {
-        var result = Shell.Run("git", arguments, cwd);
-        return result is { ExitCode: 0 } success ? success.Stdout.Trim() : null;
-    }
-}
-
 internal static class StopWordCli
 {
     public const int FoundExitCode = 1;
 
-    public static CommandResult? Run(IReadOnlyList<string> files, string cwd)
+    public static CommandResult? Run(string filePath)
     {
         var home = Environment.GetEnvironmentVariable("HOME") ?? "";
         var cliPath = Path.Combine(home, ".claude", "cli", "check_japanese_stop_word.cs");
         if (!File.Exists(cliPath))
             return null;
-        var arguments = new List<string> { "run", cliPath, "--" };
-        arguments.AddRange(files);
-        return Shell.Run("dotnet", arguments, cwd);
+        return Shell.Run("dotnet", ["run", cliPath, "--", filePath]);
     }
 }
 
-internal static class DenyReason
+internal static class RewriteInstruction
 {
-    private const int MaxShownFindings = 40;
+    private const int MaxShownFindings = 30;
 
-    public static string Build(string cliStderr)
+    public static string Build(string path, string cliStderr)
     {
         var findings = cliStderr.Split('\n', StringSplitOptions.RemoveEmptyEntries);
         var sb = new StringBuilder();
-        sb.Append("AI 特有の不自然な日本語語彙が変更ファイルに残っています。");
-        sb.Append("commit / PR 作成の前に書き直してください。\n\n");
+        sb.Append($"ファイルが Write/Edit されました: {path}\n\n");
+        sb.Append(
+            "[必須アクション] このファイルに AI 特有の不自然な日本語語彙 (stop word) が含まれている。"
+        );
+        sb.Append("ただちに言い換えなければならない。省略・ユーザーへの確認は不要である。\n\n");
         sb.Append("検出結果 (ファイル:行: 語彙と言い換え先):\n");
         foreach (var finding in findings.Take(MaxShownFindings))
             sb.Append($"- {finding}\n");
         if (findings.Length > MaxShownFindings)
             sb.Append($"- (ほか {findings.Length - MaxShownFindings} 件)\n");
-        sb.Append("\n各指摘の言い換え先に沿って該当箇所を書き直してください。");
+        sb.Append("\n各指摘の言い換え先に沿って該当箇所を書き直す。");
+        sb.Append("機械的な置換で文が不自然になる場合は、文全体を自然な日本語へ書き直す。");
         sb.Append(
-            "機械的な置換で文が不自然になる場合は、文全体を自然な日本語へ書き直してください。"
+            "語彙の一覧は ~/.claude/skills/reference/japanese_stop_word/stop_word.csv にある。\n\n"
         );
-        sb.Append("すべて修正したうえで、再度同じコマンドを実行してください。\n");
-        sb.Append("語彙の一覧: ~/.claude/skills/reference/japanese_stop_word/stop_word.csv");
+        sb.Append("すべての検出を解消するまで、他のタスクへ進んではならない。");
         return sb.ToString();
+    }
+}
+
+internal static class HookIo
+{
+    public static async Task<string?> ReadEditedFilePathAsync()
+    {
+        var input = await Console.In.ReadToEndAsync();
+        var hook = JsonSerializer.Deserialize(input, HookJson.Default.HookInput);
+        if (hook?.ToolName is not ("Write" or "Edit"))
+            return null;
+        var path = hook.ToolInput?.FilePath ?? "";
+        return path.Length == 0 ? null : path;
+    }
+
+    public static void WriteContext(string context)
+    {
+        var output = new Output(new HookSpecificOutput("PostToolUse", context));
+        Console.WriteLine(JsonSerializer.Serialize(output, HookJson.Default.Output));
     }
 }
 
@@ -184,51 +136,40 @@ internal static class Program
 {
     private static async Task<int> Main()
     {
-        var input = await Console.In.ReadToEndAsync();
-        var hook = JsonSerializer.Deserialize(input, HookJson.Default.HookInput);
-        if (hook?.ToolName != "Bash")
+        var path = await HookIo.ReadEditedFilePathAsync();
+        if (path is null)
+            return 0;
+        if (!TargetExtensions.Load().Contains(Path.GetExtension(path)))
+            return 0;
+        if (!File.Exists(path))
             return 0;
 
-        var command = hook.ToolInput?.Command ?? "";
-        if (Gate.ScopeOf(command) is not { } scope)
-            return 0;
-
-        var cwd = hook.Cwd ?? Directory.GetCurrentDirectory();
-        var files = ChangedFiles.Collect(scope, cwd, TargetExtensions.Load());
-        if (files.Count == 0)
-            return 0;
-
-        var result = StopWordCli.Run(files, cwd);
+        var result = StopWordCli.Run(path);
         if (result is not { ExitCode: StopWordCli.FoundExitCode } found)
             return 0;
 
-        var decision = new Decision(
-            new HookSpecificOutput("PreToolUse", "deny", DenyReason.Build(found.Stderr))
-        );
-        Console.WriteLine(JsonSerializer.Serialize(decision, HookJson.Default.Decision));
+        HookIo.WriteContext(RewriteInstruction.Build(path, found.Stderr));
         return 0;
     }
 }
 
 record HookInput(
     [property: JsonPropertyName("tool_name")] string? ToolName,
-    [property: JsonPropertyName("tool_input")] ToolInput? ToolInput,
-    [property: JsonPropertyName("cwd")] string? Cwd
+    [property: JsonPropertyName("tool_input")] ToolInput? ToolInput
 );
 
-record ToolInput([property: JsonPropertyName("command")] string? Command);
+record ToolInput([property: JsonPropertyName("file_path")] string? FilePath);
 
-record Decision(
+record Output(
     [property: JsonPropertyName("hookSpecificOutput")] HookSpecificOutput HookSpecificOutput
 );
 
 record HookSpecificOutput(
     [property: JsonPropertyName("hookEventName")] string HookEventName,
-    [property: JsonPropertyName("permissionDecision")] string PermissionDecision,
-    [property: JsonPropertyName("permissionDecisionReason")] string PermissionDecisionReason
+    [property: JsonPropertyName("additionalContext")] string AdditionalContext
 );
 
 [JsonSourceGenerationOptions(DefaultIgnoreCondition = JsonIgnoreCondition.Never)]
 [JsonSerializable(typeof(HookInput))]
-[JsonSerializable(typeof(Decision))]
+[JsonSerializable(typeof(Output))]
 partial class HookJson : JsonSerializerContext;

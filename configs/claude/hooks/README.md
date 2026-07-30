@@ -32,7 +32,7 @@ SEE: https://code.claude.com/docs/en/hooks#posttooluse-decision-control
 | `write_structured_comment.cs` | PostToolUse (Write\|Edit) | ソース編集後に write__structured_comment を促す |
 | `clean_comment_out.cs` | PostToolUse (Write\|Edit) | ソース編集後に clean__comment_out を促す |
 | `validate_comment_format.cs` | PostToolUse (Write\|Edit) | コメントを走査し語彙・2行・80文字・issue番号の違反を検出して修正を促す |
-| `validate_japanese_stop_word.cs` | PreToolUse (Bash) | `git commit` / `gh pr create` の前に変更ファイルの不自然な日本語語彙を検出し deny で書き直しを指示する |
+| `validate_japanese_stop_word.cs` | PostToolUse (Write\|Edit) | 編集直後のファイルから不自然な日本語語彙を検出し言い換えと書き直しを指示する |
 | `block_stop_on_open_tasks.cs` | Stop | 未完了 Task が残ったままの停止をブロックする |
 
 ## Task 必須フック (require_tasks.cs)
@@ -77,12 +77,12 @@ TaskCreate/TaskUpdate ツールが利用できないハーネスでも編集を�
 
 ## 日本語 stop word フック (validate_japanese_stop_word.cs)
 
-AI が下書きした日本語の不自然な語彙を commit / PR 作成の前に検出するゲート。
-hook 本体は発火判定と deny だけを担う。
+AI が下書きした日本語の不自然な語彙を、ドキュメント記載の直後に検出して書き直させる。
+hook 本体は対象判定と指示の出力だけを担う。
 走査は専用 CLI `~/.claude/cli/check_japanese_stop_word.cs` へ委譲する。
 
-- **発火条件**: Bash コマンドが `git commit` または `gh pr create` を含むとき。
-- **走査対象**: `git commit` は staged な変更を走査する。`gh pr create` は `origin/HEAD` (無ければ `origin/main`) との diff を走査する。対象拡張子はコメント対象言語 (`extensions.csv`) + `.md` `.markdown` `.txt`。
+- **発火条件**: Write / Edit の PostToolUse。編集されたファイル 1 つだけを走査する。
+- **対象拡張子**: コメント対象言語 (`extensions.csv`) + `.md` `.markdown` `.txt`。
 - **語彙の定義**: `~/.claude/skills/reference/japanese_stop_word/stop_word.csv` が single source of truth。行を足せば hook と CLI の挙動が同時に変わる。
-- **検出時**: `permissionDecision: deny` でコマンドをブロックする。検出結果 (ファイル:行: 語彙と言い換え先) と書き直しの指示を返す。
-- **fail open**: git・dotnet・CLI が使えない環境ではブロックせず素通しする。品質ゲートを単一障害点にしないためである。
+- **検出時**: additionalContext で検出結果 (ファイル:行: 語彙と言い換え先) と書き直しの指示を出力する。編集自体は妨げない。
+- **fail open**: dotnet や CLI が使えない環境では何も出力しない。品質ゲートを単一障害点にしないためである。

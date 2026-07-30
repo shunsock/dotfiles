@@ -67,10 +67,6 @@
           {
             "type": "command",
             "command": "dotnet run $HOME/.claude/hooks/pr_submission_via_skill.cs"
-          },
-          {
-            "type": "command",
-            "command": "dotnet run $HOME/.claude/hooks/validate_japanese_stop_word.cs"
           }
         ]
       },
@@ -108,6 +104,10 @@
           {
             "type": "command",
             "command": "dotnet run $HOME/.claude/hooks/validate_comment_format.cs"
+          },
+          {
+            "type": "command",
+            "command": "dotnet run $HOME/.claude/hooks/validate_japanese_stop_word.cs"
           }
         ]
       }
