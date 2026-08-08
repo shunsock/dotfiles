@@ -108,6 +108,10 @@
           {
             "type": "command",
             "command": "dotnet run $HOME/.claude/hooks/validate_japanese_stop_word.cs"
+          },
+          {
+            "type": "command",
+            "command": "dotnet run $HOME/.claude/hooks/trigger_validate_japanese.cs"
           }
         ]
       }
