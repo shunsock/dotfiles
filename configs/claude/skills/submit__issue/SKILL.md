@@ -52,16 +52,14 @@ agent は 1 行目に `TITLE: <タイトル案>`、2 行目以降に `issue_ackn
 # 既存ラベルを取得し、Issue の内容に合うラベル (bug / enhancement など) を選ぶ
 gh label list --json name,description
 
-# status ラベルが無ければ固定の色・説明で作成する (既存ならスキップ)
-gh label create "status:acknowledged" --color FBCA04 --description "要件定義済み・実装準備前" 2>/dev/null || true
-gh label create "status:ready" --color 0E8A16 --description "実装準備完了・着手可能" 2>/dev/null || true
-
 # assignee は実行ユーザー
 gh issue create --title "<タイトル>" --body-file <本文ファイル> --assignee @me \
   --label "<選択したラベル>,status:acknowledged"
 ```
 
-ラベル選択の基準: 種別に対応するラベル (バグ報告 → `bug` 系、機能開発 → `enhancement` 系) を最優先し、説明文から内容に合う補助ラベルがあれば加える。合うラベルが無ければ status ラベルのみでよく、新しい種別ラベルを勝手に作らない。
+ラベル選択の基準: 種別に対応するラベル (バグ報告 → `bug` 系、機能開発 → `enhancement` 系) を最優先し、説明文から内容に合う補助ラベルがあれば加える。合うラベルが無ければ status ラベルのみでよい。
+
+ラベルの定義 (語彙・色・説明) は `shunsock/github_central` が single source of truth として管理する。本スキルはラベルを作成しない。`status:acknowledged` がリポジトリに存在しない場合は status ラベル抜きで起票し、サマリーで github_central からのラベル同期が必要である旨を報告する。
 
 ### Phase 4: サマリーと次アクションの推薦
 
@@ -90,5 +88,5 @@ gh issue create --title "<タイトル>" --body-file <本文ファイル> --assi
 - 本文生成を inline で行う (必ず `issue-writer` agent へ委譲する)
 - 起票前にユーザーへ確認を求める
 - 本文にシステム要件セクション (提案手法・検証方法・作業単位・SP) を含める
-- status ラベル以外のラベルを新規作成する
+- ラベルを新規作成する (ラベル定義は `shunsock/github_central` が管理する)
 - サマリーで `prepare__issue` の推薦を省略する

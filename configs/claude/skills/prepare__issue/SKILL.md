@@ -87,7 +87,7 @@ gh api "repos/{owner}/{repo}/issues/<親番号>/sub_issues" --jq 'length'
 gh issue edit <親番号> --remove-label "status:acknowledged" --add-label "status:ready"
 ```
 
-`status:ready` ラベルが存在しない場合は先に作成する (`--color 0E8A16 --description "実装準備完了・着手可能"`)。
+ラベルの定義は `shunsock/github_central` が管理するため、本スキルはラベルを作成しない。`status:ready` がリポジトリに存在しない場合は遷移を保留し、サマリーで github_central からのラベル同期が必要である旨を報告する。
 
 ### Phase 7: サマリー出力
 
