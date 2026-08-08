@@ -1,8 +1,9 @@
 ---
 name: write__pull_request
 description: >-
-  プルリクエストを作成するときに起動する。git diff とコミット履歴を分析し、背景・
-  意思決定の根拠・トレードオフ・確認事項を重視したナラティブ型の PR 説明文を生成する。
+  PR 説明文を生成するときに起動する。PR の作成 (gh pr create)・push・CI 監視は行わない。
+  一気通貫の提出は submit__pull_request が担い、その内部から本スキルが起動される。
+  git diff とコミット履歴を分析し、背景・意思決定の根拠・トレードオフ・確認事項を重視したナラティブ型の PR 説明文を生成する。
   チェックリストではなく、テックブログのように記述する。構成は同梱テンプレートに従う。
 tools: Bash, Read, Glob, Grep
 model: inherit
