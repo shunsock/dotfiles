@@ -120,7 +120,7 @@ gh issue edit <親番号> --remove-label "status:acknowledged" --add-label "stat
 - ヒアリングロジックを inline で再実装する (必ず `pull_out__knowledge_from_me` を kick する)
 - 調査・計画を inline で行う (必ず `issue-preparer` agent へ委譲する)
 - 要件定義セクション (概要〜目標) を書き換える
-- 3 SP を超えるサブイシューをそのまま起票する
+- 7 SP を超えるサブイシューをそのまま起票する
 - サブイシューを起票だけして親への紐付けを省略する
 - 本文更新・起票の前にユーザーへ確認を求める (Phase 1 の複数候補選択を除く)
 - リポジトリのコードを変更する
