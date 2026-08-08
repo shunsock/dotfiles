@@ -24,7 +24,6 @@ paths:
 |---|---|---|
 | `grill_me` | `__` 区切りがなく動詞と目的語の境界が不明瞭 | `pull_out__knowledge_from_me` |
 | `clean_comment_out` | 動詞 clean と目的語の境界を `__` で示せていない | `clean__comment_out` |
-| `hold_personal_meeting` | 同上 | `hold__personal_meeting` |
 
 ## 注意
 
