@@ -33,6 +33,7 @@ SEE: https://code.claude.com/docs/en/hooks#posttooluse-decision-control
 | `clean_comment_out.cs` | PostToolUse (Write\|Edit) | ソース編集後に clean__comment_out を促す |
 | `validate_comment_format.cs` | PostToolUse (Write\|Edit) | コメントを走査し語彙・2行・70文字・issue番号・CONSTRAINT ペア形式/句点終端/件数の違反を検出して修正を促す |
 | `validate_japanese_stop_word.cs` | PostToolUse (Write\|Edit) | 編集直後のファイルから不自然な日本語語彙を検出し言い換えと書き直しを指示する |
+| `trigger_validate_japanese.cs` | PostToolUse (Write\|Edit) | 日本語を含む Markdown の編集後に validate__japanese を促す |
 | `block_stop_on_open_tasks.cs` | Stop | 未完了 Task が残ったままの停止をブロックする |
 
 ## Task 必須フック (require_tasks.cs)
@@ -87,3 +88,12 @@ hook 本体は対象判定と指示の出力だけを担う。
 - **語彙の定義**: `~/.claude/skills/reference/japanese_stop_word/stop_word.csv` が single source of truth。行を足せば hook と CLI の挙動が同時に変わる。
 - **検出時**: additionalContext で検出結果 (ファイル:行: 語彙と言い換え先) と書き直しの指示を出力する。編集自体は妨げない。
 - **fail open**: dotnet や CLI が使えない環境では何も出力しない。品質ゲートを単一障害点にしないためである。
+
+## 日本語リント発火フック (trigger_validate_japanese.cs)
+
+日本語を含む Markdown の編集直後に validate__japanese スキルの実行を義務付ける。
+スキルの description マッチングに任せると発火が安定しないため、hook で確実に促す。
+
+- **発火条件**: Write / Edit の PostToolUse。編集されたファイルが `.md` / `.markdown` で、日本語の文字 (かな・CJK 漢字・CJK 記号) を含む場合のみ。
+- **二重起動の抑止**: validate__japanese の実行中はスキル自身の編集で再発火する。進行中の実行が要求を満たす旨をメッセージに明記し、起動し直しを禁じる。
+- **fail open**: ファイルが読めない環境では何も出力しない。
