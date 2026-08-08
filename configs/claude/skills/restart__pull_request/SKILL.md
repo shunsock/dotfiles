@@ -23,8 +23,7 @@ PR レビュー中に以下が起きると、PR は「読めない」状態に�
 - リベース失敗や merge コミット混入で履歴が汚れた
 - レビュー指摘を反映するうちに、PR 説明文が現状と合わなくなった
 
-この状況で「force push で歴史を書き換える」のは禁止されている
-(global rule: `git push --force` / `git push -f` 禁止)。
+この状況で「force push で歴史を書き換える」のは禁止されている (global rule: `git push --force` / `git push -f` 禁止)。
 そこで本スキルは **新ブランチに squash した単一コミットを作って新PRを開く**。
 そのうえで **旧PRを参照付きで close する** という安全な手順で再出発する。
 
@@ -72,6 +71,7 @@ OLD_BRANCH=$(gh pr view "$PR_NUMBER" --json headRefName --jq '.headRefName')
 BASE_BRANCH=$(gh pr view "$PR_NUMBER" --json baseRefName --jq '.baseRefName')
 OLD_TITLE=$(gh pr view "$PR_NUMBER" --json title --jq '.title')
 OLD_URL=$(gh pr view "$PR_NUMBER" --json url --jq '.url')
+OLD_LABELS=$(gh pr view "$PR_NUMBER" --json labels --jq '[.labels[].name] | join(",")')
 ```
 
 ---
@@ -131,7 +131,7 @@ git log "origin/${BASE_BRANCH}..origin/${OLD_BRANCH}" --oneline --no-merges
 git diff --stat "origin/${BASE_BRANCH}...origin/${OLD_BRANCH}"
 ```
 
-差分が空なら「再出発する変更がない」状態です。ユーザーに報告して中止します。
+差分に変更が 1 件も無ければ「再出発する変更がない」状態です。ユーザーに報告して中止します。
 
 未コミットの変更が作業ツリーにある場合は警告し、stash か commit を促す:
 
@@ -170,8 +170,7 @@ git checkout -b "$NEW_BRANCH" "origin/${BASE_BRANCH}"
 git merge --squash "origin/${OLD_BRANCH}"
 ```
 
-コンフリクトが出た場合はユーザーに報告して停止する (`git push --force` で
-回避するような操作はしない)。
+コンフリクトが出た場合はユーザーに報告して停止する (`git push --force` で回避するような操作はしない)。
 
 #### 3.4 コミットメッセージの作成
 
@@ -296,13 +295,16 @@ Supersedes ${OLD_URL}
 
 #### 5.2 PR 作成
 
-`submit__pull_request` と同じバイパスマーカーを付与する (pr-submission-via-skill hook 用):
+`submit__pull_request` と同じバイパスマーカーを付与する (pr-submission-via-skill hook 用)。
+ラベルは旧 PR から引き継ぎ、assignee は実行ユーザーを自動付与する:
 
 ```bash
 gh pr create \
   --base "$BASE_BRANCH" \
   --head "$NEW_BRANCH" \
   --title "$OLD_TITLE" \
+  --assignee @me \
+  ${OLD_LABELS:+--label "$OLD_LABELS"} \
   --body "$(cat <<'EOF'
 <Phase 5.1 で生成した説明文>
 EOF
@@ -336,8 +338,7 @@ EOF
 gh pr close "$PR_NUMBER"
 ```
 
-旧ブランチ (`$OLD_BRANCH`) は **削除しない**。レビュー履歴のリンク先 (コード行参照)
-が壊れるのを防ぐため、参照可能な状態で残す。削除するかはユーザーが判断する。
+旧ブランチ (`$OLD_BRANCH`) は **削除しない**。レビュー履歴のリンク先 (コード行参照) が壊れるのを防ぐため、参照可能な状態で残す。削除するかはユーザーが判断する。
 
 ---
 
@@ -380,8 +381,6 @@ gh pr close "$PR_NUMBER"
 
 ## 推奨事項
 
-- 旧 PR の参加者 (reviewer/commenter) を新 PR の reviewer に再指名する:
-  `gh pr edit ${NEW_PR_NUMBER} --add-reviewer <user>`
-- 議論量が膨大な場合は、Phase 1.4 のグルーピング結果を新 PR 内で
-  collapsible `<details>` ブロックにまとめる
+- 旧 PR の参加者 (reviewer/commenter) を新 PR の reviewer に再指名する: `gh pr edit ${NEW_PR_NUMBER} --add-reviewer <user>`
+- 議論量が膨大な場合は、Phase 1.4 のグルーピング結果を新 PR 内で collapsible `<details>` ブロックにまとめる
 - 旧 PR にラベル `restarted` などを付けて検索性を上げる
