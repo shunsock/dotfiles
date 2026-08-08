@@ -29,10 +29,8 @@ Phase 4 はコンフリクト監視、Phase 5 は CI 監視です。
 
 PR 作成後、必ず以下を実行すること:
 
-1. `monitor__pull_request_conflict` スキルを kick し、ベースとの merge conflict を
-   検知・解決する。CI がクリーンな状態で走るよう、CI 監視より先に行う
-2. `monitor__ci_status` スキルを kick し、CI を監視する。失敗があれば
-   `monitor__ci_status` が `rescue__ci_failure` を自律起動して修正・再監視する
+1. `monitor__pull_request_conflict` スキルを kick し、ベースとの merge conflict を検知・解決する。CI がクリーンな状態で走るよう、CI 監視より先に行う
+2. `monitor__ci_status` スキルを kick し、CI を監視する。失敗があれば `monitor__ci_status` が `rescue__ci_failure` を自律起動して修正・再監視する
 3. 両監視の結果を統合してサマリーを出力する
 
 PR 作成だけで完了を報告することは禁止する。
@@ -52,8 +50,7 @@ Skill ツールで `write__pull_request` を起動し、生成された説明文
 
 ### Phase 3: PR作成
 
-コマンドの末尾にバイパスマーカーを付与する。これは PreToolUse hook
-（pr_submission_via_skill.cs）がこのスキル経由の `gh pr create` を許可するための識別子です。
+コマンドの末尾にバイパスマーカーを付与する。これは PreToolUse hook（pr_submission_via_skill.cs）がこのスキル経由の `gh pr create` を許可するための識別子です。
 マーカーがないと hook がコマンドを拒否する。
 
 ラベルと assignee はユーザーへの確認なしで自動付与する。
@@ -66,7 +63,7 @@ gh pr create --title "<タイトル>" --body "<Phase 1-2で生成した説明文
   --assignee @me --label "<選択したラベル>" # @pr-submission-via-skill-bypass
 ```
 
-ラベル選択の基準: 変更の種別に対応するラベル (バグ修正 → `bug` 系、機能追加 → `enhancement` 系) を最優先し、説明文から内容に合う補助ラベルがあれば加える。関連 Issue にラベルが付いていれば種別の判断材料にする。
+ラベル選択の基準は変更の種別との対応です。バグ修正なら `bug` 系、機能追加なら `enhancement` 系を最優先する。説明文から内容に合う補助ラベルがあれば加える。関連 Issue にラベルが付いていれば種別の判断材料にする。
 
 ラベルの定義 (語彙・色・説明) は `shunsock/github_central` が single source of truth として管理する。本スキルはラベルを作成しない。合うラベルが無ければ `--label` を省略し、`--assignee @me` のみで作成する。
 
