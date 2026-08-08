@@ -1,7 +1,7 @@
 {
-  "model": "claude-opus-4-7",
+  "model": "claude-fable-5[1m]",
   "env": {
-    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-opus-4-7",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-5[1m]",
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "BASH_DEFAULT_TIMEOUT_MS": "180000",
     "MAX_THINKING_TOKENS": "10000",

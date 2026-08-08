@@ -3,7 +3,7 @@ name: delegate__task_to_subagent
 description: >-
   簡単・定型的な作業をメインループで直接実行せず委譲したいときに起動する。
   Phase 1 で現在のモデルがタスク分解と依存関係・並行可否を分析し、
-  Phase 2 で opus モデル固定のサブエージェント task-executor に
+  Phase 2 で Sonnet 5 モデル固定のサブエージェント task-executor に
   作業単位ごとの実行を委譲する。
 tools: Bash, Read, Write, Edit, Glob, Grep, Agent
 model: inherit
@@ -49,7 +49,7 @@ model: inherit
 ### Phase 2: task-executor による実行
 
 作業単位ごとに Agent ツールで `task-executor` サブエージェントを起動する。
-モデルはエージェント定義の `model: opus` が適用される。
+モデルはエージェント定義の `model: claude-sonnet-5[1m]` が適用される。
 
 - プロンプトに範囲・変更対象ファイル・完了条件・検証方法を明記し、「入力の契約」を満たす
 - 依存関係のない作業単位は並行起動する。依存のある作業単位は前段の Task Execution Report を確認してから起動する
