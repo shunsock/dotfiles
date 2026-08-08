@@ -56,9 +56,19 @@ Skill ツールで `write__pull_request` を起動し、生成された説明文
 （pr_submission_via_skill.cs）がこのスキル経由の `gh pr create` を許可するための識別子です。
 マーカーがないと hook がコマンドを拒否する。
 
+ラベルと assignee はユーザーへの確認なしで自動付与する。
+
 ```bash
-gh pr create --title "<タイトル>" --body "<Phase 1-2で生成した説明文>" # @pr-submission-via-skill-bypass
+# 既存ラベルを取得し、変更内容に合うラベル (bug / enhancement など) を選ぶ
+gh label list --json name,description
+
+gh pr create --title "<タイトル>" --body "<Phase 1-2で生成した説明文>" \
+  --assignee @me --label "<選択したラベル>" # @pr-submission-via-skill-bypass
 ```
+
+ラベル選択の基準: 変更の種別に対応するラベル (バグ修正 → `bug` 系、機能追加 → `enhancement` 系) を最優先し、説明文から内容に合う補助ラベルがあれば加える。関連 Issue にラベルが付いていれば種別の判断材料にする。
+
+ラベルの定義 (語彙・色・説明) は `shunsock/github_central` が single source of truth として管理する。本スキルはラベルを作成しない。合うラベルが無ければ `--label` を省略し、`--assignee @me` のみで作成する。
 
 PR 番号を取得して後続フェーズで使用する:
 
@@ -110,6 +120,8 @@ CI 監視より先に行う理由を述べる。
 - PR: #<number>
 - Title: <title>
 - URL: <url>
+- Labels: <labels>
+- Assignee: <user>
 
 ### Conflict Monitor
 - Result: MERGEABLE / STILL_CONFLICTING

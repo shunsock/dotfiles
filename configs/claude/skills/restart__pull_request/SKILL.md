@@ -72,6 +72,7 @@ OLD_BRANCH=$(gh pr view "$PR_NUMBER" --json headRefName --jq '.headRefName')
 BASE_BRANCH=$(gh pr view "$PR_NUMBER" --json baseRefName --jq '.baseRefName')
 OLD_TITLE=$(gh pr view "$PR_NUMBER" --json title --jq '.title')
 OLD_URL=$(gh pr view "$PR_NUMBER" --json url --jq '.url')
+OLD_LABELS=$(gh pr view "$PR_NUMBER" --json labels --jq '[.labels[].name] | join(",")')
 ```
 
 ---
@@ -131,7 +132,7 @@ git log "origin/${BASE_BRANCH}..origin/${OLD_BRANCH}" --oneline --no-merges
 git diff --stat "origin/${BASE_BRANCH}...origin/${OLD_BRANCH}"
 ```
 
-差分が空なら「再出発する変更がない」状態です。ユーザーに報告して中止します。
+差分に変更が 1 件も無ければ「再出発する変更がない」状態です。ユーザーに報告して中止します。
 
 未コミットの変更が作業ツリーにある場合は警告し、stash か commit を促す:
 
@@ -296,13 +297,16 @@ Supersedes ${OLD_URL}
 
 #### 5.2 PR 作成
 
-`submit__pull_request` と同じバイパスマーカーを付与する (pr-submission-via-skill hook 用):
+`submit__pull_request` と同じバイパスマーカーを付与する (pr-submission-via-skill hook 用)。
+ラベルは旧 PR から引き継ぎ、assignee は実行ユーザーを自動付与する:
 
 ```bash
 gh pr create \
   --base "$BASE_BRANCH" \
   --head "$NEW_BRANCH" \
   --title "$OLD_TITLE" \
+  --assignee @me \
+  ${OLD_LABELS:+--label "$OLD_LABELS"} \
   --body "$(cat <<'EOF'
 <Phase 5.1 で生成した説明文>
 EOF
