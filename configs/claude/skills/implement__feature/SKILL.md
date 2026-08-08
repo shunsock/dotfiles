@@ -74,6 +74,7 @@ model: inherit
 | 可読性の指摘ゼロ | `review_code__readability` スキルを起動する |
 | 一貫性の指摘ゼロ | `review_code__consistency` スキルを起動する |
 | 脆弱性・不安定挙動の指摘ゼロ | `review_code__bug_checker` スキルを起動する |
+| 過剰実装の指摘ゼロ | `review_code__minimalism` スキルを起動する |
 | 複雑度が悪化していない | `validate__code_complexity` スキルを起動する |
 | コメント品質 | `write__structured_comment` → `clean__comment_out` を起動する |
 | 計画との一致 | Phase 1 の作業単位・テストリストが全て消化されているか確認する |

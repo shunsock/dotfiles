@@ -19,7 +19,7 @@ model: inherit
 一貫性の違反は 1 箇所ずつは小さくても、蓄積するとコードベースの予測可能性を壊す。
 「このプロジェクトではどう書くか」という慣例は、リンタでは機械的に検出しきれない (同じ概念への異なる語の使用、既存ユーティリティの再発明など)。
 このスキルは変更コードと既存コードの比較を必須とすることで、一般論の押し付けではなくプロジェクト固有の慣例への追従を検証する。
-review_code シリーズ (readability / consistency / bug_checker) の一角であり、修正は行わず発見に徹する。
+review_code シリーズ (readability / consistency / bug_checker / minimalism) の一角であり、修正は行わず発見に徹する。
 
 ## Trigger Condition
 
