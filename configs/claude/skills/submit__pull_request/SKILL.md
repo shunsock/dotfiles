@@ -45,9 +45,8 @@ PR 作成だけで完了を報告することは禁止する。
 
 ### Phase 1-2: PR 説明文の生成 (write__pull_request へ委譲)
 
-Skill ツールで `write__pull_request` を起動し、生成された説明文を Phase 3 の
-`gh pr create --body` に渡す。差分分析とテンプレート充填の手順は
-`write__pull_request` が single source of truth として所有する。
+Skill ツールで `write__pull_request` を起動し、生成された説明文を Phase 3 の `gh pr create --body` に渡す。
+差分分析とテンプレート充填の手順は `write__pull_request` が single source of truth として所有する。
 
 ---
 
