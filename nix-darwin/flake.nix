@@ -131,12 +131,18 @@
                 # nix-darwin は --force 系を生成しないため、cleanup を明示承認する。
                 extraFlags = [ "--force-cleanup" ];
               };
+              # gogcli は tap-qualified name で参照するため、tap 自体も管理下に置く
+              # (taps に無いと cleanup が untap し、次回の解決に失敗する)。
+              taps = [
+                "steipete/tap"
+              ];
               brews = [
                 "colima"
                 "docker"
                 "docker-buildx"
                 "docker-compose"
                 "curl"
+                "steipete/tap/gogcli"
               ];
               casks = [
                 "aquaskk"
