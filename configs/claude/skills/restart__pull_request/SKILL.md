@@ -217,7 +217,7 @@ git push -u origin "$NEW_BRANCH"
 
 - [何をしたか・何を解決するかを 1〜2 文の箇条書きで述べる。1 項目 1 文とし、句点が出たら改行して次の項目に分ける。]
 
-close: #<issue-number>
+Closes #<issue-number>
 Supersedes ${OLD_URL}
 
 ## 背景

@@ -3,8 +3,8 @@
   PR 説明文を生成する全スキル (write__pull_request / submit__pull_request /
   restart__pull_request) が参照する single source of truth。
   各 [プレースホルダ] を実際の内容で埋め、不要な行は削除する。
-  ただし close: 行は必須であり削除してはならない。
-  関連 Issue が無い場合は先に Issue を起票して紐付ける。
+  ただし Closes 行は必須であり削除してはならない。
+  関連 Issue が無い場合は、ユーザーに Issue の作成を案内する。
   この HTML コメントは投稿前に必ず削除する。
 -->
 ## 概要
@@ -12,7 +12,7 @@
 - [何をしたのか・何を解決するのかを 1〜2 文の箇条書きで述べる。]
 - [1 項目 1 文とし、句点が出たら次の項目へ改行する。]
 
-close: #<issue-number>
+Closes #<issue-number>
 
 ## 背景
 
