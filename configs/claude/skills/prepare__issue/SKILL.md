@@ -4,7 +4,8 @@ description: >-
   status:acknowledged の GitHub Issue を実装準備完了 (status:ready) へ引き上げるときに
   起動する。pull_out__knowledge_from_me のヒアリングで実装判断を確定し、issue-preparer
   agent の調査・計画レポートを元に、親 Issue を提案手法・Mermaid 図・SP 付きの本文へ
-  更新し、1 PR 粒度のサブイシューを native sub-issues として起票・紐付けする。
+  更新し、1 PR 粒度のサブイシューを native sub-issues として起票・紐付けし、
+  実施順序の依存を native issue dependencies (blocked by) として設定する。
 tools: Bash, Read, Write, Glob, Grep, Agent
 model: inherit
 ---
@@ -17,7 +18,7 @@ model: inherit
 > **構成**: 実装判断の聞き出しは Skill ツールで `pull_out__knowledge_from_me` を起動して委譲する (Phase 2)。
 > 調査と計画立案は `issue-preparer` agent へ委譲する (Phase 3)。
 > 本文更新前の計画評価は `skeptical-reviewer` agent へ委譲する (Phase 3.5、基準は `criteria.md`)。
-> 本スキルはそれらを kick し、`gh` 操作 (本文更新・サブイシュー起票・親子リンク・ラベル遷移) を担うオーケストレーターである。
+> 本スキルはそれらを kick し、`gh` 操作 (本文更新・サブイシュー起票・親子リンク・依存関係設定・ラベル遷移) を担うオーケストレーターである。
 > ヒアリング・計画立案・評価のロジックを本スキルに inline で再実装してはならない。
 
 ## 処理フロー
@@ -97,6 +98,24 @@ gh api "repos/{owner}/{repo}/issues/<親番号>/sub_issues" -F sub_issue_id="${C
 gh api "repos/{owner}/{repo}/issues/<親番号>/sub_issues" --jq 'length'
 ```
 
+### Phase 5.5: 実施順序の依存設定 (blocked by)
+
+分割案の「依存するサブイシュー」に従い、先行タスクを後続タスクの blocker として GitHub native issue dependencies に登録する。全サブイシューの起票が完了してから実行する (依存先の番号が確定している必要があるため)。
+
+```bash
+# 先行サブイシューの数値 ID (REST の id フィールド) を取得して後続の blocked_by に登録する
+BLOCKER_ID=$(gh api "repos/{owner}/{repo}/issues/<先行サブ番号>" --jq '.id')
+gh api "repos/{owner}/{repo}/issues/<後続サブ番号>/dependencies/blocked_by" -F issue_id="${BLOCKER_ID}"
+```
+
+登録後、各後続サブイシューの blocked_by 件数が分割案の依存数と一致することを確認する。
+
+```bash
+gh api "repos/{owner}/{repo}/issues/<後続サブ番号>/dependencies/blocked_by" --jq 'length'
+```
+
+依存を持たないサブイシュー (分割案で「なし」) には何も登録しない。分割案に依存の循環を見つけた場合は登録しない。循環は Phase 3.5 の残存指摘と同様にサマリーへ明記する。
+
 ### Phase 6: 状態遷移
 
 親 Issue のラベルを差し替える。
@@ -128,6 +147,7 @@ gh issue edit <親番号> --remove-label "status:acknowledged" --add-label "stat
 
 ### Verification
 - Sub-issues linked: <count>/<count>
+- Blocked-by relations: <count>/<count> (分割案の依存数に対する登録数)
 - 親 SP = サブ SP 合計: OK / NG
 ```
 
@@ -141,5 +161,6 @@ gh issue edit <親番号> --remove-label "status:acknowledged" --add-label "stat
 - 要件定義セクション (概要〜目標) を書き換える
 - 7 SP を超えるサブイシューをそのまま起票する
 - サブイシューを起票だけして親への紐付けを省略する
+- 分割案に依存があるのに blocked by の登録を省略する
 - 本文更新・起票の前にユーザーへ確認を求める (Phase 1 の複数候補選択を除く)
 - リポジトリのコードを変更する
