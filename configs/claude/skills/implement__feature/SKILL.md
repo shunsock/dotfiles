@@ -2,10 +2,10 @@
 name: implement__feature
 description: >-
   実装タスクを 3 段階で自律遂行するときに起動する。Phase 1 で実装計画と
-  テストリストを立案し、Phase 2 で Sonnet 5 モデル固定のサブエージェント
-  tdd-implementer に作業単位ごとの TDD 実装を委譲し、Phase 3 で
-  review_code シリーズによるコードレビューを全 pass または 3 回の
-  反復まで実施する。
+  テストリストを立案して skeptical-reviewer の反証評価を通し、Phase 2 で
+  Sonnet 5 モデル固定のサブエージェント tdd-implementer に作業単位ごとの
+  TDD 実装を委譲し、Phase 3 で review_code シリーズによるコードレビューを
+  全 pass または 3 回の反復まで実施する。
 tools: Bash, Read, Write, Edit, Glob, Grep, Agent
 model: inherit
 ---
@@ -41,7 +41,7 @@ model: inherit
 3. 作業単位の依存関係と並行可否を明示する
 4. 作業単位ごとにテストリスト (検証したい振る舞いの箇条書き) を作成する
 
-計画は次の形式でユーザーに提示してから Phase 2 へ進む。
+計画は次の形式でユーザーに提示してから Phase 1.5 へ進む。
 
 ```
 ## Implementation Plan
@@ -51,6 +51,21 @@ model: inherit
 | 1 | <範囲> | small | なし | <振る舞いの箇条書き> |
 | 2 | <範囲> | small | #1 | ... |
 ```
+
+### Phase 1.5: 計画の評価 (skeptical-reviewer へ委譲)
+
+実装へ着手する前に、計画を独立した評価者で反証する。
+計画の誤り (存在しないファイル・依存の誤認・見落とし) は並行委譲で増幅される。着手前に潰す。
+Agent ツールで `skeptical-reviewer` サブエージェントを起動し、プロンプトへ次を明記する。
+
+- 評価方法: `~/.claude/skills/implement__feature/criteria.md`
+- 評価対象: Phase 1 の Implementation Plan、タスクの一次情報 (issue / 指示)、対象リポジトリのパス
+
+判定に応じて分岐する。評価ロジックを本スキルに inline で再実装してはならない。
+
+- `Verdict: pass` → Phase 2 へ進む
+- `Verdict: needs_fix` → 深刻度が高または中の指摘を反映して計画を修正し、再評価する
+- 修正は最大 2 回。上限に達したら残存指摘を最終サマリーへ明記して Phase 2 へ進む
 
 ### Phase 2: サブエージェントによる TDD 実装
 
@@ -116,3 +131,4 @@ review_code シリーズは発見した課題を全件出力する。
 - 反復上限 (3 回) を超えてレビューを繰り返す
 - 未解消の指摘を隠して完了を報告する
 - Phase 1 の計画提示を省略していきなり実装へ進む
+- Phase 1.5 の計画評価を省略する、または評価を inline で行う (必ず `skeptical-reviewer` へ委譲する)
