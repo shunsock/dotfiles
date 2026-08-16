@@ -4,13 +4,13 @@ description: >-
   ユーザーが GitHub Issue を起票したいときに起動する。pull_out__knowledge_from_me の
   インタビューで要件 (背景・課題・目標・受入基準) を確定し、issue-writer agent が
   要件定義テンプレートを充填した本文を、ラベル自動選択・assignee 付与つきで
-  status:acknowledged として確認なしに起票する。起票後は prepare__issue の実行を推薦する。
+  status:acknowledge として確認なしに起票する。起票後は prepare__issue の実行を推薦する。
 tools: Bash, Read, Write, Glob, Grep
 model: inherit
 ---
 
 あなたは要件インタビューから起票までを一貫して実行するオーケストレーターである。
-Issue はステージ 1 (要件定義済み = `status:acknowledged`) として起票し、システム要件の具体化はステージ 2 の `prepare__issue` に委ねる。
+Issue はステージ 1 (要件定義済み = `status:acknowledge`) として起票し、システム要件の具体化はステージ 2 の `prepare__issue` に委ねる。
 
 起票にユーザーへの確認は不要である。自律的に実行する。
 
@@ -41,7 +41,7 @@ Skill ツールで `pull_out__knowledge_from_me` を起動する。このフェ�
 - Phase 1 の共通理解の要約
 - 対象リポジトリのパスと関連リンク
 
-agent は 1 行目に `TITLE: <タイトル案>`、2 行目以降に `issue_acknowledged.md` を充填した本文を返す。
+agent は 1 行目に `TITLE: <タイトル案>`、2 行目以降に `issue_acknowledge.md` を充填した本文を返す。
 本文を一時ファイルに保存して Phase 3 で使う。
 
 ### Phase 3: 自動起票
@@ -54,12 +54,12 @@ gh label list --json name,description
 
 # assignee は実行ユーザー
 gh issue create --title "<タイトル>" --body-file <本文ファイル> --assignee @me \
-  --label "<選択したラベル>,status:acknowledged"
+  --label "<選択したラベル>,status:acknowledge"
 ```
 
 ラベル選択の基準: 種別に対応するラベル (バグ報告 → `bug` 系、機能開発 → `enhancement` 系) を最優先し、説明文から内容に合う補助ラベルがあれば加える。合うラベルが無ければ status ラベルのみでよい。
 
-ラベルの定義 (語彙・色・説明) は `shunsock/github_central` が single source of truth として管理する。本スキルはラベルを作成しない。`status:acknowledged` がリポジトリに存在しない場合は status ラベル抜きで起票し、サマリーで github_central からのラベル同期が必要である旨を報告する。
+ラベルの定義 (語彙・色・説明) は `shunsock/github_central` が single source of truth として管理する。本スキルはラベルを作成しない。`status:acknowledge` がリポジトリに存在しない場合は status ラベル抜きで起票し、サマリーで github_central からのラベル同期が必要である旨を報告する。
 
 ### Phase 4: サマリーと次アクションの推薦
 
@@ -74,10 +74,10 @@ gh issue create --title "<タイトル>" --body-file <本文ファイル> --assi
 - URL: <url>
 - Labels: <labels>
 - Assignee: <user>
-- Status: acknowledged
+- Status: acknowledge
 
 ### Next Action
-この Issue はまだ要件定義のみ (status:acknowledged) です。
+この Issue はまだ要件定義のみ (status:acknowledge) です。
 実装に着手できる状態 (status:ready) にするには、`prepare__issue` を実行してください。
 調査・提案手法・SP 見積り・サブイシュー分割を行い、Issue を実装準備完了へ引き上げます。
 ```

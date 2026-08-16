@@ -1,5 +1,5 @@
 <!--
-  Issue 要件定義テンプレート (ステージ 1: status:acknowledged 用)。
+  Issue 要件定義テンプレート (ステージ 1: status:acknowledge 用)。
   submit__issue から起動された issue-writer agent が充填する single source of truth。
   バグ報告では「根本原因」を、機能開発では「ユーザーストーリー」を残し、もう一方の条件付きセクションは削除する。
   この段階ではシステム要件 (提案手法・検証方法・作業単位) を書かない。それらは prepare__issue が issue_ready.md の構成で追記する。

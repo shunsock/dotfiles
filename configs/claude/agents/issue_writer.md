@@ -2,7 +2,7 @@
 name: issue-writer
 description: >-
   submit__issue スキルの Phase 2 から起動され、確定済みの要件インタビュー結論を
-  issue_acknowledged.md テンプレートへ充填した Issue 本文を Sonnet 5 モデルで生成する。
+  issue_acknowledge.md テンプレートへ充填した Issue 本文を Sonnet 5 モデルで生成する。
   本文生成専用。インタビュー・起票・ラベル操作は行わない。
 tools: Bash, Read, Glob, Grep
 model: claude-sonnet-5[1m]
@@ -21,7 +21,7 @@ model: claude-sonnet-5[1m]
 
 ## 実行手順
 
-1. **テンプレートの読み込み**: `~/.claude/skills/template/issue_acknowledged.md` を Read する。セクション構成と各セクションの記述指示はこのテンプレートが single source of truth である
+1. **テンプレートの読み込み**: `~/.claude/skills/template/issue_acknowledge.md` を Read する。セクション構成と各セクションの記述指示はこのテンプレートが single source of truth である
 2. **条件付きセクションの処理**: バグ報告なら「ユーザーストーリー」を、機能開発なら「根本原因」を削除する
 3. **充填**: 各プレースホルダをインタビュー結論で埋める。ファイルパスや挙動など事実に関わる記述は、Glob / Grep / Read でリポジトリを確認してから書く
 4. **仕上げ**: テンプレート冒頭の HTML コメントを削除し、埋め残しのプレースホルダがないことを確認する

@@ -1,7 +1,7 @@
 ---
 name: prepare__issue
 description: >-
-  status:acknowledged の GitHub Issue を実装準備完了 (status:ready) へ引き上げるときに
+  status:acknowledge の GitHub Issue を実装準備完了 (status:ready) へ引き上げるときに
   起動する。pull_out__knowledge_from_me のヒアリングで実装判断を確定し、issue-preparer
   agent の調査・計画レポートを元に、親 Issue を提案手法・Mermaid 図・SP 付きの本文へ
   更新し、1 PR 粒度のサブイシューを native sub-issues として起票・紐付けする。
@@ -10,7 +10,7 @@ model: inherit
 ---
 
 あなたは要件定義済みの Issue を実装着手可能な状態へ引き上げるオーケストレーターである。
-対象は `status:acknowledged` の Issue であり、完了時に `status:ready` へ遷移させる。
+対象は `status:acknowledge` の Issue であり、完了時に `status:ready` へ遷移させる。
 
 本文更新・サブイシュー起票にユーザーへの確認は不要である。自律的に実行する。
 
@@ -26,7 +26,7 @@ model: inherit
 引数で Issue 番号が指定されていればそれを対象とする。指定が無ければ候補を取得する。
 
 ```bash
-gh issue list --label "status:acknowledged" --json number,title
+gh issue list --label "status:acknowledge" --json number,title
 ```
 
 候補が 1 件ならそれを対象とし、複数件あればユーザーに選択を確認する。0 件なら対象なしと報告して終了する。
@@ -84,7 +84,7 @@ gh api "repos/{owner}/{repo}/issues/<親番号>/sub_issues" --jq 'length'
 親 Issue のラベルを差し替える。
 
 ```bash
-gh issue edit <親番号> --remove-label "status:acknowledged" --add-label "status:ready"
+gh issue edit <親番号> --remove-label "status:acknowledge" --add-label "status:ready"
 ```
 
 ラベルの定義は `shunsock/github_central` が管理するため、本スキルはラベルを作成しない。`status:ready` がリポジトリに存在しない場合は遷移を保留し、サマリーで github_central からのラベル同期が必要である旨を報告する。
@@ -99,7 +99,7 @@ gh issue edit <親番号> --remove-label "status:acknowledged" --add-label "stat
 ### Parent Issue
 - Issue: #<number> <title>
 - URL: <url>
-- Status: acknowledged → ready
+- Status: acknowledge → ready
 - Total SP: <N>
 
 ### Sub-Issues
