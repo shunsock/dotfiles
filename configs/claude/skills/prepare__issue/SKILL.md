@@ -114,7 +114,8 @@ gh api "repos/{owner}/{repo}/issues/<後続サブ番号>/dependencies/blocked_by
 gh api "repos/{owner}/{repo}/issues/<後続サブ番号>/dependencies/blocked_by" --jq 'length'
 ```
 
-依存を持たないサブイシュー (分割案で「なし」) には何も登録しない。分割案に依存の循環を見つけた場合は登録しない。循環は Phase 3.5 の残存指摘と同様にサマリーへ明記する。
+- 依存を持たないサブイシュー (分割案で「なし」) には何も登録しない。
+- 分割案に依存の循環を見つけた場合は登録しない。循環は Phase 3.5 の残存指摘と同様にサマリーへ明記する。
 
 ### Phase 6: 状態遷移
 
