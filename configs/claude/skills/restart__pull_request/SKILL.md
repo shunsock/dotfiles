@@ -6,7 +6,7 @@ description: >-
   ブランチを新ブランチ上の単一のクリーンなコミットに squash し、過去の PR 議論
   (レビューコメント・スレッド・リアクション) を統合した説明文で新しい PR を作成する。
   元のブランチを force-push してはならない。必ず新しいブランチを作成する。
-tools: Bash, Read, Write, Edit, Grep
+tools: Bash, Read, Write, Edit, Grep, Agent
 model: inherit
 ---
 
@@ -292,6 +292,22 @@ Supersedes ${OLD_URL}
 
 - [タイトル](URL)
 ```
+
+#### 5.1.5 説明文の評価 (skeptical-reviewer へ委譲)
+
+PR を作成する前に、説明文を独立した評価者で反証する。
+本スキルの存在意義は議論の統合にある。要約の捏造・脱落は評価で潰す。
+Agent ツールで `skeptical-reviewer` サブエージェントを起動し、プロンプトへ次を明記する。
+
+- 評価方法: `~/.claude/skills/template/evaluation_pull_request.md`
+- restart__pull_request から呼ばれたことを明記する (restart 固有の追加観点を適用させるため)
+- 評価対象: 生成した説明文、旧 PR 番号 (`${PR_NUMBER}`)、新ブランチとベースブランチ名
+
+判定に応じて分岐する。評価ロジックを本スキルに inline で再実装してはならない。
+
+- `Verdict: pass` → 5.2 へ進む
+- `Verdict: needs_fix` → 深刻度が高または中の指摘を反映して説明文を修正し、再評価する
+- 修正は最大 2 回。上限に達したら残存指摘をサマリーへ明記して 5.2 へ進む
 
 #### 5.2 PR 作成
 

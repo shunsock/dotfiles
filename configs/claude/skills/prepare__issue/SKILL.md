@@ -5,7 +5,7 @@ description: >-
   起動する。pull_out__knowledge_from_me のヒアリングで実装判断を確定し、issue-preparer
   agent の調査・計画レポートを元に、親 Issue を提案手法・Mermaid 図・SP 付きの本文へ
   更新し、1 PR 粒度のサブイシューを native sub-issues として起票・紐付けする。
-tools: Bash, Read, Write, Glob, Grep
+tools: Bash, Read, Write, Glob, Grep, Agent
 model: inherit
 ---
 
@@ -16,8 +16,9 @@ model: inherit
 
 > **構成**: 実装判断の聞き出しは Skill ツールで `pull_out__knowledge_from_me` を起動して委譲する (Phase 2)。
 > 調査と計画立案は `issue-preparer` agent へ委譲する (Phase 3)。
+> 本文更新前の計画評価は `skeptical-reviewer` agent へ委譲する (Phase 3.5、基準は `criteria.md`)。
 > 本スキルはそれらを kick し、`gh` 操作 (本文更新・サブイシュー起票・親子リンク・ラベル遷移) を担うオーケストレーターである。
-> ヒアリングや計画立案のロジックを本スキルに inline で再実装してはならない。
+> ヒアリング・計画立案・評価のロジックを本スキルに inline で再実装してはならない。
 
 ## 処理フロー
 
@@ -38,7 +39,7 @@ Skill ツールで `pull_out__knowledge_from_me` を起動する。スコープ�
 
 - 採用アプローチの方向性 (複数案があるときの選好)
 - スコープ境界 (この Issue でやらないこと)
-- 既存コードへの影響の許容度 (互換性維持か作り直しか)
+- 既存コードへの影響の許容度 (互換性維持または作り直し)
 - サブイシュー分割の粒度感と優先順位
 - SP 見積りの前提 (実装者の習熟度など)
 
@@ -50,11 +51,28 @@ Skill ツールで `pull_out__knowledge_from_me` を起動する。スコープ�
 - Phase 2 のヒアリング結論
 - 対象リポジトリのパス
 
-agent は提案手法 (diff・ロジックフロー・コンポーネント関係図・代替案表)・検証方法・受入基準・SP・サブイシュー分割案を Markdown レポートで返す。
+agent は次の内容を Markdown レポートで返す。
+
+- 提案手法 (diff・ロジックフロー・コンポーネント関係図・代替案表)
+- 検証方法・受入基準・SP・サブイシュー分割案
+
+### Phase 3.5: 計画の評価 (skeptical-reviewer へ委譲)
+
+親 Issue を更新する前に、レポートを独立した評価者で反証する。
+Agent ツールで `skeptical-reviewer` サブエージェントを起動し、プロンプトへ次を明記する。
+
+- 評価方法: `~/.claude/skills/prepare__issue/criteria.md`
+- 評価対象: issue-preparer のレポート、対象 Issue の本文、Phase 2 のヒアリング結論、対象リポジトリのパス
+
+判定に応じて分岐する。評価ロジックを本スキルに inline で再実装してはならない。
+
+- `Verdict: pass` → Phase 4 へ進む
+- `Verdict: needs_fix` → 深刻度が高または中の指摘を issue-preparer へ渡して計画を再立案し、再評価する
+- 差し戻しは最大 2 回。上限に達したら残存指摘をサマリーへ明記して Phase 4 へ進む
 
 ### Phase 4: 親 Issue 更新
 
-`~/.claude/skills/template/issue_ready.md` の構成で本文を組み立てる。要件定義セクション (概要〜目標) は既存本文を保持し、agent のレポートからシステム要件セクション群を充填する。テンプレート冒頭の HTML コメントを削除し、一時ファイルへ保存して更新する。
+`~/.claude/skills/template/issue_ready.md` の構成で本文を組み立てる。要件定義セクション (概要〜目標) は既存本文を保持する。agent のレポートからシステム要件セクション群を充填する。テンプレート冒頭の HTML コメントを削除し、一時ファイルへ保存して更新する。
 
 ```bash
 gh issue edit <number> --body-file <本文ファイル>
@@ -113,12 +131,13 @@ gh issue edit <親番号> --remove-label "status:acknowledged" --add-label "stat
 - 親 SP = サブ SP 合計: OK / NG
 ```
 
-親 Issue の SP がサブイシューの SP 合計と一致しない場合は、レポートを見直して修正してから出力する。
+親 Issue の SP がサブイシューの SP 合計と一致しない場合がある。その場合はレポートを見直して修正してから出力する。
 
 ## 禁止事項
 
 - ヒアリングロジックを inline で再実装する (必ず `pull_out__knowledge_from_me` を kick する)
 - 調査・計画を inline で行う (必ず `issue-preparer` agent へ委譲する)
+- Phase 3.5 の評価を省略する、または評価を inline で行う (必ず `skeptical-reviewer` へ委譲する)
 - 要件定義セクション (概要〜目標) を書き換える
 - 7 SP を超えるサブイシューをそのまま起票する
 - サブイシューを起票だけして親への紐付けを省略する

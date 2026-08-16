@@ -4,7 +4,7 @@ description: >-
   プルリクエストを作成から完了まで一貫して提出するときに起動する。ナラティブ型の
   PR 説明文を生成し、PR を作成し、CI チェックを監視し、CI の失敗を自動修正する。
   PR ナラティブと CI 修正のワークフローを 1 つの自律フローに統合する。
-tools: Bash, Read, Write, Edit, Glob, Grep
+tools: Bash, Read, Write, Edit, Glob, Grep, Agent
 model: inherit
 ---
 
@@ -15,6 +15,7 @@ PR 作成後は CI を監視し、失敗があれば自動修正します。
 全フェーズでユーザーへの確認は不要です。自律的に実行してください。
 
 > **構成**: PR説明文の生成は Skill ツールで `write__pull_request` を起動して委譲する (Phase 1-2)。
+> PR作成前の説明文評価は `skeptical-reviewer` agent へ委譲する (Phase 2.5)。基準は `~/.claude/skills/template/evaluation_pull_request.md` が所有する。
 > PR作成後の監視・修復は専用スキルに委譲する — コンフリクト検知は
 > `monitor__pull_request_conflict`、CI監視は `monitor__ci_status` が担い、
 > それぞれ検知時に `rescue__pull_request_conflict` / `rescue__ci_failure` を
@@ -43,8 +44,24 @@ PR 作成だけで完了を報告することは禁止する。
 
 ### Phase 1-2: PR 説明文の生成 (write__pull_request へ委譲)
 
-Skill ツールで `write__pull_request` を起動し、生成された説明文を Phase 3 の `gh pr create --body` に渡す。
+Skill ツールで `write__pull_request` を起動し、生成された説明文を Phase 2.5 の評価へ渡す。
 差分分析とテンプレート充填の手順は `write__pull_request` が single source of truth として所有する。
+
+---
+
+### Phase 2.5: 説明文の評価 (skeptical-reviewer へ委譲)
+
+PR を作成する前に、説明文を独立した評価者で反証する。
+Agent ツールで `skeptical-reviewer` サブエージェントを起動し、プロンプトへ次を明記する。
+
+- 評価方法: `~/.claude/skills/template/evaluation_pull_request.md`
+- 評価対象: 生成された説明文 (一時ファイルパス)、対象ブランチとベースブランチ名
+
+判定に応じて分岐する。評価ロジックを本スキルに inline で再実装してはならない。
+
+- `Verdict: pass` → Phase 3 へ進む
+- `Verdict: needs_fix` → 深刻度が高または中の指摘を反映して説明文を修正し、再評価する
+- 修正は最大 2 回。上限に達したら残存指摘をサマリーへ明記して Phase 3 へ進む
 
 ---
 
@@ -140,6 +157,7 @@ CI 監視より先に行う理由を述べる。
 - `git push --force` / `git push -f` は使わない
 - ユーザーに確認を求めない（全フェーズ自動実行）
 - 監視・修復を本スキルに inline 再実装しない（必ず monitor を kick する）
+- Phase 2.5 の説明文評価を省略しない（必ず `skeptical-reviewer` へ委譲する）
 - git diff を読まずに推測で PR 説明を書かない
 - 選択肢の比較で採用案だけを持ち上げる偏った記述をしない
 - 変更のないコードについて言及しない
