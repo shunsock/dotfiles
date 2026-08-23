@@ -300,6 +300,12 @@ Supersedes ${OLD_URL}
 - [タイトル](URL)
 ````
 
+#### 5.1.2 説明文の保存と日本語検証
+
+生成した説明文は Write ツールで `.md` 拡張子の一時ファイル (`$BODY_FILE`) へ保存する。
+保存後、Skill ツールで `validate__japanese` を起動し、この一時ファイルを対象に全フェーズを完了させる。完了してから 5.1.5 へ進む。
+`gh` へ渡す本文は Write/Edit hook (trigger_validate_japanese) を通らずに投稿される。そのため、この検証を省略してはならない。
+
 #### 5.1.5 説明文の評価 (skeptical-reviewer へ委譲)
 
 PR を作成する前に、説明文を独立した評価者で反証する。
@@ -328,10 +334,7 @@ gh pr create \
   --title "$OLD_TITLE" \
   --assignee @me \
   ${OLD_LABELS:+--label "$OLD_LABELS"} \
-  --body "$(cat <<'EOF'
-<Phase 5.1 で生成した説明文>
-EOF
-)" # @pr-submission-via-skill-bypass
+  --body-file "$BODY_FILE" # @pr-submission-via-skill-bypass
 ```
 
 新 PR 番号と URL を保存:
@@ -399,6 +402,7 @@ gh pr close "$PR_NUMBER"
 - 旧ブランチを削除しない (議論のリンク先が壊れる)
 - 旧 PR を **削除** しない (close のみ) — 議論は資産
 - 議論を読まずに新 PR 説明を書かない (synthesize が本スキルの存在意義)
+- `validate__japanese` を実行せずに新 PR を作成しない (説明文は `.md` 拡張子の一時ファイルで保存する)
 - 自分が作者でない PR を勝手に close しない
 - コンフリクトを `--strategy-option=theirs` 等で握りつぶさない
 
