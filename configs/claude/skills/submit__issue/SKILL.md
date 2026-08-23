@@ -43,7 +43,10 @@ Skill ツールで `pull_out__knowledge_from_me` を起動する。このフェ�
 - 対象リポジトリのパスと関連リンク
 
 agent は 1 行目に `TITLE: <タイトル案>`、2 行目以降に `issue_acknowledged.md` を充填した本文を返す。
-本文を一時ファイルに保存して Phase 2.5 で使う。
+本文は Write ツールで `.md` 拡張子の一時ファイルへ保存する。この一時ファイルを Phase 2.5 と Phase 3 で使う。
+
+保存後、Skill ツールで `validate__japanese` を起動し、この一時ファイルを対象に全フェーズを完了させる。完了してから Phase 2.5 へ進む。
+`gh` へ渡す本文は Write/Edit hook (trigger_validate_japanese) を通らずに投稿される。そのため、この検証を省略してはならない。
 
 ### Phase 2.5: 本文の評価 (skeptical-reviewer へ委譲)
 
@@ -102,6 +105,7 @@ gh issue create --title "<タイトル>" --body-file <本文ファイル> --assi
 - インタビューロジックを inline で再実装する (必ず `pull_out__knowledge_from_me` を kick する)
 - 本文生成を inline で行う (必ず `issue-writer` agent へ委譲する)
 - Phase 2.5 の評価を省略する、または評価を inline で行う (必ず `skeptical-reviewer` へ委譲する)
+- `validate__japanese` を実行せずに起票する (本文の一時ファイルは `.md` 拡張子で保存する)
 - 起票前にユーザーへ確認を求める
 - 本文にシステム要件セクション (提案手法・検証方法・作業単位・SP) を含める
 - ラベルを新規作成する (ラベル定義は `shunsock/github_central` が管理する)

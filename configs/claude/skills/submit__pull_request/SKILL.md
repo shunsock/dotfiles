@@ -47,6 +47,10 @@ PR 作成だけで完了を報告することは禁止する。
 Skill ツールで `write__pull_request` を起動し、生成された説明文を Phase 2.5 の評価へ渡す。
 差分分析とテンプレート充填の手順は `write__pull_request` が single source of truth として所有する。
 
+生成された説明文は Write ツールで `.md` 拡張子の一時ファイルへ保存する。
+保存後、Skill ツールで `validate__japanese` を起動し、この一時ファイルを対象に全フェーズを完了させる。完了してから Phase 2.5 へ進む。
+`gh pr create` に渡す本文は Write/Edit hook (trigger_validate_japanese) を通らずに投稿される。そのため、この検証を省略してはならない。
+
 ---
 
 ### Phase 2.5: 説明文の評価 (skeptical-reviewer へ委譲)
@@ -76,7 +80,7 @@ Agent ツールで `skeptical-reviewer` サブエージェントを起動し、�
 # 既存ラベルを取得し、変更内容に合うラベル (bug / enhancement など) を選ぶ
 gh label list --json name,description
 
-gh pr create --title "<タイトル>" --body "<Phase 1-2で生成した説明文>" \
+gh pr create --title "<タイトル>" --body-file <Phase 1-2 で検証済みの一時ファイル> \
   --assignee @me --label "<選択したラベル>" # @pr-submission-via-skill-bypass
 ```
 
@@ -158,6 +162,7 @@ CI 監視より先に行う理由を述べる。
 - ユーザーに確認を求めない（全フェーズ自動実行）
 - 監視・修復を本スキルに inline 再実装しない（必ず monitor を kick する）
 - Phase 2.5 の説明文評価を省略しない（必ず `skeptical-reviewer` へ委譲する）
+- `validate__japanese` を実行せずに PR を作成しない（説明文の一時ファイルは `.md` 拡張子で保存する）
 - git diff を読まずに推測で PR 説明を書かない
 - 選択肢の比較で採用案だけを持ち上げる偏った記述をしない
 - 変更のないコードについて言及しない

@@ -73,7 +73,10 @@ Agent ツールで `skeptical-reviewer` サブエージェントを起動し、�
 
 ### Phase 4: 親 Issue 更新
 
-`~/.claude/skills/template/issue_ready.md` の構成で本文を組み立てる。要件定義セクション (概要〜目標) は既存本文を保持する。agent のレポートからシステム要件セクション群を充填する。テンプレート冒頭の HTML コメントを削除し、一時ファイルへ保存して更新する。
+`~/.claude/skills/template/issue_ready.md` の構成で本文を組み立てる。要件定義セクション (概要〜目標) は既存本文を保持する。agent のレポートからシステム要件セクション群を充填する。テンプレート冒頭の HTML コメントを削除する。本文は Write ツールで `.md` 拡張子の一時ファイルへ保存する。
+
+保存後、Skill ツールで `validate__japanese` を起動し、この一時ファイルを対象に全フェーズを完了させてから更新する。
+`gh` へ渡す本文は Write/Edit hook (trigger_validate_japanese) を通らずに投稿される。そのため、この検証を省略してはならない。
 
 ```bash
 gh issue edit <number> --body-file <本文ファイル>
@@ -82,6 +85,7 @@ gh issue edit <number> --body-file <本文ファイル>
 ### Phase 5: サブイシュー起票と親子リンク
 
 分割案の各サブイシューを `~/.claude/skills/template/sub_issue.md` の構成で起票し、GitHub native sub-issues として親に紐付ける。
+サブ本文ファイルも Write ツールで `.md` 拡張子の一時ファイルへ保存する。起票前に Phase 4 と同様に `validate__japanese` を実行する。
 
 ```bash
 # サブイシューを起票する (親と同じ assignee・種別ラベルを引き継ぐ)
@@ -159,6 +163,7 @@ gh issue edit <親番号> --remove-label "status:acknowledged" --add-label "stat
 - ヒアリングロジックを inline で再実装する (必ず `pull_out__knowledge_from_me` を kick する)
 - 調査・計画を inline で行う (必ず `issue-preparer` agent へ委譲する)
 - Phase 3.5 の評価を省略する、または評価を inline で行う (必ず `skeptical-reviewer` へ委譲する)
+- `validate__japanese` を実行せずに本文更新・起票する (本文の一時ファイルは `.md` 拡張子で保存する)
 - 要件定義セクション (概要〜目標) を書き換える
 - 7 SP を超えるサブイシューをそのまま起票する
 - サブイシューを起票だけして親への紐付けを省略する
