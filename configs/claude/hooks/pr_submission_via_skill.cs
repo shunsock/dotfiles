@@ -1,4 +1,4 @@
-// pr_submission_via_skill.cs - PreToolUse hook for Claude Code (.NET file-based app)
+// pr_submission_via_skill.cs - PreToolUse hook (.NET file-based app)
 // `gh pr create` の直接実行を拒否し、submit__pull_request スキルの利用へ誘導する。
 //
 // 実行は AOT ビルドせず `dotnet run pr_submission_via_skill.cs` で単一ファイルのまま
@@ -17,7 +17,6 @@ internal static class Gate
     private static readonly Regex GhPrCreate = new(@"\bgh\s+pr\s+create\b");
     private const string BypassMarker = "@pr-submission-via-skill-bypass";
 
-    // gh pr create を捕捉し、かつバイパスマーカーが無いときだけ拒否対象とする。
     public static bool ShouldDeny(string command) =>
         GhPrCreate.IsMatch(command) && !command.Contains(BypassMarker);
 }
@@ -26,7 +25,7 @@ internal static class Program
 {
     private const string Reason =
         "`gh pr create` の直接実行は禁止されています。代わりに submit__pull_request スキルを使用してください。"
-        + "このスキルはナラティブ型の PR 説明文（概要・背景・課題・目標・採用手法・変更箇所・妥協と制限・"
+        + "このスキルはナラティブ型の PR 説明文（概要・背景・課題・目標・採用手法・妥協と制限・"
         + "検証方法・確認事項・参考文献）を生成し、その後 CI を自動で監視します。\n\n"
         + "いま submit__pull_request スキルを実行し、適切なナラティブ説明文付きでこの PR を作成してください。";
 
@@ -44,9 +43,9 @@ internal static class Program
         if (!Gate.ShouldDeny(command))
             return 0;
 
-        // 終了コードでは確実にブロックできない (exit 1 等は非ブロッキング扱い)。
-        // PreToolUse は permissionDecision: "deny" の JSON 出力でのみツール実行を拒否する。
-        // see: https://code.claude.com/docs/en/hooks
+        // CONSTRAINT: 拒否は permissionDecision "deny" の出力で示さなくてはならない。
+        // REASON: PreToolUse では終了コード 1 が非ブロッキング扱いになるため。
+        // SEE: https://code.claude.com/docs/en/hooks
         var decision = new Decision(new HookSpecificOutput("PreToolUse", "deny", Reason));
         Console.WriteLine(JsonSerializer.Serialize(decision, HookJson.Default.Decision));
         return 0;
