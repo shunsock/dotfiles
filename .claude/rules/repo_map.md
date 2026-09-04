@@ -1,15 +1,15 @@
 # リポジトリ構成
 
-Nix を中心とした個人 dotfiles。独立した 3 つのサブプロジェクトで構成される。
+開発用 Docker コンテナを管理するリポジトリ。
 
 | ディレクトリ | 対象 | ビルドツール |
 |---|---|---|
-| `nix-darwin/` | macOS (Apple Silicon) システム設定 | Taskfile + flake |
-| `nix-os/` | Linux (NixOS) システム設定 | Taskfile + flake |
 | `nvimc/` | 開発用 Docker コンテナ | Taskfile + Docker |
-| `configs/` | グローバル設定のソース (claude / zsh) | — |
+| `document/` | 品質保証記録 | — |
 
-各サブプロジェクトは独立しており、それぞれ専用の Taskfile と flake を持つ。
-作業は対象ディレクトリで実行する。コマンドの詳細は各 `.claude/rules/<project>.md` を参照。
+作業は対象ディレクトリで実行する。コマンドの詳細は `.claude/rules/nvimc.md` を参照。
+
+Nix によるマシン構成とグローバル Claude 設定は
+[shunsock/devtools](https://github.com/shunsock/devtools) へ移設した。
 
 リポジトリ全体の説明と完全なコマンド一覧は `README.md` にある。
